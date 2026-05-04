@@ -1,0 +1,82 @@
+{
+  "login": {
+    "title": "Login",
+    "subtitle": "Acesse o ateliê industrial de sua oficina.",
+    "email": "E-mail",
+    "emailPlaceholder": "Digite seu e-mail",
+    "password": "Senha",
+    "passwordPlaceholder": "Digite sua senha",
+    "forgotPassword": "Esqueci minha senha",
+    "noAccount": "Ainda não tem uma conta?",
+    "createAccount": "Criar conta",
+    "enter": "Entrar"
+  },
+  "dashboard": {
+    "greeting": "Olá, {{name}}!",
+    "todaySummary": "RESUMO DE HOJE, {{date}}",
+    "scheduled": "AGENDADOS",
+    "today": "hoje",
+    "inService": "EM SERVIÇO",
+    "capacity": "Capacidade",
+    "weeklyPerformance": "Desempenho Semanal",
+    "appointmentsTab": "AGENDAMENTOS",
+    "inventoryTab": "ESTOQUE",
+    "inventoryAlerts": "Alertas de Estoque",
+    "viewAll": "VER TODOS",
+    "criticalStock": "ESTOQUE CRÍTICO: {{count}} UNIDADES",
+    "belowIdeal": "ABAIXO DO NÍVEL IDEAL: {{count}} UNIDADES"
+  },
+  "common": {
+    "save": "SALVAR",
+    "edit": "EDITAR",
+    "delete": "EXCLUIR",
+    "cancel": "CANCELAR",
+    "add": "ADICIONAR",
+    "search": "Buscar...",
+    "actions": "Ações",
+    "name": "Nome",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "role": "Cargo",
+    "price": "Preço"
+  },
+  "nav": {
+    "home": "Início",
+    "appointments": "Agendamentos",
+    "inventory": "Estoque",
+    "clients": "Clientes",
+    "profile": "Perfil"
+  },
+  "profile": {
+    "title": "PERFIL",
+    "visitor": "Visitante",
+    "noShop": "Sem oficina vinculada",
+    "language": "Idioma",
+    "services": "Gestão de Serviços",
+    "employees": "Gestão de Funcionários",
+    "logout": "Sair da conta"
+  },
+  "clients": {
+    "title": "CLIENTES",
+    "addTitle": "NOVO CLIENTE",
+    "editTitle": "EDITAR CLIENTE",
+    "total": "TOTAL DE CLIENTES",
+    "recent": "Clientes Recentes"
+  },
+  "services": {
+    "title": "SERVIÇOS",
+    "addTitle": "NOVO SERVIÇO",
+    "editTitle": "EDITAR SERVIÇO"
+  },
+  "employees": {
+    "title": "FUNCIONÁRIOS",
+    "addTitle": "NOVO FUNCIONÁRIO",
+    "editTitle": "EDITAR FUNCIONÁRIO"
+  },
+  "forgotPassword": {
+    "title": "RECUPERAR SENHA",
+    "instructions": "Insira seu e-mail para receber as instruções de recuperação.",
+    "send": "ENVIAR INSTRUÇÕES",
+    "back": "Voltar para o Login"
+  }
+}

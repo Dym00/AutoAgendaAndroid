@@ -1,0 +1,22 @@
+/* Layout base da aplicação */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background);
+  position: relative;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.page-content {
+  flex: 1;
+  padding: 16px;
+  padding-bottom: 80px; /* Espaço para a Bottom Navigation */
+  overflow-y: auto;
+}
+
+/* Telas sem Bottom Nav (Ex: Login, Cadastro) */
+.page-content.full-height {
+  padding-bottom: 16px;
+}

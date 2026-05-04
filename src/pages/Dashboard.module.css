@@ -1,0 +1,210 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.greetingSection {
+  margin-bottom: 24px;
+}
+
+.greeting {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--text-main);
+}
+
+.dateSubtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.summaryCards {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.card {
+  flex: 1;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cardValue {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 12px;
+}
+
+.cardFooter {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.trendIcon {
+  color: var(--warning);
+  margin-right: 4px;
+}
+
+/* Chart Area */
+.chartSection {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 32px;
+}
+
+.chartTabs {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.chartTab {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+}
+
+.chartTab.active {
+  background-color: var(--input-bg);
+  color: var(--text-main);
+}
+
+.chartTitle {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.mockChart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 120px;
+  padding: 0 16px;
+}
+
+.bar {
+  width: 32px;
+  background-color: var(--border);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.bar.active {
+  background-color: var(--primary);
+}
+
+.barLabel {
+  position: absolute;
+  bottom: -24px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Alerts Area */
+.alertsSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.alertsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.alertsTitle {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.viewAll {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--warning);
+}
+
+.alertList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alertItem {
+  display: flex;
+  align-items: center;
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--danger);
+}
+
+.alertItem.warning {
+  border-left-color: var(--warning);
+}
+
+.alertIcon {
+  margin-right: 16px;
+}
+
+.alertItem.danger .alertIcon {
+  color: var(--danger);
+}
+
+.alertItem.warning .alertIcon {
+  color: var(--warning);
+}
+
+.alertContent {
+  flex: 1;
+}
+
+.alertName {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.alertStatus {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.alertItem.danger .alertStatus {
+  color: var(--danger);
+}
+
+.alertItem.warning .alertStatus {
+  color: var(--text-secondary);
+}

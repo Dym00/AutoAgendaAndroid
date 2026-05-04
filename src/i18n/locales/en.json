@@ -1,0 +1,82 @@
+{
+  "login": {
+    "title": "Login",
+    "subtitle": "Access your workshop's industrial studio.",
+    "email": "E-mail",
+    "emailPlaceholder": "Enter your e-mail",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot my password",
+    "noAccount": "Don't have an account yet?",
+    "createAccount": "Create account",
+    "enter": "Login"
+  },
+  "dashboard": {
+    "greeting": "Hello, {{name}}!",
+    "todaySummary": "TODAY'S SUMMARY, {{date}}",
+    "scheduled": "SCHEDULED",
+    "today": "today",
+    "inService": "IN SERVICE",
+    "capacity": "Capacity",
+    "weeklyPerformance": "Weekly Performance",
+    "appointmentsTab": "APPOINTMENTS",
+    "inventoryTab": "INVENTORY",
+    "inventoryAlerts": "Inventory Alerts",
+    "viewAll": "VIEW ALL",
+    "criticalStock": "CRITICAL STOCK: {{count}} UNITS",
+    "belowIdeal": "BELOW IDEAL LEVEL: {{count}} UNITS"
+  },
+  "common": {
+    "save": "SAVE",
+    "edit": "EDIT",
+    "delete": "DELETE",
+    "cancel": "CANCEL",
+    "add": "ADD",
+    "search": "Search...",
+    "actions": "Actions",
+    "name": "Name",
+    "email": "E-mail",
+    "phone": "Phone",
+    "role": "Role",
+    "price": "Price"
+  },
+  "nav": {
+    "home": "Home",
+    "appointments": "Appointments",
+    "inventory": "Inventory",
+    "clients": "Clients",
+    "profile": "Profile"
+  },
+  "profile": {
+    "title": "PROFILE",
+    "visitor": "Visitor",
+    "noShop": "No workshop linked",
+    "language": "Language",
+    "services": "Services Management",
+    "employees": "Employees Management",
+    "logout": "Logout"
+  },
+  "clients": {
+    "title": "CLIENTS",
+    "addTitle": "NEW CLIENT",
+    "editTitle": "EDIT CLIENT",
+    "total": "TOTAL CLIENTS",
+    "recent": "Recent Clients"
+  },
+  "services": {
+    "title": "SERVICES",
+    "addTitle": "NEW SERVICE",
+    "editTitle": "EDIT SERVICE"
+  },
+  "employees": {
+    "title": "EMPLOYEES",
+    "addTitle": "NEW EMPLOYEE",
+    "editTitle": "EDIT EMPLOYEE"
+  },
+  "forgotPassword": {
+    "title": "RECOVER PASSWORD",
+    "instructions": "Enter your email to receive recovery instructions.",
+    "send": "SEND INSTRUCTIONS",
+    "back": "Back to Login"
+  }
+}

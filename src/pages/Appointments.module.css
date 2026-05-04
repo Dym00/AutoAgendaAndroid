@@ -1,0 +1,129 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--primary); /* Padrão amarelo */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.card.newCustomer {
+  border-left-color: var(--success);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.clientName {
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.badgeNovo {
+  background-color: var(--success-bg);
+  color: var(--success);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.carInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.serviceInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background-color: var(--input-bg);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.arrowIcon {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  color: var(--text-light);
+  background-color: var(--surface);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* FAB */
+.fab {
+  position: fixed;
+  bottom: 88px; /* Acima do BottomNav */
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background-color: #798C22; /* Olive green from Figma */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  transition: transform 0.2s;
+}
+
+.fab:hover {
+  transform: scale(1.05);
+}

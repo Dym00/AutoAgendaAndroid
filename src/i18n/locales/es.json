@@ -1,0 +1,82 @@
+{
+  "login": {
+    "title": "Iniciar Sesión",
+    "subtitle": "Accede al taller industrial de tu oficina.",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "Ingresa tu correo",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "forgotPassword": "Olvidé mi contraseña",
+    "noAccount": "¿Aún no tienes cuenta?",
+    "createAccount": "Crear cuenta",
+    "enter": "Entrar"
+  },
+  "dashboard": {
+    "greeting": "¡Hola, {{name}}!",
+    "todaySummary": "RESUMEN DE HOY, {{date}}",
+    "scheduled": "PROGRAMADOS",
+    "today": "hoy",
+    "inService": "EN SERVICIO",
+    "capacity": "Capacidad",
+    "weeklyPerformance": "Rendimiento Semanal",
+    "appointmentsTab": "CITAS",
+    "inventoryTab": "INVENTARIO",
+    "inventoryAlerts": "Alertas de Inventario",
+    "viewAll": "VER TODOS",
+    "criticalStock": "STOCK CRÍTICO: {{count}} UNIDADES",
+    "belowIdeal": "POR DEBAJO DEL NIVEL IDEAL: {{count}} UNIDADES"
+  },
+  "common": {
+    "save": "GUARDAR",
+    "edit": "EDITAR",
+    "delete": "ELIMINAR",
+    "cancel": "CANCELAR",
+    "add": "AÑADIR",
+    "search": "Buscar...",
+    "actions": "Acciones",
+    "name": "Nombre",
+    "email": "Correo",
+    "phone": "Teléfono",
+    "role": "Cargo",
+    "price": "Precio"
+  },
+  "nav": {
+    "home": "Inicio",
+    "appointments": "Citas",
+    "inventory": "Inventario",
+    "clients": "Clientes",
+    "profile": "Perfil"
+  },
+  "profile": {
+    "title": "PERFIL",
+    "visitor": "Visitante",
+    "noShop": "Sin taller vinculado",
+    "language": "Idioma",
+    "services": "Gestión de Servicios",
+    "employees": "Gestión de Empleados",
+    "logout": "Cerrar sesión"
+  },
+  "clients": {
+    "title": "CLIENTES",
+    "addTitle": "NUEVO CLIENTE",
+    "editTitle": "EDITAR CLIENTE",
+    "total": "TOTAL DE CLIENTES",
+    "recent": "Clientes Recientes"
+  },
+  "services": {
+    "title": "SERVICIOS",
+    "addTitle": "NUEVO SERVICIO",
+    "editTitle": "EDITAR SERVICIO"
+  },
+  "employees": {
+    "title": "EMPLEADOS",
+    "addTitle": "NUEVO EMPLEADO",
+    "editTitle": "EDITAR EMPLEADO"
+  },
+  "forgotPassword": {
+    "title": "RECUPERAR CONTRASEÑA",
+    "instructions": "Introduzca su correo electrónico para recibir las instrucciones.",
+    "send": "ENVIAR INSTRUCCIONES",
+    "back": "Volver a Iniciar Sesión"
+  }
+}

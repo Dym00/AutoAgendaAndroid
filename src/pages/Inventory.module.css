@@ -174,9 +174,22 @@
   gap: 8px;
 }
 
+.itemFooter {
+  display: flex;
+  align-items: center;
+  gap: 24px; /* Espaço suficiente para números de 3 dígitos */
+  margin-top: 4px;
+}
+
 .itemPrice {
   font-weight: 700;
   font-size: 14px;
+}
+
+.itemStock {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .stockBadge {

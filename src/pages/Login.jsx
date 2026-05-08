@@ -3,6 +3,7 @@ import { Mail, Lock } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
+import api from '../services/api';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -11,17 +12,50 @@ import styles from './Login.module.css';
 const Login = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [slug, setSlug] = useState('');
+  const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const { login } = useAppContext();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email && password) {
-      login({ name: 'Ricardo', email, token: 'mock-token-123' });
-      navigate('/dashboard');
+    setError('');
+    
+    if (slug && usuario && password) {
+      setLoading(true);
+      try {
+        const response = await api.post('/funcionario-api/logar', {
+          slug,
+          usuario,
+          senha: password
+        });
+        
+        const funcData = response.data;
+        // Salva o idOficina no LocalStorage para os interceptors do Axios
+        if (funcData && funcData.oficina && funcData.oficina.idOficina) {
+          localStorage.setItem('idOficina', funcData.oficina.idOficina.toString());
+        }
+        
+        login(funcData);
+        navigate('/dashboard');
+      } catch (err) {
+        if (err.response && err.response.data && err.response.data.erro) {
+          setError(err.response.data.erro);
+        } else {
+          setError('Erro de conexão com o servidor. O Spring Boot está rodando?');
+        }
+      } finally {
+        setLoading(false);
+      }
     }
+  };
+
+  const handleOfflineLogin = () => {
+    login({ nomeFuncionario: 'Desenvolvedor', acesso: 'admin', isOffline: true });
+    navigate('/dashboard');
   };
 
   return (
@@ -34,14 +68,25 @@ const Login = () => {
         </div>
 
         <form className={styles.form} onSubmit={handleLogin}>
+          {error && <div style={{ color: 'var(--danger)', fontSize: '12px', marginBottom: '16px', textAlign: 'center' }}>{error}</div>}
+          
           <Input
-            label={t('login.email')}
-            id="email"
-            type="email"
+            label="SLUG DA OFICINA"
+            id="slug"
+            type="text"
+            placeholder="Ex: autoagenda-sp"
+            value={slug}
+            onChange={(e) => setSlug(e.target.value)}
+            required
+          />
+          <Input
+            label="USUÁRIO OU E-MAIL"
+            id="usuario"
+            type="text"
             placeholder={t('login.emailPlaceholder')}
             icon={Mail}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={usuario}
+            onChange={(e) => setUsuario(e.target.value)}
             required
           />
           <Input
@@ -68,7 +113,20 @@ const Login = () => {
           </div>
           
           <div className={styles.buttonContainer}>
-            <Button type="submit">{t('login.enter')}</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Aguarde...' : t('login.enter')}
+            </Button>
+            
+            <button 
+              type="button" 
+              onClick={handleOfflineLogin}
+              style={{
+                marginTop: '16px', background: 'transparent', border: '1px solid var(--border)', 
+                color: 'var(--text-secondary)', padding: '12px', borderRadius: '8px', width: '100%'
+              }}
+            >
+              Entrar no Modo de Teste Visual
+            </button>
           </div>
         </form>
       </div>

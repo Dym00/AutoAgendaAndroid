@@ -1,40 +1,90 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Package, SlidersHorizontal, Droplets, Zap, User, Wrench, Briefcase } from 'lucide-react';
+import api from '../services/api';
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   
-  const [appointments, setAppointments] = useState([
-    { id: 1, name: "Ana Silva", time: "10:00", car: "Chevrolet Onix 2022", service: "Troca de Óleo e Inspeção", isNew: false },
-    { id: 2, name: "Carlos Mendes", time: "11:30", car: "Ford Ka 2021", service: "Substituição de Pastilhas de Freio", isNew: false },
-    { id: 3, name: "Beatriz Souza", time: "14:30", car: "Volkswagen T-Cross 2023", service: "Rodízio e Alinhamento de Pneus", isNew: true },
-    { id: 4, name: "Hector Semenssato", time: "15:30", car: "Fiat Tempra 1992", service: "Troca de Óleo e Inspeção", isNew: false },
-  ]);
+  const [appointments, setAppointments] = useState([]);
+  const [inventory, setInventory] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [services, setServices] = useState([]);
 
-  const [inventory, setInventory] = useState([
-    { id: 1, name: 'Óleo Sintético 5W30', category: 'Líquidos & Fluidos', price: '45,00', stock: 130, critical: false, Icon: Package },
-    { id: 2, name: 'Pastilhas de Freio Cerâmica', category: 'Alerta de Estoque Baixo', price: '120,00', stock: 2, critical: true, Icon: SlidersHorizontal },
-    { id: 3, name: 'Filtro de Ar Condicionado', category: 'Filtros & Cabine', price: '35,00', stock: 40, critical: false, Icon: Package },
-    { id: 4, name: 'Fluido de Freio', category: 'Líquidos & Fluidos', price: '25,00', stock: 15, critical: false, Icon: Droplets },
-    { id: 5, name: 'Velas de Ignição', category: 'Ignição & Elétrica', price: '60,00', stock: 8, critical: false, Icon: Zap },
-  ]);
+  useEffect(() => {
+    if (user) {
+      loadData();
+    }
+  }, [user]);
 
-  const [clients, setClients] = useState([
-    { id: 1, name: 'João Silva', phone: '(11) 98765-4321', email: 'joao@email.com' },
-    { id: 2, name: 'Maria Souza', phone: '(11) 91234-5678', email: 'maria@email.com' }
-  ]);
+  const loadData = async () => {
+    if (user && user.isOffline) {
+      // Injeta dados falsos para Teste Visual
+      setClients([{ id: 1, name: 'João (Teste)', phone: '(11) 9999-9999', email: 'teste@email.com' }]);
+      setEmployees([{ id: 1, name: 'Desenvolvedor', role: 'Gerente', email: 'dev@autoagenda.com' }]);
+      setServices([{ id: 1, name: 'Troca de Óleo', price: '80,00' }]);
+      setInventory([{ id: 1, name: 'Filtro (Teste)', category: 'Peças', price: '45,00', stock: 10, critical: false, Icon: Package }]);
+      setAppointments([{ id: 1, name: 'João (Teste)', time: '14:30', car: 'Onix 2022', service: 'Troca de Óleo', isNew: true }]);
+      return;
+    }
 
-  const [employees, setEmployees] = useState([
-    { id: 1, name: 'Ricardo Oliveira', role: 'Gerente / Mecânico Chefe', email: 'ricardo@autoagenda.com' },
-    { id: 2, name: 'Paulo Santos', role: 'Mecânico', email: 'paulo@autoagenda.com' }
-  ]);
+    try {
+       // Carregamento paralelo de todas as APIs
+       const [cliRes, empRes, prodRes, servRes, agenRes] = await Promise.all([
+          api.get('/cliente-api'),
+          api.get('/funcionario-api'),
+          api.get('/produto-api'),
+          api.get('/servico-api').catch(() => ({ data: [] })), // Fallback se não existir
+          api.get('/agendamento-api')
+       ]);
 
-  const [services, setServices] = useState([
-    { id: 1, name: 'Troca de Óleo', price: '80,00' },
-    { id: 2, name: 'Alinhamento e Balanceamento', price: '150,00' }
-  ]);
+       if (cliRes.data) {
+         setClients(cliRes.data.map(c => ({
+           id: c.idCliente, name: c.nomeCliente, phone: c.telefone, email: c.email
+         })));
+       }
+
+       if (empRes.data) {
+         setEmployees(empRes.data.map(e => ({
+           id: e.idFuncionario, name: e.nomeFuncionario, role: e.acesso === 'admin' ? 'Gerente' : 'Mecânico', email: e.email
+         })));
+       }
+
+       if (prodRes.data) {
+         setInventory(prodRes.data.map(p => ({
+           id: p.idProduto, 
+           name: p.nomeProduto, 
+           category: p.categoria, 
+           price: p.precoVenda, 
+           stock: p.estoqueAtual, 
+           critical: p.estoqueAtual <= p.estoqueMinimo, 
+           Icon: p.estoqueAtual <= p.estoqueMinimo ? SlidersHorizontal : Package
+         })));
+       }
+
+       if (servRes.data) {
+         setServices(servRes.data.map(s => ({
+           id: s.idServico, name: s.nomeServico, price: s.descServico // Usando descServico como fallback para preço caso não tenha
+         })));
+       }
+
+       if (agenRes.data) {
+         setAppointments(agenRes.data.map(a => ({
+           id: a.idAgendamento, 
+           name: a.cliente?.nomeCliente || 'Desconhecido', 
+           time: a.dataPrevisao || 'Sem data', 
+           car: a.veiculo?.modelo || 'Não informado', 
+           service: a.servicos?.map(s => s.nomeServico).join(', ') || 'Nenhum', 
+           isNew: a.statusAgendamento === 'Pendente' || a.statusAgendamento === 'Agendado'
+         })));
+       }
+
+    } catch(err) {
+       console.error("Erro ao carregar dados das APIs:", err);
+    }
+  };
 
   const login = (userData) => {
     setUser(userData);
@@ -42,43 +92,161 @@ export const AppProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('idOficina');
   };
 
-  const addAppointment = (appointment) => {
-    setAppointments([...appointments, { ...appointment, id: Date.now() }]);
+  // ----- CRUD Agendamentos -----
+  const addAppointment = async (appointmentData) => {
+    try {
+      const formData = new FormData();
+      // O Spring Boot espera @RequestPart("agendamento") como JSON blob
+      formData.append('agendamento', new Blob([JSON.stringify({
+        dataPrevisao: appointmentData.date || null,
+        statusAgendamento: 'Agendado'
+      })], { type: "application/json" }));
+      
+      formData.append('idCliente', appointmentData.clientName);
+      formData.append('idVeiculo', appointmentData.carModel);
+      formData.append('idServicos', appointmentData.service);
+
+      await api.post('/agendamento-api', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      loadData(); // Recarrega do servidor
+    } catch (err) {
+      console.error("Erro ao salvar agendamento:", err);
+    }
   };
 
-  const updateAppointment = (id, updatedData) => {
-    setAppointments(appointments.map(a => a.id === id ? { ...a, ...updatedData } : a));
+  const updateAppointment = async (id, updatedData) => {
+    // Por enquanto apenas atualizando status na API via PATCH
+    try {
+      await api.patch(`/agendamento-api/${id}/status?novoStatus=Atualizado`);
+      loadData();
+    } catch (err) {
+      console.error("Erro ao atualizar agendamento:", err);
+    }
   };
 
-  const deleteAppointment = (id) => {
-    setAppointments(appointments.filter(a => a.id !== id));
+  const deleteAppointment = async (id) => {
+    try {
+      await api.delete(`/agendamento-api/${id}`);
+      loadData();
+    } catch (err) {
+      console.error("Erro ao excluir agendamento:", err);
+    }
   };
 
-  const addInventoryItem = (item) => {
-    setInventory([...inventory, { ...item, id: Date.now(), Icon: Package }]);
+  // ----- CRUD Estoque (Produto) -----
+  const addInventoryItem = async (item) => {
+    try {
+      await api.post('/produto-api', {
+        nomeProduto: item.name,
+        categoria: item.category,
+        precoCusto: 0,
+        precoVenda: parseFloat(item.price.replace(',', '.')) || 0,
+        estoqueAtual: parseInt(item.stock) || 0,
+        estoqueMinimo: 5
+      });
+      loadData();
+    } catch (err) {
+      console.error("Erro ao adicionar produto:", err);
+    }
   };
 
-  const updateInventoryItem = (id, updatedData) => {
-    setInventory(inventory.map(i => i.id === id ? { ...i, ...updatedData } : i));
+  const updateInventoryItem = async (id, item) => {
+    // API não tem PUT direto na Controller de mobile, usa o próprio POST (salvarOuAtualizar)
+    try {
+      await api.post('/produto-api', {
+        idProduto: id,
+        nomeProduto: item.name,
+        categoria: item.category,
+        precoVenda: parseFloat(item.price.replace(',', '.')) || 0,
+        estoqueAtual: parseInt(item.stock) || 0
+      });
+      loadData();
+    } catch (err) {
+      console.error("Erro ao atualizar produto:", err);
+    }
   };
 
-  const deleteInventoryItem = (id) => {
-    setInventory(inventory.filter(i => i.id !== id));
+  const deleteInventoryItem = async (id) => {
+    try {
+      await api.delete(`/produto-api/${id}`);
+      loadData();
+    } catch (err) {
+      console.error("Erro ao excluir produto:", err);
+    }
   };
 
-  const addClient = (client) => setClients([...clients, { ...client, id: Date.now() }]);
-  const updateClient = (id, data) => setClients(clients.map(c => c.id === id ? { ...c, ...data } : c));
-  const deleteClient = (id) => setClients(clients.filter(c => c.id !== id));
+  // ----- CRUD Clientes -----
+  const addClient = async (client) => {
+    try {
+      await api.post('/cliente-api', {
+        nomeCliente: client.name,
+        telefone: client.phone,
+        email: client.email
+      });
+      loadData();
+    } catch (err) { console.error(err); }
+  };
+  const updateClient = async (id, data) => {
+    try {
+      await api.post('/cliente-api', { idCliente: id, nomeCliente: data.name, telefone: data.phone, email: data.email });
+      loadData();
+    } catch (err) { console.error(err); }
+  };
+  const deleteClient = async (id) => {
+    try {
+      await api.patch(`/cliente-api/${id}/status`);
+      loadData();
+    } catch (err) { console.error(err); }
+  };
 
-  const addEmployee = (employee) => setEmployees([...employees, { ...employee, id: Date.now() }]);
-  const updateEmployee = (id, data) => setEmployees(employees.map(e => e.id === id ? { ...e, ...data } : e));
-  const deleteEmployee = (id) => setEmployees(employees.filter(e => e.id !== id));
+  // ----- CRUD Funcionarios -----
+  const addEmployee = async (employee) => {
+    try {
+      await api.post('/funcionario-api', {
+        nomeFuncionario: employee.name,
+        email: employee.email,
+        usuario: employee.email,
+        senha: '123' // Default provisório
+      });
+      loadData();
+    } catch (err) { console.error(err); }
+  };
+  const updateEmployee = async (id, data) => {
+    try {
+      await api.post('/funcionario-api', { idFuncionario: id, nomeFuncionario: data.name, email: data.email, usuario: data.email });
+      loadData();
+    } catch (err) { console.error(err); }
+  };
+  const deleteEmployee = async (id) => {
+    try {
+      await api.patch(`/funcionario-api/${id}/status`);
+      loadData();
+    } catch (err) { console.error(err); }
+  };
 
-  const addService = (service) => setServices([...services, { ...service, id: Date.now() }]);
-  const updateService = (id, data) => setServices(services.map(s => s.id === id ? { ...s, ...data } : s));
-  const deleteService = (id) => setServices(services.filter(s => s.id !== id));
+  // ----- CRUD Serviços -----
+  const addService = async (service) => {
+    try {
+      await api.post('/servico-api', { nomeServico: service.name, descServico: service.price });
+      loadData();
+    } catch (err) { console.error(err); }
+  };
+  const updateService = async (id, data) => {
+    try {
+      await api.post('/servico-api', { idServico: id, nomeServico: data.name, descServico: data.price });
+      loadData();
+    } catch (err) { console.error(err); }
+  };
+  const deleteService = async (id) => {
+    try {
+      await api.patch(`/servico-api/${id}/status`);
+      loadData();
+    } catch (err) { console.error(err); }
+  };
 
   return (
     <AppContext.Provider value={{ 

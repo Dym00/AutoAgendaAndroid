@@ -1,57 +1,23 @@
-// Configuração base da API (Fetch)
-// Spring Boot backend base URL
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+import axios from 'axios';
 
-export const apiFetch = async (endpoint, options = {}) => {
-  const url = `${BASE_URL}${endpoint}`;
+// A URL do backend Spring Boot local
+// Em um celular Android físico acessando o computador via Wi-Fi, seria o IP da máquina, ex: http://192.168.x.x:8080/mobile
+// No emulador Android, seria http://10.0.2.2:8080/mobile
+// Por enquanto vamos usar localhost
+const api = axios.create({
+  baseURL: 'http://localhost:8080/mobile', 
+});
+
+api.interceptors.request.use(async (config) => {
+  const idOficina = localStorage.getItem('idOficina');
   
-  const defaultHeaders = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  };
-
-  // Aqui você pode adicionar lógica para injetar o token JWT do localStorage
-  const token = localStorage.getItem('token');
-  if (token) {
-    defaultHeaders['Authorization'] = `Bearer ${token}`;
+  if (idOficina) {
+    config.headers['idOficina'] = idOficina;
   }
+  
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
 
-  const config = {
-    ...options,
-    headers: {
-      ...defaultHeaders,
-      ...options.headers,
-    },
-  };
-
-  try {
-    const response = await fetch(url, config);
-    if (!response.ok) {
-      // Tentar extrair a mensagem de erro da API Spring Boot
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP Error: ${response.status}`);
-    }
-    
-    // Evita tentar fazer parse de JSON em respostas vazias (ex: 204 No Content)
-    if (response.status === 204) {
-        return null;
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error(`API Error on ${endpoint}:`, error);
-    throw error;
-  }
-};
-
-// Exemplos de métodos exportados
-export const authService = {
-  login: (credentials) => apiFetch('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(credentials)
-  }),
-};
-
-export const appointmentsService = {
-  getToday: () => apiFetch('/appointments/today'),
-};
+export default api;

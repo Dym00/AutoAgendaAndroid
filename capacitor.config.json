@@ -2,5 +2,8 @@
   "appId": "br.com.autoagenda",
   "appName": "AutoAgenda",
   "webDir": "dist",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "server": {
+    "cleartext": true
+  }
 }

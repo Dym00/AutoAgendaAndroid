@@ -27,13 +27,27 @@ const Login = () => {
     if (slug && usuario && password) {
       setLoading(true);
       try {
-        const response = await api.post('/funcionario-api/logar', {
-          slug,
-          usuario,
-          senha: password
+        const fetchUrl = `${api.defaults.baseURL}/funcionario-api/logar`;
+        const response = await fetch(fetchUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            slug,
+            usuario,
+            senha: password
+          })
         });
         
-        const funcData = response.data;
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw { response: { status: response.status, data: errorData } };
+        }
+        
+        const funcData = await response.json();
+        
         // Salva o idOficina no LocalStorage para os interceptors do Axios
         if (funcData && funcData.oficina && funcData.oficina.idOficina) {
           localStorage.setItem('idOficina', funcData.oficina.idOficina.toString());
@@ -42,11 +56,21 @@ const Login = () => {
         login(funcData);
         navigate('/dashboard');
       } catch (err) {
-        if (err.response && err.response.data && err.response.data.erro) {
-          setError(err.response.data.erro);
+        let errorDetails = "Erro desconhecido";
+        if (err.response) {
+          if (err.response.data && err.response.data.erro) {
+            errorDetails = err.response.data.erro;
+          } else {
+            errorDetails = `HTTP ${err.response.status}: ${JSON.stringify(err.response.data).substring(0, 100)}`;
+          }
+        } else if (err.request) {
+          errorDetails = `Sem resposta do servidor (Timeout ou CORS). URL: ${api.defaults.baseURL}`;
         } else {
-          setError('Erro de conexão com o servidor. O Spring Boot está rodando?');
+          errorDetails = err.message;
         }
+        
+        setError(`Falha de conexão: ${errorDetails}`);
+        alert(`DETALHES DO ERRO:\n${errorDetails}\nURL: ${api.defaults.baseURL}/funcionario-api/logar`);
       } finally {
         setLoading(false);
       }

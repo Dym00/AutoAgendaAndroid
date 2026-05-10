@@ -3,6 +3,7 @@ import { Search, Briefcase, Plus, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
+import { AccessibleNode } from '../components/ui/AccessibleNode';
 import styles from './Inventory.module.css';
 
 const Employees = () => {
@@ -33,16 +34,19 @@ const Employees = () => {
         </div>
       </section>
 
-      <div className={styles.list} role="list" aria-label="Lista de funcionários">
+      <div className={styles.list} role="list" aria-label={t('employees.title')}>
         {filteredEmployees.length === 0 ? (
-          <p style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '32px 0'}}>Nenhum funcionário encontrado.</p>
+          <p style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '32px 0'}}>{t('common.emptyList', { item: t('employees.item') })}</p>
         ) : filteredEmployees.map(emp => (
-          <article 
+          <AccessibleNode 
+            as="article"
             key={emp.id} 
             className={styles.itemCard}
-            role="listitem"
-            tabIndex={0}
-            aria-label={`Funcionário: ${emp.name}, Cargo: ${emp.role}, Email: ${emp.email}`}
+            textToSpeak={t('employees.tts_employee', {
+              name: emp.name,
+              role: emp.role,
+              email: emp.email
+            })}
           >
             <div className={styles.iconBox} aria-hidden="true">
               <Briefcase size={24} color="var(--primary)" />
@@ -57,32 +61,38 @@ const Employees = () => {
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginLeft: 'auto' }}>
-              <button 
+              <AccessibleNode 
+                as="button"
                 onClick={() => navigate(`/employees/edit/${emp.id}`)}
+                textToSpeak={t('employees.tts_edit', { name: emp.name })}
                 style={{ background: 'none', border: 'none', color: 'var(--text-light)', padding: '12px', minWidth: '44px', minHeight: '44px' }}
-                aria-label={`${t('common.edit')} ${emp.name}`}
+                aria-label={t('common.edit')}
               >
                 <Edit size={20} aria-hidden="true" />
-              </button>
-              <button 
+              </AccessibleNode>
+              <AccessibleNode 
+                as="button"
                 onClick={() => deleteEmployee(emp.id)}
+                textToSpeak={t('employees.tts_delete', { name: emp.name })}
                 style={{ background: 'none', border: 'none', color: '#ff4444', padding: '12px', minWidth: '44px', minHeight: '44px' }}
-                aria-label={`${t('common.delete')} ${emp.name}`}
+                aria-label={t('common.delete')}
               >
                 <Trash2 size={20} aria-hidden="true" />
-              </button>
+              </AccessibleNode>
             </div>
-          </article>
+          </AccessibleNode>
         ))}
       </div>
 
-      <button 
+      <AccessibleNode 
+        as="button"
         className={styles.fab} 
         aria-label={t('employees.addTitle')}
+        textToSpeak={t('employees.tts_create')}
         onClick={() => navigate('/employees/add')}
       >
         <Plus size={24} aria-hidden="true" />
-      </button>
+      </AccessibleNode>
     </div>
   );
 };

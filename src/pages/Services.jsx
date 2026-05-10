@@ -3,6 +3,7 @@ import { Search, Wrench, Plus, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
+import { AccessibleNode } from '../components/ui/AccessibleNode';
 import styles from './Inventory.module.css';
 
 const Services = () => {
@@ -32,16 +33,18 @@ const Services = () => {
         </div>
       </section>
 
-      <div className={styles.list} role="list" aria-label="Lista de serviços" style={{ marginTop: '24px' }}>
+      <div className={styles.list} role="list" aria-label={t('services.title')} style={{ marginTop: '24px' }}>
         {filteredServices.length === 0 ? (
-          <p style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '32px 0'}}>Nenhum serviço encontrado.</p>
+          <p style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '32px 0'}}>{t('common.emptyList', { item: t('services.item') })}</p>
         ) : filteredServices.map(srv => (
-          <article 
+          <AccessibleNode 
+            as="article"
             key={srv.id} 
             className={styles.itemCard}
-            role="listitem"
-            tabIndex={0}
-            aria-label={`Serviço: ${srv.name}, Preço: R$ ${srv.price}`}
+            textToSpeak={t('services.tts_service', {
+              name: srv.name,
+              price: srv.price
+            })}
           >
             <div className={styles.itemIconContainer} aria-hidden="true">
               <Wrench size={24} color="var(--primary)" />
@@ -55,32 +58,38 @@ const Services = () => {
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginLeft: 'auto' }}>
-              <button 
+              <AccessibleNode 
+                as="button"
                 onClick={() => navigate(`/services/edit/${srv.id}`)}
+                textToSpeak={t('services.tts_edit', { name: srv.name })}
                 style={{ background: 'none', border: 'none', color: 'var(--text-light)', padding: '12px', minWidth: '44px', minHeight: '44px' }}
-                aria-label={`${t('common.edit')} ${srv.name}`}
+                aria-label={t('common.edit')}
               >
                 <Edit size={20} aria-hidden="true" />
-              </button>
-              <button 
+              </AccessibleNode>
+              <AccessibleNode 
+                as="button"
                 onClick={() => deleteService(srv.id)}
+                textToSpeak={t('services.tts_delete', { name: srv.name })}
                 style={{ background: 'none', border: 'none', color: '#ff4444', padding: '12px', minWidth: '44px', minHeight: '44px' }}
-                aria-label={`${t('common.delete')} ${srv.name}`}
+                aria-label={t('common.delete')}
               >
                 <Trash2 size={20} aria-hidden="true" />
-              </button>
+              </AccessibleNode>
             </div>
-          </article>
+          </AccessibleNode>
         ))}
       </div>
 
-      <button 
+      <AccessibleNode 
+        as="button"
         className={styles.fab} 
         aria-label={t('services.addTitle')}
+        textToSpeak={t('services.tts_create')}
         onClick={() => navigate('/services/add')}
       >
         <Plus size={24} aria-hidden="true" />
-      </button>
+      </AccessibleNode>
     </div>
   );
 };

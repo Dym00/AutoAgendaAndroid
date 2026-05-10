@@ -55,9 +55,9 @@ const AddClient = () => {
         <form className={styles.form} onSubmit={handleSubmit}>
           
           <Input 
-            label={t('common.name').toUpperCase()} 
+            label={t('forms.fullNameLabel')} 
             id="name" 
-            placeholder="Ex: João Silva" 
+            placeholder={t('forms.clientNamePlaceholder')} 
             icon={User} 
             value={formData.name} 
             onChange={handleChange('name')} 
@@ -65,9 +65,9 @@ const AddClient = () => {
           />
           
           <Input 
-            label={t('common.phone').toUpperCase()} 
+            label={t('forms.phoneLabel')} 
             id="phone" 
-            placeholder="Ex: (11) 98765-4321" 
+            placeholder={t('forms.phonePlaceholder')} 
             icon={Phone} 
             type="tel"
             value={formData.phone} 
@@ -76,10 +76,10 @@ const AddClient = () => {
           />
           
           <Input 
-            label={t('common.email').toUpperCase()} 
+            label={t('forms.emailLabel')} 
             id="email" 
             type="email" 
-            placeholder="Ex: joao@email.com" 
+            placeholder={t('forms.emailPlaceholder')} 
             icon={Mail} 
             value={formData.email} 
             onChange={handleChange('email')} 
@@ -87,7 +87,7 @@ const AddClient = () => {
           />
           
           <div className={styles.buttonContainer}>
-            <Button type="submit">{t('common.save')}</Button>
+            <Button type="submit">{t('forms.saveClient')}</Button>
           </div>
         </form>
       </div>

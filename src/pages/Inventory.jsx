@@ -1,10 +1,13 @@
 import React from 'react';
-import { Search, SlidersHorizontal, Package, Droplets, Zap, Plus, Edit, Trash2 } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
+import { AccessibleNode } from '../components/ui/AccessibleNode';
 import styles from './Inventory.module.css';
 
 const Inventory = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { inventory, deleteInventoryItem } = useAppContext();
   const totalItems = inventory.length;
@@ -18,38 +21,42 @@ const Inventory = () => {
           <input 
             type="text" 
             className={styles.searchInput} 
-            placeholder="Buscar por peça, marca ou código..."
-            aria-label="Buscar peça no estoque"
+            placeholder={t('inventory.searchPlaceholder')}
+            aria-label={t('inventory.searchPlaceholder')}
           />
         </div>
-        <button className={styles.filterButton} aria-label="Filtrar resultados">
+        <button className={styles.filterButton} aria-label={t('common.search')}>
           <SlidersHorizontal size={20} aria-hidden="true" />
         </button>
       </div>
 
       <div className={styles.summaryCards}>
         <div className={`${styles.summaryCard} ${styles.total}`}>
-          <span className={styles.summaryCardTitle}>ITENS TOTAIS</span>
+          <span className={styles.summaryCardTitle}>{t('inventory.totalItems')}</span>
           <span className={styles.summaryCardValue}>{totalItems}</span>
         </div>
         <div className={`${styles.summaryCard} ${styles.critical}`}>
-          <span className={styles.summaryCardTitle}>CRÍTICOS</span>
+          <span className={styles.summaryCardTitle}>{t('inventory.critical')}</span>
           <span className={styles.summaryCardValue}>0{criticalItems}</span>
         </div>
       </div>
 
-      <h3 className={styles.sectionTitle}>Itens Recentes</h3>
+      <h3 className={styles.sectionTitle}>{t('inventory.recentItems')}</h3>
 
-      <div className={styles.list} role="list" aria-label="Lista de itens em estoque">
+      <div className={styles.list} role="list" aria-label={t('inventory.recentItems')}>
         {inventory.length === 0 ? (
-          <p style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '32px 0'}}>Estoque vazio.</p>
+          <p style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '32px 0'}}>{t('common.emptyInventory')}</p>
         ) : inventory.map(item => (
-          <article 
+          <AccessibleNode 
+            as="article"
             key={item.id} 
             className={`${styles.itemCard} ${item.critical ? styles.critical : ''}`}
-            role="listitem"
-            tabIndex={0}
-            aria-label={`${item.name}, Preço R$ ${item.price}, Estoque ${item.stock}. ${item.critical ? 'Estoque Crítico' : ''}`}
+            textToSpeak={t('inventory.tts_item', {
+              name: item.name,
+              price: item.price,
+              stock: item.stock,
+              critical: item.critical ? t('inventory.lowStockAlert') : ''
+            })}
           >
             <div className={styles.iconBox} aria-hidden="true">
               <item.Icon size={24} />
@@ -58,36 +65,46 @@ const Inventory = () => {
             <div className={styles.itemInfo} aria-hidden="true">
               <h4 className={styles.itemName}>{item.name}</h4>
               <span className={styles.itemCategory}>{item.category}</span>
-              {item.critical && <span className={styles.criticalWarning}>Alerta de Estoque Baixo</span>}
+              {item.critical && <span className={styles.criticalWarning}>{t('inventory.lowStockAlert')}</span>}
               <div className={styles.itemFooter}>
-                <span className={styles.itemPrice}>R$ {item.price}</span>
-                <span className={styles.itemStock}>{item.stock} un</span>
+                <span className={styles.itemPrice}>${item.price}</span>
+                <span className={styles.itemStock}>{item.stock} {t('common.unit')}</span>
               </div>
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginLeft: 'auto' }}>
-              <button 
+              <AccessibleNode 
+                as="button"
                 onClick={() => navigate(`/inventory/edit/${item.id}`)}
+                textToSpeak={t('inventory.tts_edit', { name: item.name })}
                 style={{ background: 'none', border: 'none', color: 'var(--text-light)', padding: '12px', minWidth: '44px', minHeight: '44px' }}
-                aria-label={`Editar ${item.name}`}
+                aria-label={t('common.edit')}
               >
                 <Edit size={20} aria-hidden="true" />
-              </button>
-              <button 
+              </AccessibleNode>
+              <AccessibleNode 
+                as="button"
                 onClick={() => deleteInventoryItem(item.id)}
+                textToSpeak={t('inventory.tts_delete', { name: item.name })}
                 style={{ background: 'none', border: 'none', color: '#ff4444', padding: '12px', minWidth: '44px', minHeight: '44px' }}
-                aria-label={`Excluir ${item.name}`}
+                aria-label={t('common.delete')}
               >
                 <Trash2 size={20} aria-hidden="true" />
-              </button>
+              </AccessibleNode>
             </div>
-          </article>
+          </AccessibleNode>
         ))}
       </div>
 
-      <button className={styles.fab} aria-label="Adicionar nova peça ao estoque" onClick={() => navigate('/inventory/new')}>
+      <AccessibleNode 
+        as="button"
+        className={styles.fab} 
+        textToSpeak={t('inventory.tts_create')}
+        aria-label={t('common.add')} 
+        onClick={() => navigate('/inventory/new')}
+      >
         <Plus size={24} aria-hidden="true" />
-      </button>
+      </AccessibleNode>
     </div>
   );
 };

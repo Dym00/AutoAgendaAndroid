@@ -15,7 +15,7 @@ const AddInventory = () => {
   const { inventory, addInventoryItem, updateInventoryItem } = useAppContext();
   
   const isEditing = !!id;
-  const title = isEditing ? t('common.edit') : "NOVA PEÇA";
+  const title = isEditing ? t('common.edit') : t('inventory.tts_create');
 
   const [formData, setFormData] = useState({
     itemName: '', category: '', price: '', stock: ''
@@ -66,13 +66,13 @@ const AddInventory = () => {
       <TopBar title={title} showBack={true} />
       <div className={`page-content full-height ${styles.container}`}>
         <form className={styles.form} onSubmit={handleSubmit}>
-          <Input label="NOME DA PEÇA" id="name" placeholder="Ex: Pastilha de Freio" icon={Package} value={formData.itemName} onChange={handleChange('itemName')} required />
-          <Input label="CATEGORIA" id="category" placeholder="Ex: Freios" icon={Tag} value={formData.category} onChange={handleChange('category')} required />
-          <Input label="PREÇO (R$)" id="price" type="number" step="0.01" placeholder="0.00" icon={DollarSign} value={formData.price} onChange={handleChange('price')} required />
-          <Input label="QUANTIDADE INICIAL" id="stock" type="number" placeholder="0" icon={Layers} value={formData.stock} onChange={handleChange('stock')} required />
+          <Input label={t('forms.partNameLabel')} id="name" placeholder={t('forms.partNamePlaceholder')} icon={Package} value={formData.itemName} onChange={handleChange('itemName')} required />
+          <Input label={t('forms.categoryLabel')} id="category" placeholder={t('forms.categoryPlaceholder')} icon={Tag} value={formData.category} onChange={handleChange('category')} required />
+          <Input label={t('forms.priceLabel')} id="price" type="number" step="0.01" placeholder={t('forms.pricePlaceholder')} icon={DollarSign} value={formData.price} onChange={handleChange('price')} required />
+          <Input label={t('forms.initialStockLabel')} id="stock" type="number" placeholder="0" icon={Layers} value={formData.stock} onChange={handleChange('stock')} required />
           
           <div className={styles.buttonContainer}>
-            <Button type="submit">CADASTRAR PEÇA</Button>
+            <Button type="submit">{t('forms.savePart')}</Button>
           </div>
         </form>
       </div>

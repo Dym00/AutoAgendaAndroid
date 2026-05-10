@@ -24,7 +24,8 @@
     "inventoryAlerts": "Inventory Alerts",
     "viewAll": "VIEW ALL",
     "criticalStock": "CRITICAL STOCK: {{count}} UNITS",
-    "belowIdeal": "BELOW IDEAL LEVEL: {{count}} UNITS"
+    "belowIdeal": "BELOW IDEAL LEVEL: {{count}} UNITS",
+    "noAlerts": "No stock alerts!"
   },
   "common": {
     "save": "SAVE",
@@ -38,7 +39,33 @@
     "email": "E-mail",
     "phone": "Phone",
     "role": "Role",
-    "price": "Price"
+    "price": "Price",
+    "emptyList": "No {{item}} found.",
+    "emptyInventory": "Empty inventory.",
+    "emptyAppointments": "No appointments for today.",
+    "unit": "un"
+  },
+  "appointments": {
+    "title": "APPOINTMENTS",
+    "today": "Today",
+    "vehicle": "Vehicle",
+    "service": "Service",
+    "newCustomer": "NEW",
+    "tts_appointment": "Appointment for {{name}} at {{time}}. Vehicle: {{car}}. Service: {{service}}. {{isNew}}",
+    "tts_edit": "Edit appointment for {{name}}",
+    "tts_delete": "Delete appointment for {{name}}",
+    "tts_create": "Create new appointment"
+  },
+  "inventory": {
+    "searchPlaceholder": "Search by part, brand or code...",
+    "totalItems": "TOTAL ITEMS",
+    "critical": "CRITICAL",
+    "recentItems": "Recent Items",
+    "lowStockAlert": "Low Stock Alert",
+    "tts_item": "{{name}}, Price ${{price}}, Stock {{stock}}. {{critical}}",
+    "tts_edit": "Edit part {{name}}",
+    "tts_delete": "Delete part {{name}}",
+    "tts_create": "Add new part to inventory"
   },
   "nav": {
     "home": "Home",
@@ -54,29 +81,97 @@
     "language": "Language",
     "services": "Services Management",
     "employees": "Employees Management",
-    "logout": "Logout"
+    "logout": "Logout",
+    "shopData": "Workshop Data",
+    "tts_language": "Current language: {{lang}}. Select to change.",
+    "tts_navServices": "Navigate to Services Management",
+    "tts_navEmployees": "Navigate to Employees Management",
+    "tts_editShop": "Edit Workshop Data",
+    "tts_logout": "Logout from account"
   },
   "clients": {
     "title": "CLIENTS",
     "addTitle": "NEW CLIENT",
     "editTitle": "EDIT CLIENT",
     "total": "TOTAL CLIENTS",
-    "recent": "Recent Clients"
+    "recent": "Recent Clients",
+    "item": "client",
+    "tts_client": "Client: {{name}}, Email: {{email}}, Phone: {{phone}}",
+    "tts_edit": "Edit client {{name}}",
+    "tts_delete": "Delete client {{name}}",
+    "tts_create": "Add new client"
   },
   "services": {
     "title": "SERVICES",
     "addTitle": "NEW SERVICE",
-    "editTitle": "EDIT SERVICE"
+    "editTitle": "EDIT SERVICE",
+    "item": "service",
+    "tts_service": "Service: {{name}}, Price: ${{price}}",
+    "tts_edit": "Edit service {{name}}",
+    "tts_delete": "Delete service {{name}}",
+    "tts_create": "Add new service"
   },
   "employees": {
     "title": "EMPLOYEES",
     "addTitle": "NEW EMPLOYEE",
-    "editTitle": "EDIT EMPLOYEE"
+    "editTitle": "EDIT EMPLOYEE",
+    "item": "employee",
+    "tts_employee": "Employee: {{name}}, Role: {{role}}, Email: {{email}}",
+    "tts_edit": "Edit employee {{name}}",
+    "tts_delete": "Delete employee {{name}}",
+    "tts_create": "Add new employee"
   },
   "forgotPassword": {
     "title": "RECOVER PASSWORD",
     "instructions": "Enter your email to receive recovery instructions.",
     "send": "SEND INSTRUCTIONS",
     "back": "Back to Login"
+  },
+  "forms": {
+    "clientNameLabel": "CLIENT NAME",
+    "clientNamePlaceholder": "Ex: John Doe",
+    "clientSelectPlaceholder": "Select the Client...",
+    "serviceLabel": "SERVICE",
+    "serviceSelectPlaceholder": "Select the Service...",
+    "dateLabel": "DATE",
+    "timeLabel": "TIME",
+    "vehicleLabel": "VEHICLE",
+    "vehiclePlaceholder": "Ex: Chevrolet Onix",
+    "notesLabel": "NOTES",
+    "notesPlaceholder": "Any important notes?",
+    "saveAppointment": "SAVE APPOINTMENT",
+    "partNameLabel": "PART NAME",
+    "partNamePlaceholder": "Ex: Brake Pad",
+    "categoryLabel": "CATEGORY",
+    "categoryPlaceholder": "Ex: Brakes",
+    "priceLabel": "PRICE ($)",
+    "pricePlaceholder": "0.00",
+    "initialStockLabel": "INITIAL STOCK",
+    "savePart": "REGISTER PART",
+    "fullNameLabel": "FULL NAME",
+    "emailLabel": "E-MAIL",
+    "emailPlaceholder": "email@example.com",
+    "phoneLabel": "PHONE",
+    "phonePlaceholder": "(00) 00000-0000",
+    "saveClient": "REGISTER CLIENT",
+    "employeeNameLabel": "EMPLOYEE NAME",
+    "roleLabel": "ROLE",
+    "rolePlaceholder": "Ex: Head Mechanic",
+    "saveEmployee": "REGISTER EMPLOYEE",
+    "serviceNameLabel": "SERVICE NAME",
+    "serviceNamePlaceholder": "Ex: Oil Change",
+    "saveService": "REGISTER SERVICE"
+  },
+  "about": {
+    "description": "AutoAgenda was born to redefine automotive management. We combine cutting-edge technology to offer a robust platform for appointments, parts inventory, and vehicle history. Our focus is to transform technical data into intelligent decisions for mechanics and owners."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "criticalStock": "Critical Stock",
+    "criticalStockMsg": "Brake Pads (Ceramic) with only 2 units left.",
+    "newAppointment": "New Appointment",
+    "newAppointmentMsg": "Beatriz Souza scheduled Tire Rotation at 2:30 PM.",
+    "serviceDone": "Service Completed",
+    "serviceDoneMsg": "Oil change for Chevrolet Onix finished."
   }
 }

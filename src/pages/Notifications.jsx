@@ -1,13 +1,16 @@
 import React from 'react';
 import { Bell, AlertTriangle, Package, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import TopBar from '../components/layout/TopBar';
 import styles from './Appointments.module.css'; // Reutilizando list styles
 
 const Notifications = () => {
+  const { t } = useTranslation();
+
   const mockNotifications = [
-    { id: 1, type: 'alert', title: 'Estoque Crítico', message: 'Pastilhas de Freio (Cerâmica) com apenas 2 unidades restantes.', time: 'Há 10 min', read: false },
-    { id: 2, type: 'info', title: 'Novo Agendamento', message: 'Beatriz Souza agendou Rodízio de Pneus às 14:30.', time: 'Há 1 hora', read: false },
-    { id: 3, type: 'success', title: 'Serviço Concluído', message: 'Troca de óleo do Chevrolet Onix finalizada.', time: 'Há 2 horas', read: true },
+    { id: 1, type: 'alert', title: t('notifications.criticalStock'), message: t('notifications.criticalStockMsg'), time: 'Há 10 min', read: false },
+    { id: 2, type: 'info', title: t('notifications.newAppointment'), message: t('notifications.newAppointmentMsg'), time: 'Há 1 hora', read: false },
+    { id: 3, type: 'success', title: t('notifications.serviceDone'), message: t('notifications.serviceDoneMsg'), time: 'Há 2 horas', read: true },
   ];
 
   const getIcon = (type) => {
@@ -20,7 +23,7 @@ const Notifications = () => {
 
   return (
     <>
-      <TopBar title="NOTIFICAÇÕES" showBack={true} />
+      <TopBar title={t('notifications.title')} showBack={true} />
       <div className={`page-content ${styles.container}`}>
         <div className={styles.list} role="list">
           {mockNotifications.map(notif => (

@@ -2,6 +2,7 @@ import React from 'react';
 import { Home, Calendar, Package, UserSquare } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { AccessibleNode } from '../ui/AccessibleNode';
 import styles from './BottomNav.module.css';
 
 const BottomNav = () => {
@@ -23,10 +24,12 @@ const BottomNav = () => {
         const Icon = item.icon;
         
         return (
-          <button
+          <AccessibleNode
+            as="button"
             key={item.path}
             className={`${styles.navItem} ${isActive ? styles.active : ''}`}
             onClick={() => navigate(item.path)}
+            textToSpeak={`Navegar para a aba ${t(item.i18nKey)}`}
             aria-label={t(item.i18nKey)}
             aria-current={isActive ? 'page' : undefined}
           >
@@ -34,7 +37,7 @@ const BottomNav = () => {
               <Icon size={24} aria-hidden="true" />
             </div>
             <span className={styles.label}>{t(item.i18nKey)}</span>
-          </button>
+          </AccessibleNode>
         );
       })}
     </nav>

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
 import TopBar from '../components/layout/TopBar';
 import Button from '../components/ui/Button';
+import { AccessibleNode } from '../components/ui/AccessibleNode';
 import styles from './Login.module.css';
 
 const Profile = () => {
@@ -34,41 +35,52 @@ const Profile = () => {
         }}>
           R
         </div>
-        <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}>{user ? user.name : "Visitante"}</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '32px' }}>{user ? user.email : "Sem oficina vinculada"}</p>
+        <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}>{user ? user.name : t('profile.visitor')}</h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '32px' }}>{user ? user.email : t('profile.noShop')}</p>
 
         <div style={{ width: '100%', marginBottom: '24px' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '700', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-            <Globe size={16} /> {t('profile.language').toUpperCase()}
+            <Globe size={16} aria-hidden="true" /> {t('profile.language').toUpperCase()}
           </label>
-          <select 
+          <AccessibleNode
+            as="select"
             value={i18n.language.substring(0, 2)} 
             onChange={handleLanguageChange}
+            textToSpeak={t('profile.tts_language', { lang: i18n.language })}
             style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)' }}
           >
             <option value="pt">Português (BR)</option>
             <option value="en">English (US)</option>
             <option value="es">Español</option>
-          </select>
+          </AccessibleNode>
         </div>
 
         <div style={{ width: '100%', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <Button variant="secondary" icon={Wrench} onClick={() => navigate('/services')} style={{ justifyContent: 'flex-start' }}>
-            {t('profile.services')}
-          </Button>
+          <AccessibleNode textToSpeak={t('profile.tts_navServices')} onClick={() => navigate('/services')} style={{ display: 'block' }}>
+            <Button variant="secondary" icon={Wrench} style={{ justifyContent: 'flex-start', pointerEvents: 'none' }}>
+              {t('profile.services')}
+            </Button>
+          </AccessibleNode>
 
-          <Button variant="secondary" icon={Users} onClick={() => navigate('/employees')} style={{ justifyContent: 'flex-start' }}>
-            {t('profile.employees')}
-          </Button>
+          <AccessibleNode textToSpeak={t('profile.tts_navEmployees')} onClick={() => navigate('/employees')} style={{ display: 'block' }}>
+            <Button variant="secondary" icon={Users} style={{ justifyContent: 'flex-start', pointerEvents: 'none' }}>
+              {t('profile.employees')}
+            </Button>
+          </AccessibleNode>
         </div>
 
         <div style={{ width: '100%', marginBottom: 'auto' }}>
-          <Button variant="secondary" icon={Settings} style={{ marginBottom: '16px', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)' }}>
-            {t('common.edit')} Dados da Oficina
-          </Button>
-          <Button icon={LogOut} onClick={handleLogout} style={{ backgroundColor: 'var(--danger-bg)', color: 'var(--danger)' }}>
-            {t('profile.logout')}
-          </Button>
+          <AccessibleNode textToSpeak={t('profile.tts_editShop')} onClick={() => {}} style={{ display: 'block', marginBottom: '16px' }}>
+            <Button variant="secondary" icon={Settings} style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', pointerEvents: 'none' }}>
+              {t('common.edit')} {t('profile.shopData')}
+            </Button>
+          </AccessibleNode>
+          
+          <AccessibleNode textToSpeak={t('profile.tts_logout')} onClick={handleLogout} style={{ display: 'block' }}>
+            <Button icon={LogOut} style={{ backgroundColor: 'var(--danger-bg)', color: 'var(--danger)', pointerEvents: 'none' }}>
+              {t('profile.logout')}
+            </Button>
+          </AccessibleNode>
         </div>
 
       </div>

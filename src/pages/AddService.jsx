@@ -54,9 +54,9 @@ const AddService = () => {
         <form className={styles.form} onSubmit={handleSubmit}>
           
           <Input 
-            label={t('common.name').toUpperCase()} 
+            label={t('forms.serviceNameLabel')} 
             id="name" 
-            placeholder="Ex: Troca de Óleo" 
+            placeholder={t('forms.serviceNamePlaceholder')} 
             icon={Wrench} 
             value={formData.name} 
             onChange={handleChange('name')} 
@@ -64,9 +64,9 @@ const AddService = () => {
           />
           
           <Input 
-            label={t('common.price').toUpperCase()} 
+            label={t('forms.priceLabel')} 
             id="price" 
-            placeholder="Ex: 80,00" 
+            placeholder={t('forms.pricePlaceholder')} 
             icon={DollarSign} 
             value={formData.price} 
             onChange={handleChange('price')} 
@@ -74,7 +74,7 @@ const AddService = () => {
           />
           
           <div className={styles.buttonContainer}>
-            <Button type="submit">{t('common.save')}</Button>
+            <Button type="submit">{t('forms.saveService')}</Button>
           </div>
         </form>
       </div>

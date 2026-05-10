@@ -1,14 +1,16 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './About.module.css';
 
 const About = () => {
+  const { t } = useTranslation();
   return (
     <div className={styles.container}>
       <span className={styles.initiativeTag}>A INICIATIVA</span>
       <h2 className={styles.title} aria-level="2">Sobre o Projeto</h2>
       
       <p className={styles.description}>
-        O AutoAgenda nasceu para redefinir a gestão automotiva no país. Combinamos tecnologia de ponta para oferecer uma plataforma robusta de agendamentos, estoque de peças e histórico veicular. Nosso foco é transformar dados técnicos em decisões inteligentes para mecânicos e proprietários.
+        {t('about.description')}
       </p>
 
       <div className={styles.grid} role="list" aria-label="Informações sobre a equipe e projeto">

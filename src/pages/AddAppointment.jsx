@@ -15,7 +15,7 @@ const AddAppointment = () => {
   const { appointments, addAppointment, updateAppointment } = useAppContext();
   
   const isEditing = !!id;
-  const title = isEditing ? t('common.edit') : "NOVO AGENDAMENTO";
+  const title = isEditing ? t('common.edit') : t('appointments.newCustomer');
 
   const [formData, setFormData] = useState({
     clientName: '', carModel: '', date: '', time: '', service: ''
@@ -83,13 +83,13 @@ const AddAppointment = () => {
         <form className={styles.form} onSubmit={handleSubmit}>
           {/* Cliente Select */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>NOME DO CLIENTE</label>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.clientNameLabel')}</label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
               <User size={20} color="var(--text-light)" style={{ position: 'absolute', left: '16px' }} />
               <select 
                 value={formData.clientName} onChange={handleChange('clientName')} required
                 style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}>
-                <option value="" disabled>Selecione o Cliente...</option>
+                <option value="" disabled>{t('forms.clientSelectPlaceholder')}</option>
                 {clientesMock.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
@@ -97,37 +97,37 @@ const AddAppointment = () => {
 
           {/* Veículo Select */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>VEÍCULO</label>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.vehicleLabel')}</label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
               <Car size={20} color="var(--text-light)" style={{ position: 'absolute', left: '16px' }} />
               <select 
                 value={formData.carModel} onChange={handleChange('carModel')} required
                 style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}>
-                <option value="" disabled>Selecione o Veículo...</option>
+                <option value="" disabled>{t('forms.vehiclePlaceholder')}</option>
                 {veiculosMock.map(v => <option key={v.id} value={v.id}>{v.model}</option>)}
               </select>
             </div>
           </div>
 
-          <Input label="DATA" id="date" type="date" icon={Calendar} value={formData.date} onChange={handleChange('date')} required />
-          <Input label="HORÁRIO" id="time" type="time" icon={Clock} value={formData.time} onChange={handleChange('time')} required />
+          <Input label={t('forms.dateLabel')} id="date" type="date" icon={Calendar} value={formData.date} onChange={handleChange('date')} required />
+          <Input label={t('forms.timeLabel')} id="time" type="time" icon={Clock} value={formData.time} onChange={handleChange('time')} required />
           
           {/* Serviço Select */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>SERVIÇO</label>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.serviceLabel')}</label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
               <Wrench size={20} color="var(--text-light)" style={{ position: 'absolute', left: '16px' }} />
               <select 
                 value={formData.service} onChange={handleChange('service')} required
                 style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}>
-                <option value="" disabled>Selecione o Serviço...</option>
+                <option value="" disabled>{t('forms.serviceSelectPlaceholder')}</option>
                 {servicosMock.map(s => <option key={s.id} value={s.id}>{s.desc}</option>)}
               </select>
             </div>
           </div>
           
           <div className={styles.buttonContainer}>
-            <Button type="submit">SALVAR AGENDAMENTO</Button>
+            <Button type="submit">{t('forms.saveAppointment')}</Button>
           </div>
         </form>
       </div>

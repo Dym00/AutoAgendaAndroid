@@ -98,7 +98,7 @@ const Dashboard = () => {
           ))}
 
           {criticalInventory.length === 0 && belowIdealInventory.length === 0 && (
-            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '16px' }}>Nenhum alerta de estoque!</p>
+            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '16px' }}>{t('dashboard.noAlerts')}</p>
           )}
         </div>
       </section>

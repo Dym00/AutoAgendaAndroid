@@ -24,7 +24,8 @@
     "inventoryAlerts": "Alertas de Estoque",
     "viewAll": "VER TODOS",
     "criticalStock": "ESTOQUE CRÍTICO: {{count}} UNIDADES",
-    "belowIdeal": "ABAIXO DO NÍVEL IDEAL: {{count}} UNIDADES"
+    "belowIdeal": "ABAIXO DO NÍVEL IDEAL: {{count}} UNIDADES",
+    "noAlerts": "Nenhum alerta de estoque!"
   },
   "common": {
     "save": "SALVAR",
@@ -38,7 +39,33 @@
     "email": "E-mail",
     "phone": "Telefone",
     "role": "Cargo",
-    "price": "Preço"
+    "price": "Preço",
+    "emptyList": "Nenhum {{item}} encontrado.",
+    "emptyInventory": "Estoque vazio.",
+    "emptyAppointments": "Nenhum agendamento para hoje.",
+    "unit": "un"
+  },
+  "appointments": {
+    "title": "AGENDAMENTOS",
+    "today": "Hoje",
+    "vehicle": "Veículo",
+    "service": "Serviço",
+    "newCustomer": "NOVO",
+    "tts_appointment": "Agendamento para {{name}} às {{time}}. Veículo: {{car}}. Serviço: {{service}}. {{isNew}}",
+    "tts_edit": "Editar agendamento de {{name}}",
+    "tts_delete": "Excluir agendamento de {{name}}",
+    "tts_create": "Criar novo agendamento"
+  },
+  "inventory": {
+    "searchPlaceholder": "Buscar por peça, marca ou código...",
+    "totalItems": "ITENS TOTAIS",
+    "critical": "CRÍTICOS",
+    "recentItems": "Itens Recentes",
+    "lowStockAlert": "Alerta de Estoque Baixo",
+    "tts_item": "{{name}}, Preço R$ {{price}}, Estoque {{stock}}. {{critical}}",
+    "tts_edit": "Editar peça {{name}}",
+    "tts_delete": "Excluir peça {{name}}",
+    "tts_create": "Adicionar nova peça ao estoque"
   },
   "nav": {
     "home": "Início",
@@ -54,29 +81,97 @@
     "language": "Idioma",
     "services": "Gestão de Serviços",
     "employees": "Gestão de Funcionários",
-    "logout": "Sair da conta"
+    "logout": "Sair da conta",
+    "shopData": "Dados da Oficina",
+    "tts_language": "Idioma atual: {{lang}}. Selecione para alterar.",
+    "tts_navServices": "Navegar para Gestão de Serviços",
+    "tts_navEmployees": "Navegar para Gestão de Funcionários",
+    "tts_editShop": "Editar Dados da Oficina",
+    "tts_logout": "Sair da conta"
   },
   "clients": {
     "title": "CLIENTES",
     "addTitle": "NOVO CLIENTE",
     "editTitle": "EDITAR CLIENTE",
     "total": "TOTAL DE CLIENTES",
-    "recent": "Clientes Recentes"
+    "recent": "Clientes Recentes",
+    "item": "cliente",
+    "tts_client": "Cliente: {{name}}, Email: {{email}}, Telefone: {{phone}}",
+    "tts_edit": "Editar cliente {{name}}",
+    "tts_delete": "Excluir cliente {{name}}",
+    "tts_create": "Adicionar novo cliente"
   },
   "services": {
     "title": "SERVIÇOS",
     "addTitle": "NOVO SERVIÇO",
-    "editTitle": "EDITAR SERVIÇO"
+    "editTitle": "EDITAR SERVIÇO",
+    "item": "serviço",
+    "tts_service": "Serviço: {{name}}, Preço: R$ {{price}}",
+    "tts_edit": "Editar serviço {{name}}",
+    "tts_delete": "Excluir serviço {{name}}",
+    "tts_create": "Adicionar novo serviço"
   },
   "employees": {
     "title": "FUNCIONÁRIOS",
     "addTitle": "NOVO FUNCIONÁRIO",
-    "editTitle": "EDITAR FUNCIONÁRIO"
+    "editTitle": "EDITAR FUNCIONÁRIO",
+    "item": "funcionário",
+    "tts_employee": "Funcionário: {{name}}, Cargo: {{role}}, Email: {{email}}",
+    "tts_edit": "Editar funcionário {{name}}",
+    "tts_delete": "Excluir funcionário {{name}}",
+    "tts_create": "Adicionar novo funcionário"
   },
   "forgotPassword": {
     "title": "RECUPERAR SENHA",
     "instructions": "Insira seu e-mail para receber as instruções de recuperação.",
     "send": "ENVIAR INSTRUÇÕES",
     "back": "Voltar para o Login"
+  },
+  "forms": {
+    "clientNameLabel": "NOME DO CLIENTE",
+    "clientNamePlaceholder": "Ex: João Silva",
+    "clientSelectPlaceholder": "Selecione o Cliente...",
+    "serviceLabel": "SERVIÇO",
+    "serviceSelectPlaceholder": "Selecione o Serviço...",
+    "dateLabel": "DATA",
+    "timeLabel": "HORÁRIO",
+    "vehicleLabel": "VEÍCULO",
+    "vehiclePlaceholder": "Ex: Chevrolet Onix",
+    "notesLabel": "OBSERVAÇÕES",
+    "notesPlaceholder": "Alguma observação importante?",
+    "saveAppointment": "SALVAR AGENDAMENTO",
+    "partNameLabel": "NOME DA PEÇA",
+    "partNamePlaceholder": "Ex: Pastilha de Freio",
+    "categoryLabel": "CATEGORIA",
+    "categoryPlaceholder": "Ex: Freios",
+    "priceLabel": "PREÇO (R$)",
+    "pricePlaceholder": "0.00",
+    "initialStockLabel": "QUANTIDADE INICIAL",
+    "savePart": "CADASTRAR PEÇA",
+    "fullNameLabel": "NOME COMPLETO",
+    "emailLabel": "E-MAIL",
+    "emailPlaceholder": "email@exemplo.com",
+    "phoneLabel": "TELEFONE",
+    "phonePlaceholder": "(00) 00000-0000",
+    "saveClient": "CADASTRAR CLIENTE",
+    "employeeNameLabel": "NOME DO FUNCIONÁRIO",
+    "roleLabel": "CARGO",
+    "rolePlaceholder": "Ex: Mecânico Chefe",
+    "saveEmployee": "CADASTRAR FUNCIONÁRIO",
+    "serviceNameLabel": "NOME DO SERVIÇO",
+    "serviceNamePlaceholder": "Ex: Troca de Óleo",
+    "saveService": "CADASTRAR SERVIÇO"
+  },
+  "about": {
+    "description": "O AutoAgenda nasceu para redefinir a gestão automotiva no país. Combinamos tecnologia de ponta para oferecer uma plataforma robusta de agendamentos, estoque de peças e histórico veicular. Nosso foco é transformar dados técnicos em decisões inteligentes para mecânicos e proprietários."
+  },
+  "notifications": {
+    "title": "Notificações",
+    "criticalStock": "Estoque Crítico",
+    "criticalStockMsg": "Pastilhas de Freio (Cerâmica) com apenas 2 unidades restantes.",
+    "newAppointment": "Novo Agendamento",
+    "newAppointmentMsg": "Beatriz Souza agendou Rodízio de Pneus às 14:30.",
+    "serviceDone": "Serviço Concluído",
+    "serviceDoneMsg": "Troca de óleo do Chevrolet Onix finalizada."
   }
 }

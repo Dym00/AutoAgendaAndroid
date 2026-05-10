@@ -55,9 +55,9 @@ const AddEmployee = () => {
         <form className={styles.form} onSubmit={handleSubmit}>
           
           <Input 
-            label={t('common.name').toUpperCase()} 
+            label={t('forms.employeeNameLabel')} 
             id="name" 
-            placeholder="Ex: Carlos Mecânico" 
+            placeholder={t('forms.clientNamePlaceholder')} 
             icon={User} 
             value={formData.name} 
             onChange={handleChange('name')} 
@@ -65,9 +65,9 @@ const AddEmployee = () => {
           />
           
           <Input 
-            label={t('common.role').toUpperCase()} 
+            label={t('forms.roleLabel')} 
             id="role" 
-            placeholder="Ex: Mecânico" 
+            placeholder={t('forms.rolePlaceholder')} 
             icon={Briefcase} 
             value={formData.role} 
             onChange={handleChange('role')} 
@@ -75,10 +75,10 @@ const AddEmployee = () => {
           />
           
           <Input 
-            label={t('common.email').toUpperCase()} 
+            label={t('forms.emailLabel')} 
             id="email" 
             type="email" 
-            placeholder="Ex: carlos@oficina.com" 
+            placeholder={t('forms.emailPlaceholder')} 
             icon={Mail} 
             value={formData.email} 
             onChange={handleChange('email')} 
@@ -86,7 +86,7 @@ const AddEmployee = () => {
           />
           
           <div className={styles.buttonContainer}>
-            <Button type="submit">{t('common.save')}</Button>
+            <Button type="submit">{t('forms.saveEmployee')}</Button>
           </div>
         </form>
       </div>

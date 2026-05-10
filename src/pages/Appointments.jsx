@@ -31,37 +31,41 @@ const Appointments = () => {
             className={`${styles.card} ${app.isNew ? styles.newCustomer : ''}`}
             role="listitem"
             tabIndex={0}
-            aria-label={`Agendamento às ${app.time} para ${app.name}`}
+            aria-label={`Agendamento para ${app.name} às ${app.time}. Veículo: ${app.car}. Serviço: ${app.service}. ${app.isNew ? 'Cliente Novo' : ''}`}
           >
-            <div className={styles.cardHeader}>
-              <div className={styles.clientName}>
-                {app.name}
-                {app.isNew && <span className={styles.badgeNovo}>NOVO</span>}
+            <div aria-hidden="true">
+              <div className={styles.cardHeader}>
+                <div className={styles.clientName}>
+                  {app.name}
+                  {app.isNew && <span className={styles.badgeNovo}>NOVO</span>}
+                </div>
+                <div className={styles.time}>{app.time}</div>
               </div>
-              <div className={styles.time}>{app.time}</div>
-            </div>
-            
-            <div className={styles.carInfo}>
-              <Car size={16} aria-hidden="true" />
-              <span>{app.car}</span>
-            </div>
-            <div className={styles.serviceInfo}>
-              <Wrench size={16} aria-hidden="true" style={{flexShrink: 0}} />
-              <span>Serviço: {app.service}</span>
+              
+              <div className={styles.carInfo}>
+                <Car size={16} />
+                <span>{app.car}</span>
+              </div>
+              <div className={styles.serviceInfo}>
+                <Wrench size={16} style={{flexShrink: 0}} />
+                <span>Serviço: {app.service}</span>
+              </div>
             </div>
             
             <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
               <button 
                 onClick={() => navigate(`/appointments/edit/${app.id}`)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-light)', display: 'flex', alignItems: 'center', gap: '8px' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-light)', display: 'flex', alignItems: 'center', gap: '8px', minWidth: '44px', minHeight: '44px' }}
+                aria-label={`Editar agendamento de ${app.name}`}
               >
-                <Edit size={20} /> Editar
+                <Edit size={20} aria-hidden="true" /> Editar
               </button>
               <button 
                 onClick={() => deleteAppointment(app.id)}
-                style={{ background: 'none', border: 'none', color: '#ff4444', display: 'flex', alignItems: 'center', gap: '8px' }}
+                style={{ background: 'none', border: 'none', color: '#ff4444', display: 'flex', alignItems: 'center', gap: '8px', minWidth: '44px', minHeight: '44px' }}
+                aria-label={`Excluir agendamento de ${app.name}`}
               >
-                <Trash2 size={20} /> Excluir
+                <Trash2 size={20} aria-hidden="true" /> Excluir
               </button>
             </div>
           </article>

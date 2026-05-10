@@ -55,7 +55,7 @@ const Inventory = () => {
               <item.Icon size={24} />
             </div>
             
-            <div className={styles.itemInfo}>
+            <div className={styles.itemInfo} aria-hidden="true">
               <h4 className={styles.itemName}>{item.name}</h4>
               <span className={styles.itemCategory}>{item.category}</span>
               {item.critical && <span className={styles.criticalWarning}>Alerta de Estoque Baixo</span>}
@@ -68,15 +68,17 @@ const Inventory = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginLeft: 'auto' }}>
               <button 
                 onClick={() => navigate(`/inventory/edit/${item.id}`)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-light)', padding: '4px' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-light)', padding: '12px', minWidth: '44px', minHeight: '44px' }}
+                aria-label={`Editar ${item.name}`}
               >
-                <Edit size={20} />
+                <Edit size={20} aria-hidden="true" />
               </button>
               <button 
                 onClick={() => deleteInventoryItem(item.id)}
-                style={{ background: 'none', border: 'none', color: '#ff4444', padding: '4px' }}
+                style={{ background: 'none', border: 'none', color: '#ff4444', padding: '12px', minWidth: '44px', minHeight: '44px' }}
+                aria-label={`Excluir ${item.name}`}
               >
-                <Trash2 size={20} />
+                <Trash2 size={20} aria-hidden="true" />
               </button>
             </div>
           </article>

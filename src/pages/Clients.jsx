@@ -50,12 +50,14 @@ const Clients = () => {
             key={client.id} 
             className={styles.itemCard}
             role="listitem"
+            tabIndex={0}
+            aria-label={`Cliente: ${client.name}, Email: ${client.email}, Telefone: ${client.phone}`}
           >
-            <div className={styles.iconBox}>
+            <div className={styles.iconBox} aria-hidden="true">
               <User size={24} color="var(--primary)" />
             </div>
             
-            <div className={styles.itemInfo}>
+            <div className={styles.itemInfo} aria-hidden="true">
               <h4 className={styles.itemName}>{client.name}</h4>
               <p className={styles.itemCategory}>{client.email}</p>
               <div className={styles.itemFooter}>
@@ -66,17 +68,17 @@ const Clients = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginLeft: 'auto' }}>
               <button 
                 onClick={() => navigate(`/clients/edit/${client.id}`)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-light)', padding: '4px' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-light)', padding: '12px', minWidth: '44px', minHeight: '44px' }}
                 aria-label={`${t('common.edit')} ${client.name}`}
               >
-                <Edit size={20} />
+                <Edit size={20} aria-hidden="true" />
               </button>
               <button 
                 onClick={() => deleteClient(client.id)}
-                style={{ background: 'none', border: 'none', color: '#ff4444', padding: '4px' }}
+                style={{ background: 'none', border: 'none', color: '#ff4444', padding: '12px', minWidth: '44px', minHeight: '44px' }}
                 aria-label={`${t('common.delete')} ${client.name}`}
               >
-                <Trash2 size={20} />
+                <Trash2 size={20} aria-hidden="true" />
               </button>
             </div>
           </article>
@@ -88,7 +90,7 @@ const Clients = () => {
         aria-label={t('clients.addTitle')}
         onClick={() => navigate('/clients/add')}
       >
-        <Plus size={24} />
+        <Plus size={24} aria-hidden="true" />
       </button>
     </div>
   );

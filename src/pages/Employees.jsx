@@ -33,19 +33,22 @@ const Employees = () => {
         </div>
       </section>
 
-      <div className={styles.list} role="list">
+      <div className={styles.list} role="list" aria-label="Lista de funcionários">
         {filteredEmployees.length === 0 ? (
           <p style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '32px 0'}}>Nenhum funcionário encontrado.</p>
         ) : filteredEmployees.map(emp => (
           <article 
             key={emp.id} 
             className={styles.itemCard}
+            role="listitem"
+            tabIndex={0}
+            aria-label={`Funcionário: ${emp.name}, Cargo: ${emp.role}, Email: ${emp.email}`}
           >
-            <div className={styles.iconBox}>
+            <div className={styles.iconBox} aria-hidden="true">
               <Briefcase size={24} color="var(--primary)" />
             </div>
             
-            <div className={styles.itemInfo}>
+            <div className={styles.itemInfo} aria-hidden="true">
               <h4 className={styles.itemName}>{emp.name}</h4>
               <p className={styles.itemCategory}>{emp.role}</p>
               <div className={styles.itemFooter}>
@@ -56,15 +59,17 @@ const Employees = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginLeft: 'auto' }}>
               <button 
                 onClick={() => navigate(`/employees/edit/${emp.id}`)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-light)', padding: '4px' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-light)', padding: '12px', minWidth: '44px', minHeight: '44px' }}
+                aria-label={`${t('common.edit')} ${emp.name}`}
               >
-                <Edit size={20} />
+                <Edit size={20} aria-hidden="true" />
               </button>
               <button 
                 onClick={() => deleteEmployee(emp.id)}
-                style={{ background: 'none', border: 'none', color: '#ff4444', padding: '4px' }}
+                style={{ background: 'none', border: 'none', color: '#ff4444', padding: '12px', minWidth: '44px', minHeight: '44px' }}
+                aria-label={`${t('common.delete')} ${emp.name}`}
               >
-                <Trash2 size={20} />
+                <Trash2 size={20} aria-hidden="true" />
               </button>
             </div>
           </article>
@@ -76,7 +81,7 @@ const Employees = () => {
         aria-label={t('employees.addTitle')}
         onClick={() => navigate('/employees/add')}
       >
-        <Plus size={24} />
+        <Plus size={24} aria-hidden="true" />
       </button>
     </div>
   );

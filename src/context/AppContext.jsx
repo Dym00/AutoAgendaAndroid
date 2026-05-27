@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Package, SlidersHorizontal, Droplets, Zap, User, Wrench, Briefcase } from 'lucide-react';
 import api from '../services/api';
 
-const AppContext = createContext();
+export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -305,7 +305,7 @@ export const AppProvider = ({ children }) => {
 
   return (
     <AppContext.Provider value={{ 
-      user, login, logout,
+      user, login, logout, loadData,
       appointments, addAppointment, updateAppointment, deleteAppointment,
       inventory, addInventoryItem, updateInventoryItem, deleteInventoryItem,
       clients, addClient, updateClient, deleteClient,

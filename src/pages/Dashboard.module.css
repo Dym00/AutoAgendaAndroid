@@ -107,6 +107,7 @@
   justify-content: space-between;
   height: 120px;
   padding: 0 16px;
+  margin-bottom: 24px;
 }
 
 .bar {
@@ -120,6 +121,10 @@
 
 .bar.active {
   background-color: var(--primary);
+}
+
+.bar.empty {
+  opacity: 0.3;
 }
 
 .barLabel {

@@ -1,0 +1,95 @@
+/* CSS Puro para Componentes Globais (Sem Tailwind) */
+
+/* GlobalLoading Overlay */
+.global-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.global-loading-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 24px 32px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.global-loading-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--primary); /* Presumindo que a cor primária é o amarelo do tema, ou branco */
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.global-loading-text {
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 1.125rem;
+  letter-spacing: 0.025em;
+  margin: 0;
+}
+
+/* PullToRefresh Wrapper */
+.ptr-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.ptr-indicator-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+  pointer-events: none; /* Para não bloquear cliques */
+}
+
+.ptr-indicator {
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ptr-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--primary);
+}
+
+.ptr-icon-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TrendingDown, Activity, AlertTriangle, Package, ChevronRight } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
@@ -7,6 +7,7 @@ import styles from './Dashboard.module.css';
 const Dashboard = () => {
   const { t } = useTranslation();
   const { user, appointments, inventory } = useAppContext();
+  const [activeTab, setActiveTab] = useState('appointments');
   
   const userName = user ? user.name : "Ricardo";
   const today = new Date();
@@ -16,9 +17,70 @@ const Dashboard = () => {
   const todayStr = `${day} de ${capitalizedMonth}`; // Fixo para match com Figma
 
   const scheduledCount = appointments.length;
-  const inServiceCount = appointments.filter(a => a.service.includes('Óleo')).length || 1; // mock logic
+  const inServiceCount = appointments.filter(a => a.service.includes('Óleo') || a.service.includes('Revisão')).length || 1; // mock logic adaptada
   const criticalInventory = inventory.filter(i => i.critical);
   const belowIdealInventory = inventory.filter(i => i.stock < 10 && !i.critical);
+
+  const chartData = useMemo(() => {
+    if (activeTab === 'appointments') {
+      const data = [];
+      const labels = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+      const currentDayOfWeek = today.getDay(); // 0 is Sunday
+      
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - currentDayOfWeek);
+      startOfWeek.setHours(0, 0, 0, 0);
+
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(startOfWeek);
+        date.setDate(startOfWeek.getDate() + i);
+        
+        const dayStr = String(date.getDate()).padStart(2, '0');
+        const monthStrNum = String(date.getMonth() + 1).padStart(2, '0');
+        const yearStr = date.getFullYear();
+        const dateString = `${dayStr}/${monthStrNum}/${yearStr}`;
+        
+        const count = appointments.filter(a => a.time === dateString).length;
+        
+        data.push({
+          id: `app-${i}`,
+          label: labels[i],
+          count,
+          isActive: i === currentDayOfWeek
+        });
+      }
+      
+      const maxCount = Math.max(...data.map(d => d.count), 1);
+      return data.map(d => ({ ...d, height: `${(d.count / maxCount) * 100}%` }));
+      
+    } else {
+      // Tab Estoque (Opção B: Top 7 produtos com menor estoque)
+      const sorted = [...inventory].sort((a, b) => a.stock - b.stock);
+      const top7 = sorted.slice(0, 7);
+      
+      const maxStock = Math.max(...top7.map(i => i.stock), 1);
+      
+      const mapped = top7.map((item, index) => ({
+        id: `inv-${item.id}`,
+        label: item.name.charAt(0).toUpperCase(),
+        count: item.stock,
+        isActive: item.critical, // Destaca os que estão em estado crítico
+        height: `${(item.stock / maxStock) * 100}%`
+      }));
+
+      // Garante que o layout sempre terá 7 colunas para manter a simetria flex-between
+      while (mapped.length < 7) {
+        mapped.push({
+          id: `inv-empty-${mapped.length}`,
+          label: '-',
+          count: 0,
+          isActive: false,
+          height: '0%' // minHeight garantirá a visibilidade mínima
+        });
+      }
+      return mapped;
+    }
+  }, [activeTab, appointments, inventory, today]);
 
   return (
     <div className={styles.container}>
@@ -50,21 +112,35 @@ const Dashboard = () => {
         </div>
       </section>
 
-      <section className={styles.chartSection} aria-label="Gráfico de desempenho semanal">
+      <section className={styles.chartSection} aria-label="Gráfico dinâmico">
         <div className={styles.chartTabs}>
-          <button className={`${styles.chartTab} ${styles.active}`}>{t('dashboard.appointmentsTab')}</button>
-          <button className={styles.chartTab}>{t('dashboard.inventoryTab')}</button>
+          <button 
+            className={`${styles.chartTab} ${activeTab === 'appointments' ? styles.active : ''}`}
+            onClick={() => setActiveTab('appointments')}
+          >
+            {t('dashboard.appointmentsTab')}
+          </button>
+          <button 
+            className={`${styles.chartTab} ${activeTab === 'inventory' ? styles.active : ''}`}
+            onClick={() => setActiveTab('inventory')}
+          >
+            {t('dashboard.inventoryTab')}
+          </button>
         </div>
-        <h3 className={styles.chartTitle}>{t('dashboard.weeklyPerformance')}</h3>
+        <h3 className={styles.chartTitle}>
+          {activeTab === 'appointments' ? t('dashboard.weeklyPerformance') : 'Top 7 Produtos Críticos'}
+        </h3>
         <div className={styles.mockChart} aria-hidden="true">
-          {/* Mock bars for visual matching Figma */}
-          <div className={styles.bar} style={{ height: '30%' }}><span className={styles.barLabel}>D</span></div>
-          <div className={styles.bar} style={{ height: '40%' }}><span className={styles.barLabel}>S</span></div>
-          <div className={styles.bar} style={{ height: '50%' }}><span className={styles.barLabel}>T</span></div>
-          <div className={`${styles.bar} ${styles.active}`} style={{ height: '100%' }}><span className={styles.barLabel}>Q</span></div>
-          <div className={styles.bar} style={{ height: '80%' }}><span className={styles.barLabel}>Q</span></div>
-          <div className={styles.bar} style={{ height: '60%' }}><span className={styles.barLabel}>S</span></div>
-          <div className={styles.bar} style={{ height: '20%' }}><span className={styles.barLabel}>S</span></div>
+          {chartData.map((bar) => (
+            <div 
+              key={bar.id}
+              className={`${styles.bar} ${bar.isActive ? styles.active : ''} ${bar.count === 0 && bar.height === '0%' ? styles.empty : ''}`} 
+              style={{ height: bar.height, minHeight: '4px' }}
+              title={`Quantidade: ${bar.count}`}
+            >
+              <span className={styles.barLabel}>{bar.label}</span>
+            </div>
+          ))}
         </div>
       </section>
 

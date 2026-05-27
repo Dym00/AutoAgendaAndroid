@@ -21,7 +21,14 @@ const api = axios.create({
   }
 });
 
+let activeRequests = 0;
+
 api.interceptors.request.use(async (config) => {
+  if (activeRequests === 0) {
+    window.dispatchEvent(new Event('global-loading-start'));
+  }
+  activeRequests++;
+
   const idOficina = localStorage.getItem('idOficina');
   
   if (idOficina) {
@@ -30,6 +37,27 @@ api.interceptors.request.use(async (config) => {
   
   return config;
 }, (error) => {
+  activeRequests--;
+  if (activeRequests <= 0) {
+    activeRequests = 0;
+    window.dispatchEvent(new Event('global-loading-stop'));
+  }
+  return Promise.reject(error);
+});
+
+api.interceptors.response.use((response) => {
+  activeRequests--;
+  if (activeRequests <= 0) {
+    activeRequests = 0;
+    window.dispatchEvent(new Event('global-loading-stop'));
+  }
+  return response;
+}, (error) => {
+  activeRequests--;
+  if (activeRequests <= 0) {
+    activeRequests = 0;
+    window.dispatchEvent(new Event('global-loading-stop'));
+  }
   return Promise.reject(error);
 });
 

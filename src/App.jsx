@@ -1,5 +1,8 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { App as CapacitorApp } from '@capacitor/app';
 import { MainLayout, AuthLayout } from './components/layout';
+import GlobalLoading from './components/common/GlobalLoading';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -20,8 +23,46 @@ import Notifications from './pages/Notifications';
 import './App.css';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleStart = () => setIsLoading(true);
+    const handleStop = () => setIsLoading(false);
+
+    window.addEventListener('global-loading-start', handleStart);
+    window.addEventListener('global-loading-stop', handleStop);
+
+    return () => {
+      window.removeEventListener('global-loading-start', handleStart);
+      window.removeEventListener('global-loading-stop', handleStop);
+    };
+  }, []);
+
+  useEffect(() => {
+    let listener = null;
+    CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+      if (location.pathname === '/dashboard' || location.pathname === '/login' || location.pathname === '/') {
+        CapacitorApp.exitApp();
+      } else if (canGoBack) {
+        navigate(-1);
+      } else {
+        CapacitorApp.exitApp();
+      }
+    }).then(handle => {
+      listener = handle;
+    });
+
+    return () => {
+      if (listener) listener.remove();
+    };
+  }, [location, navigate]);
+
   return (
-    <Routes>
+    <>
+      {isLoading && <GlobalLoading />}
+      <Routes>
       {/* Rotas Públicas */}
       <Route element={<AuthLayout />}>
         <Route path="/" element={<Navigate to="/login" replace />} />
@@ -64,6 +105,7 @@ function App() {
         <Route path="/notifications" element={<Notifications />} />
       </Route>
     </Routes>
+    </>
   );
 }
 

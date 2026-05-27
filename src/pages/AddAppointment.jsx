@@ -12,67 +12,98 @@ const AddAppointment = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { appointments, addAppointment, updateAppointment } = useAppContext();
-  
+  const { appointments, clients, services, addAppointment, updateAppointment } = useAppContext();
+
   const isEditing = !!id;
   const title = isEditing ? t('common.edit') : t('appointments.newCustomer');
 
   const [formData, setFormData] = useState({
-    clientName: '', carModel: '', date: '', time: '', service: ''
+    clientName: '', carModel: '', date: '', time: '', services: []
   });
+  const [photos, setPhotos] = useState([]);
 
   useEffect(() => {
-    if (isEditing) {
+    if (isEditing && appointments.length > 0 && clients.length > 0) {
       const app = appointments.find(a => a.id === parseInt(id));
       if (app) {
-        // Reverse engineering the mocks since form uses relational IDs
-        const clientId = clientesMock.find(c => c.name === app.name)?.id || '';
-        const carId = veiculosMock.find(v => v.model === app.car)?.id || '';
-        const serviceId = servicosMock.find(s => s.desc === app.service)?.id || '';
+        // Tentativa de achar os IDs reais através dos nomes
+        const clientObj = clients.find(c => c.name === app.name);
+        const clientId = clientObj ? clientObj.id : '';
         
+        // Tentativa de achar o ID do veículo
+        const carId = clientObj?.veiculos?.find(v => v.modelo === app.car)?.idVeiculo || '';
+        
+        // Encontrar IDs de serviços
+        const servNames = (app.service || '').split(', ');
+        const serviceIds = services.filter(s => servNames.includes(s.name)).map(s => s.id);
+        
+        let dateVal = '';
+        let timeVal = '09:00'; // hora padrão since database doesn't store time
+        if (app.time && app.time !== 'Sem data') {
+          if (app.time.includes('T')) {
+            const parts = app.time.split('T');
+            dateVal = parts[0];
+            timeVal = parts[1].substring(0, 5);
+          } else if (/^\d{4}-\d{2}-\d{2}$/.test(app.time)) {
+            dateVal = app.time;
+          } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(app.time)) {
+            const [day, month, year] = app.time.split('/');
+            dateVal = `${year}-${month}-${day}`;
+          } else {
+             dateVal = app.time; 
+          }
+        }
+
         setFormData({
           clientName: clientId,
           carModel: carId,
-          date: '', // Mock doesnt have date
-          time: app.time,
-          service: serviceId
+          date: dateVal,
+          time: timeVal,
+          services: serviceIds
         });
       }
     }
-  }, [id, appointments, isEditing]);
+  }, [id, appointments, clients, services, isEditing]);
 
-  // Mocks de dados relacionais que viriam das APIs: /mobile/cliente-api, /mobile/veiculo-api, /mobile/servico-api
-  const clientesMock = [{ id: 1, name: 'João Silva' }, { id: 2, name: 'Maria Souza' }];
-  const veiculosMock = [{ id: 1, model: 'Chevrolet Onix 2022' }, { id: 2, model: 'Honda Civic 2019' }];
-  const servicosMock = [{ id: 1, desc: 'Troca de Óleo' }, { id: 2, desc: 'Alinhamento' }];
+  const selectedClient = clients.find(c => c.id == formData.clientName);
+  const veiculosDisponiveis = selectedClient && selectedClient.veiculos ? selectedClient.veiculos : [];
 
   const handleChange = (field) => (e) => {
-    setFormData({ ...formData, [field]: e.target.value });
+    // Ao trocar de cliente, resetar o veículo
+    if (field === 'clientName') {
+        setFormData({ ...formData, [field]: e.target.value, carModel: '' });
+    } else {
+        setFormData({ ...formData, [field]: e.target.value });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const clienteName = clientesMock.find(c => c.id == formData.clientName)?.name || 'Cliente';
-    const carName = veiculosMock.find(v => v.id == formData.carModel)?.model || 'Carro';
-    const serviceName = servicosMock.find(s => s.id == formData.service)?.desc || 'Serviço';
+
+    if (formData.services.length === 0) {
+      alert("Por favor, selecione pelo menos um serviço.");
+      return;
+    }
+
+    const dataPrevisaoFormatada = formData.date && formData.time ? `${formData.date}T${formData.time}:00` : null;
 
     if (isEditing) {
       updateAppointment(parseInt(id), {
-        name: clienteName,
-        time: formData.time,
-        car: carName,
-        service: serviceName
+        clientName: formData.clientName,
+        carModel: formData.carModel,
+        date: dataPrevisaoFormatada,
+        service: formData.services,
+        status: 'Atualizado'
       });
     } else {
       addAppointment({
-        name: clienteName,
-        time: formData.time,
-        car: carName,
-        service: serviceName,
-        isNew: false
+        clientName: formData.clientName,
+        carModel: formData.carModel,
+        date: dataPrevisaoFormatada,
+        service: formData.services
       });
     }
-    
+
     navigate('/appointments');
   };
 
@@ -86,11 +117,11 @@ const AddAppointment = () => {
             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.clientNameLabel')}</label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
               <User size={20} color="var(--text-light)" style={{ position: 'absolute', left: '16px' }} />
-              <select 
+              <select
                 value={formData.clientName} onChange={handleChange('clientName')} required
                 style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}>
                 <option value="" disabled>{t('forms.clientSelectPlaceholder')}</option>
-                {clientesMock.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
           </div>
@@ -100,32 +131,57 @@ const AddAppointment = () => {
             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.vehicleLabel')}</label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
               <Car size={20} color="var(--text-light)" style={{ position: 'absolute', left: '16px' }} />
-              <select 
-                value={formData.carModel} onChange={handleChange('carModel')} required
+              <select
+                value={formData.carModel} onChange={handleChange('carModel')} required disabled={veiculosDisponiveis.length === 0}
                 style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}>
-                <option value="" disabled>{t('forms.vehiclePlaceholder')}</option>
-                {veiculosMock.map(v => <option key={v.id} value={v.id}>{v.model}</option>)}
+                <option value="" disabled>{veiculosDisponiveis.length > 0 ? t('forms.vehiclePlaceholder') : 'Selecione um cliente com veículos'}</option>
+                {veiculosDisponiveis.map(v => <option key={v.idVeiculo} value={v.idVeiculo}>{v.modelo} - {v.placa}</option>)}
               </select>
             </div>
           </div>
 
-          <Input label={t('forms.dateLabel')} id="date" type="date" icon={Calendar} value={formData.date} onChange={handleChange('date')} required />
+          <Input label={t('forms.dateLabel')} id="date" type="date" icon={Calendar} value={formData.date} onChange={handleChange('date')} required min={new Date().toISOString().split('T')[0]} />
           <Input label={t('forms.timeLabel')} id="time" type="time" icon={Clock} value={formData.time} onChange={handleChange('time')} required />
-          
-          {/* Serviço Select */}
+
+          {/* Serviço Multi-Select */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.serviceLabel')}</label>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-              <Wrench size={20} color="var(--text-light)" style={{ position: 'absolute', left: '16px' }} />
-              <select 
-                value={formData.service} onChange={handleChange('service')} required
-                style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}>
-                <option value="" disabled>{t('forms.serviceSelectPlaceholder')}</option>
-                {servicosMock.map(s => <option key={s.id} value={s.id}>{s.desc}</option>)}
-              </select>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.serviceLabel')} (Múltipla Seleção)</label>
+            <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {services.map(s => (
+                <label key={s.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '14px', padding: '16px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'var(--input-bg)' }}>
+                  <input
+                    type="checkbox"
+                    style={{ transform: 'scale(1.2)' }}
+                    checked={formData.services.includes(s.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setFormData({ ...formData, services: [...formData.services, s.id] });
+                      } else {
+                        setFormData({ ...formData, services: formData.services.filter(id => id !== s.id) });
+                      }
+                    }}
+                  />
+                  <span style={{ fontWeight: formData.services.includes(s.id) ? '600' : '400', color: formData.services.includes(s.id) ? 'var(--text-main)' : 'var(--text-secondary)' }}>{s.name} - R$ {s.price}</span>
+                </label>
+              ))}
             </div>
           </div>
-          
+
+          {/* Fotos Upload */}
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>FOTOS DO VEÍCULO (Opcional - Para resguardo)</label>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) => setPhotos(Array.from(e.target.files))}
+                style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px dashed var(--primary)', backgroundColor: 'var(--input-bg)', color: 'var(--text-secondary)' }}
+              />
+            </div>
+            {photos.length > 0 && <span style={{ display: 'block', marginTop: '8px', fontSize: '12px', fontWeight: '600', color: 'var(--primary)' }}>📸 {photos.length} foto(s) selecionada(s)</span>}
+          </div>
+
           <div className={styles.buttonContainer}>
             <Button type="submit">{t('forms.saveAppointment')}</Button>
           </div>
@@ -136,3 +192,4 @@ const AddAppointment = () => {
 };
 
 export default AddAppointment;
+

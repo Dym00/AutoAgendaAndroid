@@ -42,7 +42,7 @@ export const AppProvider = ({ children }) => {
 
        if (cliRes.data) {
          setClients(cliRes.data.map(c => ({
-           id: c.idCliente, name: c.nomeCliente, phone: c.telefone, email: c.email
+           id: c.idCliente, name: c.nomeCliente, phone: c.telefone, email: c.email, veiculos: c.veiculos || []
          })));
        }
 
@@ -63,20 +63,29 @@ export const AppProvider = ({ children }) => {
            Icon: p.estoqueAtual <= p.estoqueMinimo ? SlidersHorizontal : Package
          })));
        }
-
+       
+       let servicesList = [];
        if (servRes.data) {
-         setServices(servRes.data.map(s => ({
+         servicesList = servRes.data.map(s => ({
            id: s.idServico, name: s.nomeServico, price: s.descServico // Usando descServico como fallback para preço caso não tenha
-         })));
+         }));
+         setServices(servicesList);
        }
 
        if (agenRes.data) {
          setAppointments(agenRes.data.map(a => ({
            id: a.idAgendamento, 
            name: a.cliente?.nomeCliente || 'Desconhecido', 
-           time: a.dataPrevisao || 'Sem data', 
+           time: a.dataPrevisao ? (() => {
+             const parts = a.dataPrevisao.split('-');
+             if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+             return a.dataPrevisao;
+           })() : 'Sem data', 
            car: a.veiculo?.modelo || 'Não informado', 
-           service: a.servicos?.map(s => s.nomeServico).join(', ') || 'Nenhum', 
+           service: a.servicos?.map(s => {
+             const matched = servicesList.find(svc => svc.id === s.idServico);
+             return matched ? matched.name : s.descricao || 'Serviço';
+           }).join(', ') || 'Nenhum', 
            isNew: a.statusAgendamento === 'Pendente' || a.statusAgendamento === 'Agendado'
          })));
        }
@@ -101,13 +110,18 @@ export const AppProvider = ({ children }) => {
       const formData = new FormData();
       // O Spring Boot espera @RequestPart("agendamento") como JSON blob
       formData.append('agendamento', new Blob([JSON.stringify({
-        dataPrevisao: appointmentData.date || null,
-        statusAgendamento: 'Agendado'
+        dataPrevisao: appointmentData.date ? appointmentData.date.split('T')[0] : null,
+        statusAgendamento: 'Agendado',
+        funcionario: user && user.idFuncionario ? { idFuncionario: user.idFuncionario } : null
       })], { type: "application/json" }));
       
       formData.append('idCliente', appointmentData.clientName);
       formData.append('idVeiculo', appointmentData.carModel);
-      formData.append('idServicos', appointmentData.service);
+      if (Array.isArray(appointmentData.service)) {
+        appointmentData.service.forEach(svcId => formData.append('idServicos', svcId));
+      } else {
+        formData.append('idServicos', appointmentData.service);
+      }
 
       await api.post('/agendamento-api', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -118,10 +132,27 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const updateAppointment = async (id, updatedData) => {
-    // Por enquanto apenas atualizando status na API via PATCH
+  const updateAppointment = async (id, appointmentData) => {
     try {
-      await api.patch(`/agendamento-api/${id}/status?novoStatus=Atualizado`);
+      const formData = new FormData();
+      formData.append('agendamento', new Blob([JSON.stringify({
+        idAgendamento: id,
+        dataPrevisao: appointmentData.date ? appointmentData.date.split('T')[0] : null,
+        statusAgendamento: appointmentData.status || 'Atualizado',
+        funcionario: user && user.idFuncionario ? { idFuncionario: user.idFuncionario } : null
+      })], { type: "application/json" }));
+      
+      formData.append('idCliente', appointmentData.clientName);
+      formData.append('idVeiculo', appointmentData.carModel);
+      if (Array.isArray(appointmentData.service)) {
+        appointmentData.service.forEach(svcId => formData.append('idServicos', svcId));
+      } else {
+        formData.append('idServicos', appointmentData.service);
+      }
+
+      await api.post('/agendamento-api', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       loadData();
     } catch (err) {
       console.error("Erro ao atualizar agendamento:", err);
@@ -203,6 +234,30 @@ export const AppProvider = ({ children }) => {
     } catch (err) { console.error(err); }
   };
 
+  // ----- CRUD Veículos -----
+  const addVehicle = async (clientId, vehicle) => {
+    try {
+      await api.post('/veiculo-api', {
+        cliente: { idCliente: clientId },
+        modelo: vehicle.modelo,
+        marca: vehicle.marca,
+        placa: vehicle.placa
+      });
+      loadData();
+    } catch (err) {
+      console.error("Erro ao salvar veículo:", err);
+    }
+  };
+
+  const deleteVehicle = async (id) => {
+    try {
+      await api.delete(`/veiculo-api/${id}`);
+      loadData();
+    } catch (err) {
+      console.error("Erro ao excluir veículo:", err);
+    }
+  };
+
   // ----- CRUD Funcionarios -----
   const addEmployee = async (employee) => {
     try {
@@ -243,7 +298,7 @@ export const AppProvider = ({ children }) => {
   };
   const deleteService = async (id) => {
     try {
-      await api.patch(`/servico-api/${id}/status`);
+      await api.delete(`/servico-api/${id}`);
       loadData();
     } catch (err) { console.error(err); }
   };
@@ -255,7 +310,8 @@ export const AppProvider = ({ children }) => {
       inventory, addInventoryItem, updateInventoryItem, deleteInventoryItem,
       clients, addClient, updateClient, deleteClient,
       employees, addEmployee, updateEmployee, deleteEmployee,
-      services, addService, updateService, deleteService
+      services, addService, updateService, deleteService,
+      addVehicle, deleteVehicle
     }}>
       {children}
     </AppContext.Provider>

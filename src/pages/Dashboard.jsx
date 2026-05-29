@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { TrendingDown, Activity, AlertTriangle, Package, ChevronRight } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import styles from './Dashboard.module.css';
@@ -8,6 +9,7 @@ const Dashboard = () => {
   const { t } = useTranslation();
   const { user, appointments, inventory } = useAppContext();
   const [activeTab, setActiveTab] = useState('appointments');
+  const navigate = useNavigate();
   
   const userName = user ? user.name : "Ricardo";
   const today = new Date();
@@ -147,12 +149,19 @@ const Dashboard = () => {
       <section className={styles.alertsSection} aria-labelledby="alerts-title">
         <div className={styles.alertsHeader}>
           <h3 id="alerts-title" className={styles.alertsTitle}>{t('dashboard.inventoryAlerts')}</h3>
-          <button className={styles.viewAll} aria-label="Ver todos os alertas">{t('dashboard.viewAll')}</button>
+          <button className={styles.viewAll} onClick={() => navigate('/inventory')} aria-label="Ver todos os alertas">{t('dashboard.viewAll')}</button>
         </div>
         
         <div className={styles.alertList} role="list">
           {criticalInventory.map(item => (
-            <div key={item.id} className={`${styles.alertItem} ${styles.danger}`} role="listitem">
+            <div 
+              key={item.id} 
+              className={`${styles.alertItem} ${styles.danger}`} 
+              role="button" 
+              tabIndex={0}
+              onClick={() => navigate(`/inventory/edit/${item.id}`)}
+              onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/inventory/edit/${item.id}`); }}
+            >
               <AlertTriangle size={24} className={styles.alertIcon} aria-hidden="true" />
               <div className={styles.alertContent}>
                 <div className={styles.alertName}>{item.name}</div>
@@ -163,7 +172,14 @@ const Dashboard = () => {
           ))}
 
           {belowIdealInventory.map(item => (
-            <div key={item.id} className={`${styles.alertItem} ${styles.warning}`} role="listitem">
+            <div 
+              key={item.id} 
+              className={`${styles.alertItem} ${styles.warning}`} 
+              role="button" 
+              tabIndex={0}
+              onClick={() => navigate(`/inventory/edit/${item.id}`)}
+              onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/inventory/edit/${item.id}`); }}
+            >
               <Package size={24} className={styles.alertIcon} aria-hidden="true" />
               <div className={styles.alertContent}>
                 <div className={styles.alertName}>{item.name}</div>

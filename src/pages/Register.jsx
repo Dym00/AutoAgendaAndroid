@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, Briefcase, FileText, Lock, CheckCircle } from 'lucide-react';
+import { User, Mail, Phone, Briefcase, FileText, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import api from '../services/api';
 import styles from './Login.module.css'; // Reutilizando os estilos do Login
 
 const Register = () => {
@@ -14,15 +15,65 @@ const Register = () => {
     workshopName: '', cnpj: '', specialty: '',
     password: '', confirmPassword: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (field) => (e) => {
     setFormData({ ...formData, [field]: e.target.value });
   };
 
-  const handleNext = (e) => {
+  const handleNext = async (e) => {
     e.preventDefault();
-    if (step < 3) setStep(step + 1);
-    else navigate('/dashboard'); // Finaliza e loga
+    setError('');
+
+    // Validações do Passo 1
+    if (step === 1) {
+      if (formData.name.trim().split(' ').length < 2) {
+        return setError("Por favor, insira seu nome completo (nome e sobrenome).");
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        return setError("Insira um endereço de e-mail válido.");
+      }
+      if (formData.phone.replace(/\D/g, '').length < 10) {
+        return setError("O número de telefone inserido é muito curto.");
+      }
+    }
+
+    // Validações do Passo 2
+    if (step === 2) {
+      if (formData.workshopName.trim().length < 3) {
+        return setError("O nome da oficina deve ter pelo menos 3 caracteres.");
+      }
+      if (formData.cnpj.replace(/\D/g, '').length !== 14) {
+        return setError("O CNPJ deve conter exatamente 14 números.");
+      }
+    }
+
+    // Validações do Passo 3 (Finalização)
+    if (step === 3) {
+      if (formData.password.length < 8) {
+        return setError("A senha deve conter no mínimo 8 caracteres.");
+      }
+      if (formData.password !== formData.confirmPassword) {
+        return setError("As senhas não coincidem. Digite novamente.");
+      }
+
+      // Tenta realizar o cadastro real (ainda não suportado pelo backend original)
+      setLoading(true);
+      try {
+        await api.post('/mobile/cadastro-api', formData);
+        // Se a rota for criada no backend, o usuário logaria aqui.
+        navigate('/dashboard'); 
+      } catch (err) {
+        setError("O cadastro pelo aplicativo estará disponível em breve. A rota do servidor ainda não foi implementada (404).");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    setStep(step + 1);
   };
 
   return (
@@ -42,6 +93,13 @@ const Register = () => {
         </div>
 
         <form className={styles.form} onSubmit={handleNext}>
+          {error && (
+            <div className={styles.errorBox}>
+              <AlertCircle size={20} className={styles.errorIcon} />
+              <span className={styles.errorText}>{error}</span>
+            </div>
+          )}
+
           {step === 1 && (
             <>
               <Input label="NOME COMPLETO" id="name" placeholder="Seu nome completo" icon={User} value={formData.name} onChange={handleChange('name')} required />
@@ -71,7 +129,9 @@ const Register = () => {
           )}
           
           <div className={styles.buttonContainer}>
-            <Button type="submit">{step === 3 ? "FINALIZAR CADASTRO" : "CONTINUAR"}</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "PROCESSANDO..." : (step === 3 ? "FINALIZAR CADASTRO" : "CONTINUAR")}
+            </Button>
           </div>
         </form>
       </div>

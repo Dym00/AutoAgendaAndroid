@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, AlertCircle } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
@@ -68,9 +68,19 @@ const Login = () => {
         } else {
           errorDetails = err.message;
         }
+        let displayError = errorDetails;
         
-        setError(`Falha de conexão: ${errorDetails}`);
-        alert(`DETALHES DO ERRO:\n${errorDetails}\nURL: ${api.defaults.baseURL}/funcionario-api/logar`);
+        // Mapeamento de erros humanizados para o front-end
+        if (errorDetails.includes("desativada no sistema")) {
+          // O backend v3.0 joga esse erro tanto pra oficina inexistente quanto pra desativada
+          displayError = "Não encontramos nenhuma oficina com esse nome ou ela está desativada. Verifique a digitação.";
+        } else if (errorDetails.includes("Usuário ou senha incorretos")) {
+          displayError = "E-mail, usuário ou senha incorretos.";
+        } else if (err.request && !err.response) {
+          displayError = "Sem resposta do servidor. Verifique sua conexão com a internet.";
+        }
+        
+        setError(displayError);
       } finally {
         setLoading(false);
       }
@@ -92,7 +102,12 @@ const Login = () => {
         </div>
 
         <form className={styles.form} onSubmit={handleLogin}>
-          {error && <div style={{ color: 'var(--danger)', fontSize: '12px', marginBottom: '16px', textAlign: 'center' }}>{error}</div>}
+          {error && (
+            <div className={styles.errorBox}>
+              <AlertCircle size={20} className={styles.errorIcon} />
+              <span className={styles.errorText}>{error}</span>
+            </div>
+          )}
           
           <Input
             label="SLUG DA OFICINA"

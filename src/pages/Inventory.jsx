@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Search, SlidersHorizontal, Plus, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -10,8 +10,18 @@ const Inventory = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { inventory, deleteInventoryItem } = useAppContext();
-  const totalItems = inventory.length;
-  const criticalItems = inventory.filter(i => i.critical).length;
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredInventory = inventory.filter(item => {
+    const term = searchTerm.toLowerCase();
+    const nameMatch = item.name && item.name.toLowerCase().includes(term);
+    const catMatch = item.category && item.category.toLowerCase().includes(term);
+    const codeMatch = item.code && item.code.toLowerCase().includes(term);
+    return nameMatch || catMatch || codeMatch;
+  });
+
+  const totalItems = filteredInventory.length;
+  const criticalItems = filteredInventory.filter(i => i.critical).length;
 
   return (
     <div className={styles.container}>
@@ -23,6 +33,8 @@ const Inventory = () => {
             className={styles.searchInput} 
             placeholder={t('inventory.searchPlaceholder')}
             aria-label={t('inventory.searchPlaceholder')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <button className={styles.filterButton} aria-label={t('common.search')}>
@@ -44,9 +56,9 @@ const Inventory = () => {
       <h3 className={styles.sectionTitle}>{t('inventory.recentItems')}</h3>
 
       <div className={styles.list} role="list" aria-label={t('inventory.recentItems')}>
-        {inventory.length === 0 ? (
+        {filteredInventory.length === 0 ? (
           <p style={{textAlign: 'center', color: 'var(--text-secondary)', padding: '32px 0'}}>{t('common.emptyInventory')}</p>
-        ) : inventory.map(item => (
+        ) : filteredInventory.map(item => (
           <AccessibleNode 
             as="article"
             key={item.id} 

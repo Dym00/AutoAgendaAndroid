@@ -50,3 +50,27 @@
   margin-top: auto; /* Empurra o botão para baixo se houver espaço */
   padding-bottom: 24px;
 }
+
+.errorBox {
+  background-color: rgba(255, 59, 48, 0.1);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.errorIcon {
+  color: var(--danger);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.errorText {
+  color: var(--danger);
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+}

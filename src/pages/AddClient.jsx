@@ -148,50 +148,52 @@ const AddClient = () => {
             <div style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'var(--input-bg)' }}>
               <h4 style={{ fontSize: '13px', fontWeight: '700', marginBottom: '12px', color: 'var(--text-main)' }}>Novo Veículo</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <input 
-                    type="text" 
-                    placeholder="Marca (Ex: Chevrolet)" 
-                    value={newVehicle.marca} 
-                    onChange={(e) => setNewVehicle({ ...newVehicle, marca: e.target.value })}
-                    style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--container-bg)', color: 'var(--text-main)', fontSize: '13px' }}
-                  />
-                  <input 
-                    type="text" 
-                    placeholder="Modelo (Ex: Onix)" 
-                    value={newVehicle.modelo} 
-                    onChange={(e) => setNewVehicle({ ...newVehicle, modelo: e.target.value })}
-                    style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--container-bg)', color: 'var(--text-main)', fontSize: '13px' }}
-                  />
-                </div>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                  <input 
-                    type="text" 
-                    placeholder="Placa (Ex: ABC1D23)" 
-                    value={newVehicle.placa} 
-                    onChange={(e) => setNewVehicle({ ...newVehicle, placa: e.target.value.toUpperCase() })}
-                    maxLength={7}
-                    style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--container-bg)', color: 'var(--text-main)', fontSize: '13px' }}
-                  />
-                  <button 
-                    type="button"
-                    onClick={handleAddVehicle}
-                    disabled={!newVehicle.marca || !newVehicle.modelo || !newVehicle.placa}
-                    style={{ 
-                      padding: '12px 20px', 
-                      borderRadius: '8px', 
-                      border: 'none', 
-                      backgroundColor: 'var(--primary)', 
-                      color: 'white', 
-                      fontWeight: '700', 
-                      fontSize: '13px',
-                      cursor: 'pointer',
-                      opacity: (!newVehicle.marca || !newVehicle.modelo || !newVehicle.placa) ? 0.6 : 1
-                    }}
-                  >
-                    Adicionar
-                  </button>
-                </div>
+                <input 
+                  type="text" 
+                  placeholder="Marca (Ex: Chevrolet)" 
+                  value={newVehicle.marca} 
+                  onChange={(e) => setNewVehicle({ ...newVehicle, marca: e.target.value })}
+                  style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px' }}
+                />
+                <input 
+                  type="text" 
+                  placeholder="Modelo (Ex: Onix)" 
+                  value={newVehicle.modelo} 
+                  onChange={(e) => setNewVehicle({ ...newVehicle, modelo: e.target.value })}
+                  style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px' }}
+                />
+                <input 
+                  type="text" 
+                  placeholder="Placa (Ex: ABC1D23)" 
+                  value={newVehicle.placa} 
+                  onChange={(e) => setNewVehicle({ ...newVehicle, placa: e.target.value.toUpperCase() })}
+                  maxLength={7}
+                  style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px' }}
+                />
+                <button 
+                  type="button"
+                  onClick={handleAddVehicle}
+                  disabled={!newVehicle.marca || !newVehicle.modelo || !newVehicle.placa}
+                  style={{ 
+                    width: '100%',
+                    padding: '16px', 
+                    borderRadius: '8px', 
+                    border: 'none', 
+                    backgroundColor: 'var(--primary)', 
+                    color: 'var(--text-main)', 
+                    fontWeight: '700', 
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    opacity: (!newVehicle.marca || !newVehicle.modelo || !newVehicle.placa) ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <Plus size={18} />
+                  Adicionar
+                </button>
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { User, Car, Calendar, Wrench, Clock } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { User, Car, Calendar, Wrench, Clock, Camera, Image as ImageIcon, X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
@@ -21,6 +21,33 @@ const AddAppointment = () => {
     clientName: '', carModel: '', date: '', time: '', services: []
   });
   const [photos, setPhotos] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState([]);
+  const cameraInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [previewUrls]);
+
+  const handleFileChange = (e) => {
+    const newFiles = Array.from(e.target.files);
+    if (newFiles.length === 0) return;
+
+    setPhotos(prev => [...prev, ...newFiles]);
+    
+    const newUrls = newFiles.map(file => URL.createObjectURL(file));
+    setPreviewUrls(prev => [...prev, ...newUrls]);
+    
+    e.target.value = '';
+  };
+
+  const removePhoto = (indexToRemove) => {
+    URL.revokeObjectURL(previewUrls[indexToRemove]);
+    setPhotos(prev => prev.filter((_, index) => index !== indexToRemove));
+    setPreviewUrls(prev => prev.filter((_, index) => index !== indexToRemove));
+  };
 
   useEffect(() => {
     if (isEditing && appointments.length > 0 && clients.length > 0) {
@@ -170,15 +197,57 @@ const AddAppointment = () => {
           {/* Fotos Upload */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>FOTOS DO VEÍCULO (Opcional - Para resguardo)</label>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={(e) => setPhotos(Array.from(e.target.files))}
-                style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px dashed var(--primary)', backgroundColor: 'var(--input-bg)', color: 'var(--text-secondary)' }}
-              />
+            
+            {/* Ocultos */}
+            <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
+            <input type="file" multiple accept="image/*" ref={galleryInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
+            
+            {/* Card Área de Ação */}
+            <div style={{ 
+              marginTop: '8px', padding: '24px', borderRadius: '12px', border: '2px dashed var(--border)', 
+              backgroundColor: 'var(--input-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' 
+            }}>
+              <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+                <button type="button" onClick={() => cameraInputRef.current?.click()} style={{
+                  flex: 1, padding: '12px', borderRadius: '8px', backgroundColor: 'var(--primary)', color: 'var(--text-main)',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', fontWeight: '600', fontSize: '14px',
+                  boxShadow: 'var(--shadow-sm)', border: 'none', cursor: 'pointer'
+                }}>
+                  <Camera size={24} />
+                  Tirar Foto
+                </button>
+                <button type="button" onClick={() => galleryInputRef.current?.click()} style={{
+                  flex: 1, padding: '12px', borderRadius: '8px', backgroundColor: 'var(--surface)', color: 'var(--text-main)',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', fontWeight: '600', fontSize: '14px',
+                  border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', cursor: 'pointer'
+                }}>
+                  <ImageIcon size={24} />
+                  Galeria
+                </button>
+              </div>
             </div>
+
+            {/* Grid de Previews */}
+            {previewUrls.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '16px' }}>
+                {previewUrls.map((url, index) => (
+                  <div key={index} style={{ 
+                    position: 'relative', width: '80px', height: '80px', borderRadius: '8px', 
+                    overflow: 'hidden', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' 
+                  }}>
+                    <img src={url} alt={`Preview ${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <button type="button" onClick={() => removePhoto(index)} style={{
+                      position: 'absolute', top: '4px', right: '4px', backgroundColor: 'var(--danger)', 
+                      color: '#FFF', border: 'none', borderRadius: '50%', width: '20px', height: '20px', 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                      padding: 0
+                    }}>
+                      <X size={12} strokeWidth={3} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
             {photos.length > 0 && <span style={{ display: 'block', marginTop: '8px', fontSize: '12px', fontWeight: '600', color: 'var(--primary)' }}>📸 {photos.length} foto(s) selecionada(s)</span>}
           </div>
 

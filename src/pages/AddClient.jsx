@@ -20,6 +20,7 @@ const AddClient = () => {
   const [formData, setFormData] = useState({
     name: '', phone: '', email: ''
   });
+  const [loading, setLoading] = useState(false);
 
   const [newVehicle, setNewVehicle] = useState({
     marca: '', modelo: '', placa: ''
@@ -44,12 +45,16 @@ const AddClient = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isEditing) {
-      updateClient(parseInt(id), formData);
-    } else {
-      addClient(formData);
-    }
-    navigate('/clients');
+    setLoading(true);
+    setTimeout(() => {
+      if (isEditing) {
+        updateClient(parseInt(id), formData);
+      } else {
+        addClient(formData);
+      }
+      setLoading(false);
+      navigate('/clients');
+    }, 600);
   };
 
   const handleAddVehicle = async () => {
@@ -107,7 +112,9 @@ const AddClient = () => {
           />
           
           <div className={styles.buttonContainer} style={{ marginBottom: '16px' }}>
-            <Button type="submit">{t('forms.saveClient')}</Button>
+            <Button type="submit" loading={loading}>
+              {loading ? "PROCESSANDO..." : (isEditing ? t('common.save') : t('forms.saveClient'))}
+            </Button>
           </div>
         </form>
 

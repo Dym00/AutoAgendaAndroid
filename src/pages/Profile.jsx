@@ -3,7 +3,6 @@ import { User, Globe, LogOut, Settings, Users, Wrench } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
-import TopBar from '../components/layout/TopBar';
 import Button from '../components/ui/Button';
 import { AccessibleNode } from '../components/ui/AccessibleNode';
 import styles from './Login.module.css';
@@ -13,8 +12,8 @@ const Profile = () => {
   const { t, i18n } = useTranslation();
   const { user, logout } = useAppContext();
 
-  const handleLanguageChange = (e) => {
-    i18n.changeLanguage(e.target.value);
+  const handleLanguageChange = (lang) => {
+    i18n.changeLanguage(lang);
   };
 
   const handleLogout = () => {
@@ -24,8 +23,7 @@ const Profile = () => {
 
   return (
     <>
-      <TopBar title={t('profile.title')} showBack={true} />
-      <div className={`page-content full-height ${styles.container}`} style={{ alignItems: 'center' }}>
+      <div className={`page-content full-height ${styles.container}`} style={{ alignItems: 'center', paddingTop: '32px' }}>
         
         <div style={{
           width: '80px', height: '80px', borderRadius: '50%', 
@@ -42,17 +40,37 @@ const Profile = () => {
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '700', color: 'var(--text-secondary)', marginBottom: '8px' }}>
             <Globe size={16} aria-hidden="true" /> {t('profile.language').toUpperCase()}
           </label>
-          <AccessibleNode
-            as="select"
-            value={i18n.language.substring(0, 2)} 
-            onChange={handleLanguageChange}
-            textToSpeak={t('profile.tts_language', { lang: i18n.language })}
-            style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)' }}
-          >
-            <option value="pt">Português (BR)</option>
-            <option value="en">English (US)</option>
-            <option value="es">Español</option>
-          </AccessibleNode>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {[
+              { code: 'pt', flag: '🇧🇷', label: 'PT-BR' },
+              { code: 'en', flag: '🇺🇸', label: 'EN-US' },
+              { code: 'es', flag: '🇪🇸', label: 'ES' }
+            ].map((lang) => (
+              <AccessibleNode
+                key={lang.code}
+                as="button"
+                onClick={() => handleLanguageChange(lang.code)}
+                textToSpeak={t('profile.tts_language', { lang: lang.code })}
+                style={{
+                  flex: 1,
+                  padding: '12px 8px',
+                  borderRadius: '8px',
+                  border: i18n.language.startsWith(lang.code) ? '2px solid var(--primary)' : '1px solid var(--border)',
+                  backgroundColor: i18n.language.startsWith(lang.code) ? 'rgba(255, 204, 0, 0.1)' : 'var(--surface)',
+                  color: 'var(--text-main)',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <span style={{ fontSize: '18px' }}>{lang.flag}</span>
+                <span>{lang.label}</span>
+              </AccessibleNode>
+            ))}
+          </div>
         </div>
 
         <div style={{ width: '100%', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>

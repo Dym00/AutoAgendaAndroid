@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Briefcase, User, Mail } from 'lucide-react';
+import { Briefcase, User, Mail, Phone, CreditCard } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
@@ -18,8 +18,9 @@ const AddEmployee = () => {
   const title = isEditing ? t('employees.editTitle') : t('employees.addTitle');
 
   const [formData, setFormData] = useState({
-    name: '', role: '', email: ''
+    name: '', role: '', email: '', cpf: '', phone: ''
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isEditing) {
@@ -28,7 +29,9 @@ const AddEmployee = () => {
         setFormData({
           name: emp.name,
           role: emp.role,
-          email: emp.email
+          email: emp.email,
+          cpf: emp.cpf || '',
+          phone: emp.phone || ''
         });
       }
     }
@@ -40,12 +43,16 @@ const AddEmployee = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isEditing) {
-      updateEmployee(parseInt(id), formData);
-    } else {
-      addEmployee(formData);
-    }
-    navigate('/employees');
+    setLoading(true);
+    setTimeout(() => {
+      if (isEditing) {
+        updateEmployee(parseInt(id), formData);
+      } else {
+        addEmployee(formData);
+      }
+      setLoading(false);
+      navigate('/employees');
+    }, 600);
   };
 
   return (
@@ -85,8 +92,28 @@ const AddEmployee = () => {
             required 
           />
           
+          <Input 
+            label="CPF (Opcional)" 
+            id="cpf" 
+            placeholder="000.000.000-00" 
+            icon={CreditCard} 
+            value={formData.cpf} 
+            onChange={handleChange('cpf')} 
+          />
+
+          <Input 
+            label="Telefone (Opcional)" 
+            id="phone" 
+            placeholder="(00) 00000-0000" 
+            icon={Phone} 
+            value={formData.phone} 
+            onChange={handleChange('phone')} 
+          />
+
           <div className={styles.buttonContainer}>
-            <Button type="submit">{t('forms.saveEmployee')}</Button>
+            <Button type="submit" loading={loading}>
+              {loading ? "PROCESSANDO..." : (isEditing ? t('common.save') : t('forms.saveEmployee'))}
+            </Button>
           </div>
         </form>
       </div>

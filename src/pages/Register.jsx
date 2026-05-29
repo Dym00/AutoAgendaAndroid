@@ -129,7 +129,7 @@ const Register = () => {
           )}
           
           <div className={styles.buttonContainer}>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" loading={loading}>
               {loading ? "PROCESSANDO..." : (step === 3 ? "FINALIZAR CADASTRO" : "CONTINUAR")}
             </Button>
           </div>

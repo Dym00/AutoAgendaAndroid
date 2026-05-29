@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import TopBar from './TopBar';
 import BottomNav from './BottomNav';
 import PullToRefresh from '../common/PullToRefresh';
@@ -13,11 +14,18 @@ export const MainLayout = ({
   userName = "Ricardo"
 }) => {
   const { loadData } = useContext(AppContext);
+  const location = useLocation();
+  const { t } = useTranslation();
+
+  let currentTitle = title;
+  if (location.pathname === '/profile') {
+    currentTitle = t('profile.title');
+  }
 
   return (
     <div className="app-container">
       <TopBar 
-        title={title} 
+        title={currentTitle} 
         showProfile={showProfile} 
         showNotifications={showNotifications} 
         hasUnread={hasUnread}

@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowLeft, Bell, Ear, EarOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useA11y } from '../../context/A11yContext';
+import { useAppContext } from '../../context/AppContext';
 import { AccessibleNode } from '../ui/AccessibleNode';
 import styles from './TopBar.module.css';
 
@@ -10,11 +11,13 @@ const TopBar = ({
   showBack = false, 
   showProfile = false, 
   showNotifications = false,
-  hasUnread = false,
   userName = "User"
 }) => {
   const navigate = useNavigate();
   const { isAccessibleMode, toggleAccessibleMode } = useA11y();
+  const { notifications } = useAppContext();
+
+  const hasUnread = notifications && notifications.some(n => !n.read);
 
   const handleBack = () => {
     navigate(-1);
@@ -76,7 +79,12 @@ const TopBar = ({
             textToSpeak={hasUnread ? "Notificações. Você tem novas mensagens." : "Abrir central de notificações."}
             aria-label={hasUnread ? "Notificações, você tem novas mensagens" : "Notificações"}
           >
-            <Bell size={24} aria-hidden="true" />
+            <Bell 
+              size={24} 
+              color={hasUnread ? "var(--primary)" : "currentColor"} 
+              fill={hasUnread ? "var(--primary)" : "none"} 
+              aria-hidden="true" 
+            />
           </AccessibleNode>
         )}
       </div>

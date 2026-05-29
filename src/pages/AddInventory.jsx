@@ -20,6 +20,7 @@ const AddInventory = () => {
   const [formData, setFormData] = useState({
     code: '', itemName: '', category: '', costPrice: '', price: '', stock: '', minStock: ''
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isEditing) {
@@ -44,6 +45,8 @@ const AddInventory = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
+
     const itemData = {
       code: formData.code,
       name: formData.itemName,
@@ -54,12 +57,15 @@ const AddInventory = () => {
       minStock: formData.minStock
     };
 
-    if (isEditing) {
-      updateInventoryItem(parseInt(id), itemData);
-    } else {
-      addInventoryItem(itemData);
-    }
-    navigate('/inventory');
+    setTimeout(() => {
+      if (isEditing) {
+        updateInventoryItem(parseInt(id), itemData);
+      } else {
+        addInventoryItem(itemData);
+      }
+      setLoading(false);
+      navigate('/inventory');
+    }, 600);
   };
 
   return (
@@ -76,7 +82,9 @@ const AddInventory = () => {
           <Input label={t('forms.minStockLabel')} id="minStock" type="number" placeholder="0" icon={AlertTriangle} value={formData.minStock} onChange={handleChange('minStock')} required />
           
           <div className={styles.buttonContainer}>
-            <Button type="submit">{t('forms.savePart')}</Button>
+            <Button type="submit" loading={loading}>
+              {loading ? "PROCESSANDO..." : (isEditing ? t('common.save') : t('forms.savePart'))}
+            </Button>
           </div>
         </form>
       </div>

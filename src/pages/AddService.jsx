@@ -20,6 +20,7 @@ const AddService = () => {
   const [formData, setFormData] = useState({
     name: '', price: ''
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isEditing) {
@@ -39,12 +40,16 @@ const AddService = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isEditing) {
-      updateService(parseInt(id), formData);
-    } else {
-      addService(formData);
-    }
-    navigate('/services');
+    setLoading(true);
+    setTimeout(() => {
+      if (isEditing) {
+        updateService(parseInt(id), formData);
+      } else {
+        addService(formData);
+      }
+      setLoading(false);
+      navigate('/services');
+    }, 600);
   };
 
   return (
@@ -74,7 +79,9 @@ const AddService = () => {
           />
           
           <div className={styles.buttonContainer}>
-            <Button type="submit">{t('forms.saveService')}</Button>
+            <Button type="submit" loading={loading}>
+              {loading ? "PROCESSANDO..." : (isEditing ? t('common.save') : t('forms.saveService'))}
+            </Button>
           </div>
         </form>
       </div>

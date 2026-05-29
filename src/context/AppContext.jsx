@@ -13,6 +13,38 @@ export const AppProvider = ({ children }) => {
   const [employees, setEmployees] = useState([]);
   const [services, setServices] = useState([]);
 
+  // Notificações Locais
+  const [notifications, setNotifications] = useState(() => {
+    try {
+      const saved = localStorage.getItem('autoagenda_notifications');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const saveNotifications = (newNotifs) => {
+    setNotifications(newNotifs);
+    localStorage.setItem('autoagenda_notifications', JSON.stringify(newNotifs));
+  };
+
+  const addNotification = (type, title, message) => {
+    const newNotif = {
+      id: Date.now() + Math.random(),
+      type,
+      title,
+      message,
+      time: new Date().toISOString(),
+      read: false
+    };
+    saveNotifications([newNotif, ...notifications]);
+  };
+
+  const markAllAsRead = () => {
+    const updated = notifications.map(n => ({ ...n, read: true }));
+    saveNotifications(updated);
+  };
+
   useEffect(() => {
     if (user) {
       loadData();
@@ -48,12 +80,12 @@ export const AppProvider = ({ children }) => {
 
        if (empRes.data) {
          setEmployees(empRes.data.map(e => ({
-           id: e.idFuncionario, name: e.nomeFuncionario, role: e.acesso === 'admin' ? 'Gerente' : 'Mecânico', email: e.email
+           id: e.idFuncionario, name: e.nomeFuncionario, role: e.acesso === 'admin' ? 'Gerente' : 'Mecânico', email: e.email, cpf: e.cpf, phone: e.telefone
          })));
        }
 
        if (prodRes.data) {
-         setInventory(prodRes.data.map(p => {
+         const newInv = prodRes.data.map(p => {
            const minStockVal = p.estoqueMinimo !== undefined ? p.estoqueMinimo : (p.estoqueMinino || 5);
            return {
              id: p.idProduto, 
@@ -67,7 +99,23 @@ export const AppProvider = ({ children }) => {
              critical: p.estoqueAtual <= minStockVal, 
              Icon: p.estoqueAtual <= minStockVal ? SlidersHorizontal : Package
            };
-         }));
+         });
+         setInventory(newInv);
+
+         // Trigger de Estoque Crítico
+         const criticalItems = newInv.filter(i => i.critical);
+         if (criticalItems.length > 0) {
+           const todayStr = new Date().toISOString().split('T')[0];
+           const lastAlert = localStorage.getItem('autoagenda_last_critical_alert');
+           if (lastAlert !== todayStr) {
+             addNotification(
+               'alert', 
+               'Atenção ao Estoque!', 
+               `Você possui ${criticalItems.length} produto(s) abaixo do limite mínimo.`
+             );
+             localStorage.setItem('autoagenda_last_critical_alert', todayStr);
+           }
+         }
        }
        
        let servicesList = [];
@@ -111,13 +159,14 @@ export const AppProvider = ({ children }) => {
   };
 
   // ----- CRUD Agendamentos -----
-  const addAppointment = async (appointmentData) => {
+  const addAppointment = async (appointmentData, photos = []) => {
     try {
       const formData = new FormData();
       // O Spring Boot espera @RequestPart("agendamento") como JSON blob
       formData.append('agendamento', new Blob([JSON.stringify({
         dataPrevisao: appointmentData.date ? appointmentData.date.split('T')[0] : null,
-        statusAgendamento: 'Agendado',
+        statusAgendamento: appointmentData.status || 'Agendado',
+        observacao: appointmentData.observacao || '',
         funcionario: user && user.idFuncionario ? { idFuncionario: user.idFuncionario } : null
       })], { type: "application/json" }));
       
@@ -129,22 +178,30 @@ export const AppProvider = ({ children }) => {
         formData.append('idServicos', appointmentData.service);
       }
 
+      if (photos && photos.length > 0) {
+        photos.forEach(file => {
+          formData.append('fotos', file);
+        });
+      }
+
       await api.post('/agendamento-api', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
+      addNotification('success', 'Agendamento Salvo', 'O novo agendamento foi registrado com sucesso.');
       loadData(); // Recarrega do servidor
     } catch (err) {
       console.error("Erro ao salvar agendamento:", err);
     }
   };
 
-  const updateAppointment = async (id, appointmentData) => {
+  const updateAppointment = async (id, appointmentData, photos = []) => {
     try {
       const formData = new FormData();
       formData.append('agendamento', new Blob([JSON.stringify({
         idAgendamento: id,
         dataPrevisao: appointmentData.date ? appointmentData.date.split('T')[0] : null,
         statusAgendamento: appointmentData.status || 'Atualizado',
+        observacao: appointmentData.observacao || '',
         funcionario: user && user.idFuncionario ? { idFuncionario: user.idFuncionario } : null
       })], { type: "application/json" }));
       
@@ -154,6 +211,12 @@ export const AppProvider = ({ children }) => {
         appointmentData.service.forEach(svcId => formData.append('idServicos', svcId));
       } else {
         formData.append('idServicos', appointmentData.service);
+      }
+
+      if (photos && photos.length > 0) {
+        photos.forEach(file => {
+          formData.append('fotos', file);
+        });
       }
 
       await api.post('/agendamento-api', formData, {
@@ -275,6 +338,8 @@ export const AppProvider = ({ children }) => {
         nomeFuncionario: employee.name,
         email: employee.email,
         usuario: employee.email,
+        cpf: employee.cpf || null,
+        telefone: employee.phone || null,
         senha: '123' // Default provisório
       });
       loadData();
@@ -282,7 +347,14 @@ export const AppProvider = ({ children }) => {
   };
   const updateEmployee = async (id, data) => {
     try {
-      await api.post('/funcionario-api', { idFuncionario: id, nomeFuncionario: data.name, email: data.email, usuario: data.email });
+      await api.post('/funcionario-api', { 
+        idFuncionario: id, 
+        nomeFuncionario: data.name, 
+        email: data.email, 
+        usuario: data.email,
+        cpf: data.cpf || null,
+        telefone: data.phone || null
+      });
       loadData();
     } catch (err) { console.error(err); }
   };
@@ -321,7 +393,8 @@ export const AppProvider = ({ children }) => {
       clients, addClient, updateClient, deleteClient,
       employees, addEmployee, updateEmployee, deleteEmployee,
       services, addService, updateService, deleteService,
-      addVehicle, deleteVehicle
+      addVehicle, deleteVehicle,
+      notifications, addNotification, markAllAsRead
     }}>
       {children}
     </AppContext.Provider>

@@ -152,7 +152,7 @@ const Login = () => {
           </div>
           
           <div className={styles.buttonContainer}>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" loading={loading}>
               {loading ? 'Aguarde...' : t('login.enter')}
             </Button>
             

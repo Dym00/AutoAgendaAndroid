@@ -18,8 +18,9 @@ const AddAppointment = () => {
   const title = isEditing ? t('common.edit') : t('appointments.newCustomer');
 
   const [formData, setFormData] = useState({
-    clientName: '', carModel: '', date: '', time: '', services: []
+    clientName: '', carModel: '', date: '', status: 'Pendente', observacao: '', services: []
   });
+  const [loading, setLoading] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const cameraInputRef = useRef(null);
@@ -64,13 +65,14 @@ const AddAppointment = () => {
         const servNames = (app.service || '').split(', ');
         const serviceIds = services.filter(s => servNames.includes(s.name)).map(s => s.id);
         
+        let statusVal = app.status || 'Pendente';
+        let obsVal = app.observacao || '';
+        
         let dateVal = '';
-        let timeVal = '09:00'; // hora padrão since database doesn't store time
         if (app.time && app.time !== 'Sem data') {
           if (app.time.includes('T')) {
             const parts = app.time.split('T');
             dateVal = parts[0];
-            timeVal = parts[1].substring(0, 5);
           } else if (/^\d{4}-\d{2}-\d{2}$/.test(app.time)) {
             dateVal = app.time;
           } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(app.time)) {
@@ -85,7 +87,8 @@ const AddAppointment = () => {
           clientName: clientId,
           carModel: carId,
           date: dateVal,
-          time: timeVal,
+          status: statusVal,
+          observacao: obsVal,
           services: serviceIds
         });
       }
@@ -112,26 +115,33 @@ const AddAppointment = () => {
       return;
     }
 
-    const dataPrevisaoFormatada = formData.date && formData.time ? `${formData.date}T${formData.time}:00` : null;
+    const dataPrevisaoFormatada = formData.date ? formData.date : null;
 
-    if (isEditing) {
-      updateAppointment(parseInt(id), {
-        clientName: formData.clientName,
-        carModel: formData.carModel,
-        date: dataPrevisaoFormatada,
-        service: formData.services,
-        status: 'Atualizado'
-      });
-    } else {
-      addAppointment({
-        clientName: formData.clientName,
-        carModel: formData.carModel,
-        date: dataPrevisaoFormatada,
-        service: formData.services
-      });
-    }
+    setLoading(true);
+    setTimeout(() => {
+      if (isEditing) {
+        updateAppointment(parseInt(id), {
+          clientName: formData.clientName,
+          carModel: formData.carModel,
+          date: dataPrevisaoFormatada,
+          service: formData.services,
+          status: formData.status,
+          observacao: formData.observacao
+        }, photos);
+      } else {
+        addAppointment({
+          clientName: formData.clientName,
+          carModel: formData.carModel,
+          date: dataPrevisaoFormatada,
+          service: formData.services,
+          status: formData.status,
+          observacao: formData.observacao
+        }, photos);
+      }
 
-    navigate('/appointments');
+      setLoading(false);
+      navigate('/appointments');
+    }, 600);
   };
 
   return (
@@ -168,7 +178,22 @@ const AddAppointment = () => {
           </div>
 
           <Input label={t('forms.dateLabel')} id="date" type="date" icon={Calendar} value={formData.date} onChange={handleChange('date')} required min={new Date().toISOString().split('T')[0]} />
-          <Input label={t('forms.timeLabel')} id="time" type="time" icon={Clock} value={formData.time} onChange={handleChange('time')} required />
+          
+          {/* Status Select */}
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>STATUS DO AGENDAMENTO</label>
+            <div style={{ marginTop: '8px' }}>
+              <select
+                value={formData.status} onChange={handleChange('status')} required
+                style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}>
+                <option value="Pendente">Pendente</option>
+                <option value="Agendado">Agendado</option>
+                <option value="Em Andamento">Em Andamento</option>
+                <option value="Concluído">Concluído</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
 
           {/* Serviço Multi-Select */}
           <div style={{ marginBottom: '16px' }}>
@@ -192,6 +217,16 @@ const AddAppointment = () => {
                 </label>
               ))}
             </div>
+          </div>
+
+          <div style={{ marginBottom: '16px' }}>
+             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>OBSERVAÇÃO (Opcional)</label>
+             <textarea 
+               value={formData.observacao}
+               onChange={handleChange('observacao')}
+               placeholder="Detalhes adicionais sobre o serviço ou estado do veículo..."
+               style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', marginTop: '8px', minHeight: '100px', resize: 'vertical' }}
+             />
           </div>
 
           {/* Fotos Upload */}
@@ -252,7 +287,9 @@ const AddAppointment = () => {
           </div>
 
           <div className={styles.buttonContainer}>
-            <Button type="submit">{t('forms.saveAppointment')}</Button>
+            <Button type="submit" loading={loading}>
+              {loading ? "PROCESSANDO..." : (isEditing ? t('common.save') : t('forms.saveAppointment'))}
+            </Button>
           </div>
         </form>
       </div>

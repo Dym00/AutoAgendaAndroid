@@ -23,7 +23,7 @@
 }
 
 .navItem.active {
-  color: var(--primary);
+  color: var(--text-main);
 }
 
 .iconWrapper {

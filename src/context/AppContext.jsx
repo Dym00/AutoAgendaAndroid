@@ -53,15 +53,21 @@ export const AppProvider = ({ children }) => {
        }
 
        if (prodRes.data) {
-         setInventory(prodRes.data.map(p => ({
-           id: p.idProduto, 
-           name: p.nomeProduto, 
-           category: p.categoria, 
-           price: p.precoVenda, 
-           stock: p.estoqueAtual, 
-           critical: p.estoqueAtual <= p.estoqueMinimo, 
-           Icon: p.estoqueAtual <= p.estoqueMinimo ? SlidersHorizontal : Package
-         })));
+         setInventory(prodRes.data.map(p => {
+           const minStockVal = p.estoqueMinimo !== undefined ? p.estoqueMinimo : (p.estoqueMinino || 5);
+           return {
+             id: p.idProduto, 
+             code: p.codigoProduto || '',
+             name: p.nomeProduto, 
+             category: p.categoria, 
+             costPrice: p.precoCusto || 0,
+             price: p.precoVenda, 
+             stock: p.estoqueAtual, 
+             minStock: minStockVal,
+             critical: p.estoqueAtual <= minStockVal, 
+             Icon: p.estoqueAtual <= minStockVal ? SlidersHorizontal : Package
+           };
+         }));
        }
        
        let servicesList = [];
@@ -172,12 +178,13 @@ export const AppProvider = ({ children }) => {
   const addInventoryItem = async (item) => {
     try {
       await api.post('/produto-api', {
+        codigoProduto: item.code,
         nomeProduto: item.name,
         categoria: item.category,
-        precoCusto: 0,
-        precoVenda: parseFloat(item.price.replace(',', '.')) || 0,
+        precoCusto: parseFloat(String(item.costPrice).replace(',', '.')) || 0,
+        precoVenda: parseFloat(String(item.price).replace(',', '.')) || 0,
         estoqueAtual: parseInt(item.stock) || 0,
-        estoqueMinimo: 5
+        estoqueMinimo: parseInt(item.minStock) || 0
       });
       loadData();
     } catch (err) {
@@ -190,10 +197,13 @@ export const AppProvider = ({ children }) => {
     try {
       await api.post('/produto-api', {
         idProduto: id,
+        codigoProduto: item.code,
         nomeProduto: item.name,
         categoria: item.category,
-        precoVenda: parseFloat(item.price.replace(',', '.')) || 0,
-        estoqueAtual: parseInt(item.stock) || 0
+        precoCusto: parseFloat(String(item.costPrice).replace(',', '.')) || 0,
+        precoVenda: parseFloat(String(item.price).replace(',', '.')) || 0,
+        estoqueAtual: parseInt(item.stock) || 0,
+        estoqueMinimo: parseInt(item.minStock) || 0
       });
       loadData();
     } catch (err) {

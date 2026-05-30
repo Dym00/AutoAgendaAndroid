@@ -17,6 +17,18 @@ const Appointments = () => {
     month: 'long' 
   }).replace(/^\w/, (c) => c.toUpperCase());
 
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'Agendado': return '#3498db';
+      case 'Confirmado': return '#9b59b6';
+      case 'Em Andamento': return '#FF9800';
+      case 'Concluído': return '#4CAF50';
+      case 'Cancelado': return '#F44336';
+      case 'Pendente':
+      default: return '#6c757d';
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -31,7 +43,8 @@ const Appointments = () => {
           <AccessibleNode 
             as="article"
             key={app.id} 
-            className={`${styles.card} ${app.isNew ? styles.newCustomer : ''}`}
+            className={styles.card}
+            style={{ borderLeftColor: getStatusColor(app.status) }}
             textToSpeak={t('appointments.tts_appointment', {
               name: app.name,
               time: app.time,
@@ -42,9 +55,22 @@ const Appointments = () => {
           >
             <div aria-hidden="true">
               <div className={styles.cardHeader}>
-                <div className={styles.clientName}>
-                  {app.name}
-                  {app.isNew && <span className={styles.badgeNovo}>{t('appointments.newCustomer')}</span>}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div className={styles.clientName}>{app.name}</div>
+                  {app.status && (
+                    <div>
+                      <span className={`${styles.statusBadge} ${
+                        app.status === 'Pendente' ? styles.statusPendente :
+                        app.status === 'Agendado' ? styles.statusAgendado :
+                        app.status === 'Confirmado' ? styles.statusConfirmado :
+                        app.status === 'Em Andamento' ? styles.statusEmAndamento :
+                        app.status === 'Concluído' ? styles.statusConcluido :
+                        app.status === 'Cancelado' ? styles.statusCancelado : styles.statusPendente
+                      }`}>
+                        {app.status}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className={styles.time}>{app.time}</div>
               </div>

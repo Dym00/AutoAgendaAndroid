@@ -3,6 +3,7 @@ import { User, Car, Calendar, Wrench, Clock, Camera, Image as ImageIcon, X } fro
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
+import api from '../services/api';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -23,6 +24,7 @@ const AddAppointment = () => {
   const [loading, setLoading] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
+  const [existingPhotos, setExistingPhotos] = useState([]);
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
 
@@ -50,56 +52,56 @@ const AddAppointment = () => {
     setPreviewUrls(prev => prev.filter((_, index) => index !== indexToRemove));
   };
 
+  const handleRemoveExistingPhoto = async (photoId) => {
+    try {
+      await api.delete(`/fotos-api/${photoId}`);
+      setExistingPhotos(prev => prev.filter(p => p.id !== photoId));
+    } catch (err) {
+      console.error('Erro ao deletar foto existente', err);
+      alert('Erro ao excluir a foto salva.');
+    }
+  };
+
   useEffect(() => {
-    if (isEditing && appointments.length > 0 && clients.length > 0) {
-      const app = appointments.find(a => a.id === parseInt(id));
-      if (app) {
-        // Tentativa de achar os IDs reais através dos nomes
-        const clientObj = clients.find(c => c.name === app.name);
-        const clientId = clientObj ? clientObj.id : '';
-        
-        // Tentativa de achar o ID do veículo
-        const carId = clientObj?.veiculos?.find(v => v.modelo === app.car)?.idVeiculo || '';
-        
-        // Encontrar IDs de serviços
-        const servNames = (app.service || '').split(', ');
-        const serviceIds = services.filter(s => servNames.includes(s.name)).map(s => s.id);
-        
-        let statusVal = app.status || 'Pendente';
-        let obsVal = app.observacao || '';
-        
-        let dateVal = '';
-        if (app.time && app.time !== 'Sem data') {
-          if (app.time.includes('T')) {
-            const parts = app.time.split('T');
-            dateVal = parts[0];
-          } else if (/^\d{4}-\d{2}-\d{2}$/.test(app.time)) {
-            dateVal = app.time;
-          } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(app.time)) {
-            const [day, month, year] = app.time.split('/');
-            dateVal = `${year}-${month}-${day}`;
-          } else {
-             dateVal = app.time; 
+    const fetchData = async () => {
+      if (isEditing && appointments.length > 0 && clients.length > 0) {
+        const app = appointments.find(a => a.id === parseInt(id));
+        if (app) {
+          const clientObj = clients.find(c => c.name === app.name);
+          const clientId = clientObj ? clientObj.id : '';
+          const carId = clientObj?.veiculos?.find(v => v.modelo === app.car)?.idVeiculo || '';
+          const servNames = (app.service || '').split(', ');
+          const serviceIds = services.filter(s => servNames.includes(s.name)).map(s => s.id);
+          
+          let dateVal = app.rawDate ? app.rawDate.split('T')[0] : '';
+
+          setFormData({
+            clientName: clientId,
+            carModel: carId,
+            date: dateVal,
+            status: app.status || 'Pendente',
+            observacao: app.observacao || '',
+            services: serviceIds
+          });
+          
+          try {
+            const res = await api.get(`/fotos-api/listar/${id}`);
+            if (res.data) {
+              setExistingPhotos(res.data);
+            }
+          } catch (error) {
+            console.warn('Nenhuma foto existente encontrada.');
           }
         }
-
-        setFormData({
-          clientName: clientId,
-          carModel: carId,
-          date: dateVal,
-          status: statusVal,
-          observacao: obsVal,
-          services: serviceIds
-        });
       }
-    }
+    };
+    fetchData();
   }, [id, appointments, clients, services, isEditing]);
 
   const selectedClient = clients.find(c => c.id == formData.clientName);
   const veiculosDisponiveis = selectedClient && selectedClient.veiculos ? selectedClient.veiculos : [];
 
   const handleChange = (field) => (e) => {
-    // Ao trocar de cliente, resetar o veículo
     if (field === 'clientName') {
         setFormData({ ...formData, [field]: e.target.value, carModel: '' });
     } else {
@@ -109,36 +111,17 @@ const AddAppointment = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (formData.services.length === 0) {
       alert("Por favor, selecione pelo menos um serviço.");
       return;
     }
-
-    const dataPrevisaoFormatada = formData.date ? formData.date : null;
-
     setLoading(true);
     setTimeout(() => {
       if (isEditing) {
-        updateAppointment(parseInt(id), {
-          clientName: formData.clientName,
-          carModel: formData.carModel,
-          date: dataPrevisaoFormatada,
-          service: formData.services,
-          status: formData.status,
-          observacao: formData.observacao
-        }, photos);
+        updateAppointment(parseInt(id), { ...formData }, photos);
       } else {
-        addAppointment({
-          clientName: formData.clientName,
-          carModel: formData.carModel,
-          date: dataPrevisaoFormatada,
-          service: formData.services,
-          status: formData.status,
-          observacao: formData.observacao
-        }, photos);
+        addAppointment({ ...formData }, photos);
       }
-
       setLoading(false);
       navigate('/appointments');
     }, 600);
@@ -149,7 +132,6 @@ const AddAppointment = () => {
       <TopBar title={title} showBack={true} />
       <div className={`page-content full-height ${styles.container}`}>
         <form className={styles.form} onSubmit={handleSubmit}>
-          {/* Cliente Select */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.clientNameLabel')}</label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
@@ -163,7 +145,6 @@ const AddAppointment = () => {
             </div>
           </div>
 
-          {/* Veículo Select */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.vehicleLabel')}</label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
@@ -177,9 +158,8 @@ const AddAppointment = () => {
             </div>
           </div>
 
-          <Input label={t('forms.dateLabel')} id="date" type="date" icon={Calendar} value={formData.date} onChange={handleChange('date')} required min={new Date().toISOString().split('T')[0]} />
+          <Input label={t('forms.dateLabel')} id="date" type="date" icon={Calendar} value={formData.date} onChange={handleChange('date')} required />
           
-          {/* Status Select */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>STATUS DO AGENDAMENTO</label>
             <div style={{ marginTop: '8px' }}>
@@ -188,6 +168,7 @@ const AddAppointment = () => {
                 style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}>
                 <option value="Pendente">Pendente</option>
                 <option value="Agendado">Agendado</option>
+                <option value="Confirmado">Confirmado</option>
                 <option value="Em Andamento">Em Andamento</option>
                 <option value="Concluído">Concluído</option>
                 <option value="Cancelado">Cancelado</option>
@@ -195,7 +176,6 @@ const AddAppointment = () => {
             </div>
           </div>
 
-          {/* Serviço Multi-Select */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.serviceLabel')} (Múltipla Seleção)</label>
             <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -229,19 +209,12 @@ const AddAppointment = () => {
              />
           </div>
 
-          {/* Fotos Upload */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>FOTOS DO VEÍCULO (Opcional - Para resguardo)</label>
-            
-            {/* Ocultos */}
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>FOTOS DO VEÍCULO (Opcional)</label>
             <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
             <input type="file" multiple accept="image/*" ref={galleryInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
             
-            {/* Card Área de Ação */}
-            <div style={{ 
-              marginTop: '8px', padding: '24px', borderRadius: '12px', border: '2px dashed var(--border)', 
-              backgroundColor: 'var(--input-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' 
-            }}>
+            <div style={{ marginTop: '8px', padding: '24px', borderRadius: '12px', border: '2px dashed var(--border)', backgroundColor: 'var(--input-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
               <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
                 <button type="button" onClick={() => cameraInputRef.current?.click()} style={{
                   flex: 1, padding: '12px', borderRadius: '8px', backgroundColor: 'var(--primary)', color: 'var(--text-main)',
@@ -262,7 +235,31 @@ const AddAppointment = () => {
               </div>
             </div>
 
-            {/* Grid de Previews */}
+            {existingPhotos.length > 0 && (
+              <div style={{ marginTop: '16px' }}>
+                <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>FOTOS SALVAS NA NUVEM</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '8px' }}>
+                  {existingPhotos.map((photo) => (
+                    <div key={photo.id} style={{ 
+                      position: 'relative', width: '80px', height: '80px', borderRadius: '8px', 
+                      overflow: 'hidden', boxShadow: 'var(--shadow-sm)', border: '2px solid var(--primary)' 
+                    }}>
+                      <img src={`${api.defaults.baseURL}/fotos-api/imagem/${photo.id}`} alt="Foto Existente" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button type="button" onClick={() => handleRemoveExistingPhoto(photo.id)} style={{
+                        position: 'absolute', top: '4px', right: '4px', backgroundColor: 'var(--danger)', 
+                        color: '#FFF', border: 'none', borderRadius: '50%', width: '20px', height: '20px', 
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                        padding: 0
+                      }}>
+                        <X size={12} strokeWidth={3} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Grid de Previews das fotos NOVAS */}
             {previewUrls.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '16px' }}>
                 {previewUrls.map((url, index) => (

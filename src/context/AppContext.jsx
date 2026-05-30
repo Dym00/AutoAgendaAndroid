@@ -140,7 +140,9 @@ export const AppProvider = ({ children }) => {
              const matched = servicesList.find(svc => svc.id === s.idServico);
              return matched ? matched.name : s.descricao || 'Serviço';
            }).join(', ') || 'Nenhum', 
-           isNew: a.statusAgendamento === 'Pendente' || a.statusAgendamento === 'Agendado'
+           status: a.statusAgendamento,
+           observacao: a.observacao,
+           rawDate: a.dataPrevisao
          })));
        }
 
@@ -165,7 +167,7 @@ export const AppProvider = ({ children }) => {
       // O Spring Boot espera @RequestPart("agendamento") como JSON blob
       formData.append('agendamento', new Blob([JSON.stringify({
         dataPrevisao: appointmentData.date ? appointmentData.date.split('T')[0] : null,
-        statusAgendamento: appointmentData.status || 'Agendado',
+        statusAgendamento: appointmentData.status || 'Pendente',
         observacao: appointmentData.observacao || '',
         funcionario: user && user.idFuncionario ? { idFuncionario: user.idFuncionario } : null
       })], { type: "application/json" }));
@@ -200,7 +202,7 @@ export const AppProvider = ({ children }) => {
       formData.append('agendamento', new Blob([JSON.stringify({
         idAgendamento: id,
         dataPrevisao: appointmentData.date ? appointmentData.date.split('T')[0] : null,
-        statusAgendamento: appointmentData.status || 'Atualizado',
+        statusAgendamento: appointmentData.status || 'Pendente',
         observacao: appointmentData.observacao || '',
         funcionario: user && user.idFuncionario ? { idFuncionario: user.idFuncionario } : null
       })], { type: "application/json" }));

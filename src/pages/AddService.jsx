@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wrench, DollarSign } from 'lucide-react';
+import { Wrench, Tag } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';

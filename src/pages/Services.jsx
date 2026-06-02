@@ -43,7 +43,7 @@ const Services = () => {
             className={styles.itemCard}
             textToSpeak={t('services.tts_service', {
               name: srv.name,
-              price: srv.price
+              price: srv.description || 'Sem descrição'
             })}
           >
             <div className={styles.itemIconContainer} aria-hidden="true">

@@ -56,7 +56,7 @@ export const AppProvider = ({ children }) => {
       // Injeta dados falsos para Teste Visual
       setClients([{ id: 1, name: 'João (Teste)', phone: '(11) 9999-9999', email: 'teste@email.com' }]);
       setEmployees([{ id: 1, name: 'Desenvolvedor', role: 'Gerente', email: 'dev@autoagenda.com' }]);
-      setServices([{ id: 1, name: 'Troca de Óleo', price: '80,00' }]);
+      setServices([{ id: 1, name: 'Troca de Óleo', description: 'Serviço padrão' }]);
       setInventory([{ id: 1, name: 'Filtro (Teste)', category: 'Peças', price: '45,00', stock: 10, critical: false, Icon: Package }]);
       setAppointments([{ id: 1, name: 'João (Teste)', time: '14:30', car: 'Onix 2022', service: 'Troca de Óleo', isNew: true }]);
       return;

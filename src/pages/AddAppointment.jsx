@@ -202,7 +202,7 @@ const AddAppointment = () => {
                       }
                     }}
                   />
-                  <span style={{ fontWeight: formData.services.includes(s.id) ? '600' : '400', color: formData.services.includes(s.id) ? 'var(--text-main)' : 'var(--text-secondary)' }}>{s.name} - R$ {s.price}</span>
+                  <span style={{ fontWeight: formData.services.includes(s.id) ? '600' : '400', color: formData.services.includes(s.id) ? 'var(--text-main)' : 'var(--text-secondary)' }}>{s.name} - {s.description || 'Sem descrição'}</span>
                 </label>
               ))}
             </div>

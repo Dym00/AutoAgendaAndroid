@@ -18,7 +18,7 @@ const AddEmployee = () => {
   const title = isEditing ? t('employees.editTitle') : t('employees.addTitle');
 
   const [formData, setFormData] = useState({
-    name: '', role: '', email: '', cpf: '', phone: ''
+    name: '', role: 'Atendente', email: '', phone: '', cpf: '', usuario: '', senha: ''
   });
   const [loading, setLoading] = useState(false);
 
@@ -27,11 +27,13 @@ const AddEmployee = () => {
       const emp = employees.find(e => e.id === parseInt(id));
       if (emp) {
         setFormData({
-          name: emp.name,
-          role: emp.role,
-          email: emp.email,
+          name: emp.name || '',
+          role: emp.role || 'Atendente',
+          email: emp.email || '',
+          phone: emp.phone || '',
           cpf: emp.cpf || '',
-          phone: emp.phone || ''
+          usuario: emp.usuario || '',
+          senha: emp.senha || ''
         });
       }
     }
@@ -71,16 +73,26 @@ const AddEmployee = () => {
             required 
           />
           
-          <Input 
-            label={t('forms.roleLabel')} 
-            id="role" 
-            placeholder={t('forms.rolePlaceholder')} 
-            icon={Briefcase} 
-            value={formData.role} 
-            onChange={handleChange('role')} 
-            required 
-          />
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>ACESSO DO FUNCIONÁRIO</label>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+              <Briefcase size={20} color="var(--text-light)" style={{ position: 'absolute', left: '16px' }} />
+              <select 
+                value={formData.role} 
+                onChange={handleChange('role')}
+                style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}
+              >
+                <option value="Atendente">Atendente</option>
+                <option value="Mecânico">Mecânico</option>
+                <option value="Gerente">Gerente</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+          </div>
           
+          <Input label="USUÁRIO DE LOGIN" id="usuario" icon={User} value={formData.usuario} onChange={handleChange('usuario')} required />
+          <Input label="SENHA DE ACESSO" id="senha" type="password" icon={User} value={formData.senha} onChange={handleChange('senha')} required />
+
           <Input 
             label={t('forms.emailLabel')} 
             id="email" 

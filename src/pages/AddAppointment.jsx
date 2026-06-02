@@ -19,12 +19,14 @@ const AddAppointment = () => {
   const title = isEditing ? t('common.edit') : t('appointments.newCustomer');
 
   const [formData, setFormData] = useState({
-    clientName: '', carModel: '', date: '', status: 'Pendente', observacao: '', services: []
+    clientName: '', carModel: '', date: '', time: '', status: 'Pendente', observacao: '', services: []
   });
   const [loading, setLoading] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [existingPhotos, setExistingPhotos] = useState([]);
+  const [obsInternal, setObsInternal] = useState('');
+  const isComposing = useRef(false);
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
 
@@ -74,15 +76,18 @@ const AddAppointment = () => {
           const serviceIds = services.filter(s => servNames.includes(s.name)).map(s => s.id);
           
           let dateVal = app.rawDate ? app.rawDate.split('T')[0] : '';
+          let timeVal = app.time || '';
 
           setFormData({
             clientName: clientId,
             carModel: carId,
             date: dateVal,
+            time: timeVal,
             status: app.status || 'Pendente',
             observacao: app.observacao || '',
             services: serviceIds
           });
+          setObsInternal(app.observacao || '');
           
           try {
             const res = await api.get(`/fotos-api/listar/${id}`);
@@ -109,22 +114,25 @@ const AddAppointment = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.services.length === 0) {
       alert("Por favor, selecione pelo menos um serviço.");
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      if (isEditing) {
-        updateAppointment(parseInt(id), { ...formData }, photos);
-      } else {
-        addAppointment({ ...formData }, photos);
-      }
-      setLoading(false);
-      navigate('/appointments');
-    }, 600);
+    
+    // Garantir que a observação seja enviada caso tenha sido digitada mas não salva pelo bug de composição do Android
+    const finalData = { ...formData, observacao: obsInternal, service: formData.services };
+    
+    if (isEditing) {
+      await updateAppointment(parseInt(id), finalData, photos);
+    } else {
+      await addAppointment(finalData, photos);
+    }
+    
+    setLoading(false);
+    navigate('/appointments');
   };
 
   return (
@@ -159,6 +167,7 @@ const AddAppointment = () => {
           </div>
 
           <Input label={t('forms.dateLabel')} id="date" type="date" icon={Calendar} value={formData.date} onChange={handleChange('date')} required />
+          <Input label="HORÁRIO" id="time" type="time" icon={Clock} value={formData.time} onChange={handleChange('time')} />
           
           <div style={{ marginBottom: '16px' }}>
             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>STATUS DO AGENDAMENTO</label>
@@ -202,8 +211,18 @@ const AddAppointment = () => {
           <div style={{ marginBottom: '16px' }}>
              <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>OBSERVAÇÃO (Opcional)</label>
              <textarea 
-               value={formData.observacao}
-               onChange={handleChange('observacao')}
+               value={obsInternal}
+               onChange={(e) => {
+                 setObsInternal(e.target.value);
+                 if (!isComposing.current) {
+                   setFormData({ ...formData, observacao: e.target.value });
+                 }
+               }}
+               onCompositionStart={() => { isComposing.current = true; }}
+               onCompositionEnd={(e) => {
+                 isComposing.current = false;
+                 setFormData({ ...formData, observacao: e.target.value });
+               }}
                placeholder="Detalhes adicionais sobre o serviço ou estado do veículo..."
                style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', marginTop: '8px', minHeight: '100px', resize: 'vertical' }}
              />

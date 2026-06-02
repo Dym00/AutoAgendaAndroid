@@ -17,9 +17,7 @@ const AddService = () => {
   const isEditing = !!id;
   const title = isEditing ? t('services.editTitle') : t('services.addTitle');
 
-  const [formData, setFormData] = useState({
-    name: '', price: ''
-  });
+  const [formData, setFormData] = useState({ name: '', description: '' });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -28,7 +26,7 @@ const AddService = () => {
       if (srv) {
         setFormData({
           name: srv.name,
-          price: srv.price
+          description: srv.description || ''
         });
       }
     }
@@ -69,12 +67,12 @@ const AddService = () => {
           />
           
           <Input 
-            label={t('forms.priceLabel')} 
-            id="price" 
-            placeholder={t('forms.pricePlaceholder')} 
-            icon={DollarSign} 
-            value={formData.price} 
-            onChange={handleChange('price')} 
+            label="DESCRIÇÃO DO SERVIÇO" 
+            id="description" 
+            placeholder="Ex: Detalhamento do serviço prestado" 
+            icon={Tag} 
+            value={formData.description} 
+            onChange={handleChange('description')} 
             required 
           />
           

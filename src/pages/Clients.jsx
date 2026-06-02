@@ -81,7 +81,11 @@ const Clients = () => {
               </AccessibleNode>
               <AccessibleNode 
                 as="button"
-                onClick={() => deleteClient(client.id)}
+                onClick={() => {
+                  if (window.confirm('Deseja realmente excluir este cliente?')) {
+                    deleteClient(client.id);
+                  }
+                }}
                 textToSpeak={t('clients.tts_delete', { name: client.name })}
                 style={{ background: 'none', border: 'none', color: '#ff4444', padding: '12px', minWidth: '44px', minHeight: '44px' }}
                 aria-label={t('common.delete')}

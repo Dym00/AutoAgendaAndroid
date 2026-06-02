@@ -121,7 +121,7 @@ export const AppProvider = ({ children }) => {
        let servicesList = [];
        if (servRes.data) {
          servicesList = servRes.data.map(s => ({
-           id: s.idServico, name: s.nomeServico, price: s.descServico // Usando descServico como fallback para preço caso não tenha
+           id: s.idServico, name: s.nomeServico, description: s.descServico
          }));
          setServices(servicesList);
        }
@@ -167,6 +167,7 @@ export const AppProvider = ({ children }) => {
       // O Spring Boot espera @RequestPart("agendamento") como JSON blob
       formData.append('agendamento', new Blob([JSON.stringify({
         dataPrevisao: appointmentData.date ? appointmentData.date.split('T')[0] : null,
+        horaPrevisao: appointmentData.time || null,
         statusAgendamento: appointmentData.status || 'Pendente',
         observacao: appointmentData.observacao || '',
         funcionario: user && user.idFuncionario ? { idFuncionario: user.idFuncionario } : null
@@ -202,6 +203,7 @@ export const AppProvider = ({ children }) => {
       formData.append('agendamento', new Blob([JSON.stringify({
         idAgendamento: id,
         dataPrevisao: appointmentData.date ? appointmentData.date.split('T')[0] : null,
+        horaPrevisao: appointmentData.time || null,
         statusAgendamento: appointmentData.status || 'Pendente',
         observacao: appointmentData.observacao || '',
         funcionario: user && user.idFuncionario ? { idFuncionario: user.idFuncionario } : null
@@ -221,12 +223,20 @@ export const AppProvider = ({ children }) => {
         });
       }
 
-      await api.post('/agendamento-api', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      await api.post('/agendamento-api', formData);
       loadData();
     } catch (err) {
       console.error("Erro ao atualizar agendamento:", err);
+    }
+  };
+
+  const concludeAppointment = async (id) => {
+    try {
+      await api.patch(`/agendamento-api/${id}/concluir`);
+      addNotification('success', 'Agendamento Concluído', 'O agendamento foi marcado como concluído com sucesso.');
+      loadData();
+    } catch (err) {
+      console.error("Erro ao concluir agendamento:", err);
     }
   };
 
@@ -249,7 +259,9 @@ export const AppProvider = ({ children }) => {
         precoCusto: parseFloat(String(item.costPrice).replace(',', '.')) || 0,
         precoVenda: parseFloat(String(item.price).replace(',', '.')) || 0,
         estoqueAtual: parseInt(item.stock) || 0,
-        estoqueMinimo: parseInt(item.minStock) || 0
+        estoqueMinimo: parseInt(item.minStock) || 0,
+        fornecedor: item.fornecedor || '',
+        descricao: item.descricao || ''
       });
       loadData();
     } catch (err) {
@@ -268,7 +280,9 @@ export const AppProvider = ({ children }) => {
         precoCusto: parseFloat(String(item.costPrice).replace(',', '.')) || 0,
         precoVenda: parseFloat(String(item.price).replace(',', '.')) || 0,
         estoqueAtual: parseInt(item.stock) || 0,
-        estoqueMinimo: parseInt(item.minStock) || 0
+        estoqueMinimo: parseInt(item.minStock) || 0,
+        fornecedor: item.fornecedor || '',
+        descricao: item.descricao || ''
       });
       loadData();
     } catch (err) {
@@ -339,23 +353,26 @@ export const AppProvider = ({ children }) => {
       await api.post('/funcionario-api', {
         nomeFuncionario: employee.name,
         email: employee.email,
-        usuario: employee.email,
+        usuario: employee.usuario || employee.email,
         cpf: employee.cpf || null,
         telefone: employee.phone || null,
-        senha: '123' // Default provisório
+        acesso: employee.role?.toLowerCase() || 'comum',
+        senha: employee.senha || '123'
       });
       loadData();
     } catch (err) { console.error(err); }
   };
-  const updateEmployee = async (id, data) => {
+  const updateEmployee = async (id, employee) => {
     try {
-      await api.post('/funcionario-api', { 
-        idFuncionario: id, 
-        nomeFuncionario: data.name, 
-        email: data.email, 
-        usuario: data.email,
-        cpf: data.cpf || null,
-        telefone: data.phone || null
+      await api.post('/funcionario-api', {
+        idFuncionario: id,
+        nomeFuncionario: employee.name,
+        email: employee.email,
+        usuario: employee.usuario || employee.email,
+        cpf: employee.cpf || null,
+        telefone: employee.phone || null,
+        acesso: employee.role?.toLowerCase() || 'comum',
+        senha: employee.senha || '123'
       });
       loadData();
     } catch (err) { console.error(err); }
@@ -370,13 +387,13 @@ export const AppProvider = ({ children }) => {
   // ----- CRUD Serviços -----
   const addService = async (service) => {
     try {
-      await api.post('/servico-api', { nomeServico: service.name, descServico: service.price });
+      await api.post('/servico-api', { nomeServico: service.name, descServico: service.description });
       loadData();
     } catch (err) { console.error(err); }
   };
   const updateService = async (id, data) => {
     try {
-      await api.post('/servico-api', { idServico: id, nomeServico: data.name, descServico: data.price });
+      await api.post('/servico-api', { idServico: id, nomeServico: data.name, descServico: data.description });
       loadData();
     } catch (err) { console.error(err); }
   };
@@ -390,7 +407,7 @@ export const AppProvider = ({ children }) => {
   return (
     <AppContext.Provider value={{ 
       user, login, logout, loadData,
-      appointments, addAppointment, updateAppointment, deleteAppointment,
+      appointments, addAppointment, updateAppointment, deleteAppointment, concludeAppointment,
       inventory, addInventoryItem, updateInventoryItem, deleteInventoryItem,
       clients, addClient, updateClient, deleteClient,
       employees, addEmployee, updateEmployee, deleteEmployee,

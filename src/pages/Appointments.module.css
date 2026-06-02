@@ -28,6 +28,38 @@
   gap: 16px;
 }
 
+.tabsContainer {
+  display: flex;
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  padding: 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabActive {
+  background-color: var(--primary);
+  color: #000;
+}
+
+.searchContainer {
+  margin-bottom: 24px;
+}
+
 .card {
   background-color: var(--surface);
   border-radius: var(--radius-md);
@@ -37,6 +69,12 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  transition: opacity 0.3s ease;
+}
+
+.cardHistorico {
+  opacity: 0.7;
+  filter: grayscale(0.3);
 }
 
 .cardHeader {

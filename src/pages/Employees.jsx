@@ -72,7 +72,11 @@ const Employees = () => {
               </AccessibleNode>
               <AccessibleNode 
                 as="button"
-                onClick={() => deleteEmployee(emp.id)}
+                onClick={() => {
+                  if (window.confirm('Deseja realmente excluir este funcionário?')) {
+                    deleteEmployee(emp.id);
+                  }
+                }}
                 textToSpeak={t('employees.tts_delete', { name: emp.name })}
                 style={{ background: 'none', border: 'none', color: '#ff4444', padding: '12px', minWidth: '44px', minHeight: '44px' }}
                 aria-label={t('common.delete')}

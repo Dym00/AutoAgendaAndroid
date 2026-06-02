@@ -96,7 +96,11 @@ const Inventory = () => {
               </AccessibleNode>
               <AccessibleNode 
                 as="button"
-                onClick={() => deleteInventoryItem(item.id)}
+                onClick={() => {
+                  if (window.confirm('Deseja realmente excluir este produto/insumo?')) {
+                    deleteInventoryItem(item.id);
+                  }
+                }}
                 textToSpeak={t('inventory.tts_delete', { name: item.name })}
                 style={{ background: 'none', border: 'none', color: '#ff4444', padding: '12px', minWidth: '44px', minHeight: '44px' }}
                 aria-label={t('common.delete')}

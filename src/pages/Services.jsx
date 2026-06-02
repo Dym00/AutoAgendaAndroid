@@ -51,10 +51,10 @@ const Services = () => {
             </div>
             
             <div className={styles.itemContent} aria-hidden="true">
-              <h4 className={styles.itemName}>{srv.name}</h4>
-              <div className={styles.itemFooter}>
-                <span className={styles.itemPrice}>R$ {srv.price}</span>
-              </div>
+              <div className={styles.itemInfo}>
+              <span className={styles.itemName}>{srv.name}</span>
+              <span className={styles.itemRole}>{srv.description || 'Sem descrição'}</span>
+            </div>
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginLeft: 'auto' }}>

@@ -1,9 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import TopBar from './TopBar';
 import BottomNav from './BottomNav';
 import PullToRefresh from '../common/PullToRefresh';
+import SideMenu from './SideMenu';
 import { AppContext } from '../../context/AppContext';
 
 export const MainLayout = ({ 
@@ -13,23 +14,55 @@ export const MainLayout = ({
   hasUnread = false,
   userName = "Ricardo"
 }) => {
-  const { loadData } = useContext(AppContext);
+  const { loadData, user } = useContext(AppContext);
   const location = useLocation();
   const { t } = useTranslation();
 
-  let currentTitle = title;
-  if (location.pathname === '/profile') {
-    currentTitle = t('profile.title');
-  }
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const touchStartX = useRef(null);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    if (touchStartX.current === null) return;
+    const touchCurrentX = e.touches[0].clientX;
+    const diff = touchCurrentX - touchStartX.current;
+
+    // Se deslizou da esquerda para a direita (abrir menu)
+    // Só permite abrir se o toque começou bem no canto esquerdo (< 40px)
+    if (!isMenuOpen && diff > 50 && touchStartX.current < 40) {
+      setIsMenuOpen(true);
+      touchStartX.current = null;
+    }
+    
+    // Se deslizou da direita para a esquerda (fechar menu)
+    if (isMenuOpen && diff < -50) {
+      setIsMenuOpen(false);
+      touchStartX.current = null;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartX.current = null;
+  };
 
   return (
-    <div className="app-container">
+    <div 
+      className="app-container"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <SideMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       <TopBar 
-        title={currentTitle} 
+        title={title} 
         showProfile={showProfile} 
         showNotifications={showNotifications} 
         hasUnread={hasUnread}
-        userName={userName}
+        userName={user ? (user.nomeFuncionario || user.name || userName) : userName}
+        onOpenMenu={() => setIsMenuOpen(true)}
       />
       <PullToRefresh onRefresh={async () => { if (loadData) await loadData(); }}>
         <main className="page-content" role="main">

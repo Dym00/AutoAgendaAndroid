@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { App as CapacitorApp } from '@capacitor/app';
 import { MainLayout, AuthLayout } from './components/layout';
 import GlobalLoading from './components/common/GlobalLoading';
+import { AppContext } from './context/AppContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -18,11 +19,11 @@ import AddEmployee from './pages/AddEmployee';
 import Services from './pages/Services';
 import AddService from './pages/AddService';
 import About from './pages/About';
-import Profile from './pages/Profile';
 import Notifications from './pages/Notifications';
 import './App.css';
 
 function App() {
+  const { user } = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -65,8 +66,8 @@ function App() {
       <Routes>
       {/* Rotas Públicas */}
       <Route element={<AuthLayout />}>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} replace />} />
+        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
       </Route>
@@ -79,7 +80,6 @@ function App() {
         <Route path="clients" element={<Clients />} />
         <Route path="employees" element={<Employees />} />
         <Route path="services" element={<Services />} />
-        <Route path="profile" element={<Profile />} />
         <Route path="/about" element={<About />} />
       </Route>
 

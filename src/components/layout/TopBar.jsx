@@ -11,7 +11,8 @@ const TopBar = ({
   showBack = false, 
   showProfile = false, 
   showNotifications = false,
-  userName = "User"
+  userName = "User",
+  onOpenMenu
 }) => {
   const navigate = useNavigate();
   const { isAccessibleMode, toggleAccessibleMode } = useA11y();
@@ -24,7 +25,11 @@ const TopBar = ({
   };
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    if (onOpenMenu) {
+      onOpenMenu();
+    } else {
+      navigate('/profile');
+    }
   };
 
   const handleNotificationsClick = () => {

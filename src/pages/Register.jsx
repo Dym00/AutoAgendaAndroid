@@ -5,6 +5,7 @@ import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import api from '../services/api';
+import { isValidCNPJ } from '../utils/masks';
 import styles from './Login.module.css'; // Reutilizando os estilos do Login
 
 const Register = () => {
@@ -45,8 +46,8 @@ const Register = () => {
       if (formData.workshopName.trim().length < 3) {
         return setError("O nome da oficina deve ter pelo menos 3 caracteres.");
       }
-      if (formData.cnpj.replace(/\D/g, '').length !== 14) {
-        return setError("O CNPJ deve conter exatamente 14 números.");
+      if (!isValidCNPJ(formData.cnpj)) {
+        return setError("Por favor, insira um CNPJ válido.");
       }
     }
 
@@ -104,14 +105,14 @@ const Register = () => {
             <>
               <Input label="NOME COMPLETO" id="name" placeholder="Seu nome completo" icon={User} value={formData.name} onChange={handleChange('name')} required />
               <Input label="E-MAIL" id="email" type="email" placeholder="seu@email.com" icon={Mail} value={formData.email} onChange={handleChange('email')} required />
-              <Input label="TELEFONE" id="phone" type="tel" placeholder="(00) 00000-0000" icon={Phone} value={formData.phone} onChange={handleChange('phone')} required />
+              <Input label="TELEFONE" id="phone" type="tel" placeholder="(00) 00000-0000" icon={Phone} maskType="phone" value={formData.phone} onChange={handleChange('phone')} required />
             </>
           )}
 
           {step === 2 && (
             <>
               <Input label="NOME DA OFICINA" id="workshopName" placeholder="Ex: Auto Mecânica Silva" icon={Briefcase} value={formData.workshopName} onChange={handleChange('workshopName')} required />
-              <Input label="CNPJ" id="cnpj" placeholder="00.000.000/0000-00" icon={FileText} value={formData.cnpj} onChange={handleChange('cnpj')} required />
+              <Input label="CNPJ" id="cnpj" placeholder="00.000.000/0000-00" icon={FileText} maskType="cnpj" value={formData.cnpj} onChange={handleChange('cnpj')} required />
             </>
           )}
 

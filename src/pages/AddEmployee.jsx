@@ -6,6 +6,7 @@ import { useAppContext } from '../context/AppContext';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import { isValidCPF } from '../utils/masks';
 import styles from './Login.module.css';
 
 const AddEmployee = () => {
@@ -45,6 +46,10 @@ const AddEmployee = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (formData.cpf && !isValidCPF(formData.cpf)) {
+      alert("Por favor, insira um CPF válido.");
+      return;
+    }
     setLoading(true);
     setTimeout(() => {
       if (isEditing) {
@@ -109,6 +114,7 @@ const AddEmployee = () => {
             id="cpf" 
             placeholder="000.000.000-00" 
             icon={CreditCard} 
+            maskType="cpf"
             value={formData.cpf} 
             onChange={handleChange('cpf')} 
           />
@@ -118,6 +124,8 @@ const AddEmployee = () => {
             id="phone" 
             placeholder="(00) 00000-0000" 
             icon={Phone} 
+            type="tel"
+            maskType="phone"
             value={formData.phone} 
             onChange={handleChange('phone')} 
           />

@@ -6,6 +6,7 @@ import { useAppContext } from '../context/AppContext';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import { maskPlate } from '../utils/masks';
 import styles from './Login.module.css';
 
 const AddClient = () => {
@@ -95,6 +96,7 @@ const AddClient = () => {
             placeholder={t('forms.phonePlaceholder')} 
             icon={Phone} 
             type="tel"
+            maskType="phone"
             value={formData.phone} 
             onChange={handleChange('phone')} 
             required 
@@ -171,10 +173,10 @@ const AddClient = () => {
                 />
                 <input 
                   type="text" 
-                  placeholder="Placa (Ex: ABC1D23)" 
+                  placeholder="Placa (Ex: ABC-1234)" 
                   value={newVehicle.placa} 
-                  onChange={(e) => setNewVehicle({ ...newVehicle, placa: e.target.value.toUpperCase() })}
-                  maxLength={7}
+                  onChange={(e) => setNewVehicle({ ...newVehicle, placa: maskPlate(e.target.value) })}
+                  maxLength={8}
                   style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px' }}
                 />
                 <button 

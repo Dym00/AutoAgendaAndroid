@@ -5,8 +5,25 @@ import api from '../services/api';
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  
+  const [user, setUser] = useState(() => {
+    try {
+      const sessionStr = localStorage.getItem('@AutoAgenda:session');
+      if (sessionStr) {
+        const session = JSON.parse(sessionStr);
+        // Verifica se a sessão expirou
+        if (session.expiresAt && Date.now() < session.expiresAt) {
+          return session.user;
+        } else {
+          // Sessão expirada, limpa o cache
+          localStorage.removeItem('@AutoAgenda:session');
+          localStorage.removeItem('idOficina');
+        }
+      }
+    } catch (e) {
+      console.error('Erro ao ler sessão do cache', e);
+    }
+    return null;
+  });
   const [appointments, setAppointments] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [clients, setClients] = useState([]);
@@ -153,10 +170,17 @@ export const AppProvider = ({ children }) => {
 
   const login = (userData) => {
     setUser(userData);
+    // Persiste a sessão por 7 dias (7 * 24 * 60 * 60 * 1000 = 604800000 ms)
+    const session = {
+      user: userData,
+      expiresAt: Date.now() + 604800000
+    };
+    localStorage.setItem('@AutoAgenda:session', JSON.stringify(session));
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('@AutoAgenda:session');
     localStorage.removeItem('idOficina');
   };
 

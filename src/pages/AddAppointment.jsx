@@ -25,8 +25,7 @@ const AddAppointment = () => {
   const [photos, setPhotos] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [existingPhotos, setExistingPhotos] = useState([]);
-  const [obsInternal, setObsInternal] = useState('');
-  const isComposing = useRef(false);
+  const obsRef = useRef(null);
   const cameraInputRef = useRef(null);
   const galleryInputRef = useRef(null);
 
@@ -87,7 +86,6 @@ const AddAppointment = () => {
             observacao: app.observacao || '',
             services: serviceIds
           });
-          setObsInternal(app.observacao || '');
           
           try {
             const res = await api.get(`/fotos-api/listar/${id}`);
@@ -102,6 +100,14 @@ const AddAppointment = () => {
     };
     fetchData();
   }, [id, appointments, clients, services, isEditing]);
+
+  useEffect(() => {
+    if (obsRef.current && formData.observacao !== undefined && formData.observacao !== null) {
+      if (obsRef.current.value !== String(formData.observacao)) {
+        obsRef.current.value = formData.observacao;
+      }
+    }
+  }, [formData.observacao]);
 
   const selectedClient = clients.find(c => c.id == formData.clientName);
   const veiculosDisponiveis = selectedClient && selectedClient.veiculos ? selectedClient.veiculos : [];
@@ -123,7 +129,7 @@ const AddAppointment = () => {
     setLoading(true);
     
     // Garantir que a observação seja enviada caso tenha sido digitada mas não salva pelo bug de composição do Android
-    const finalData = { ...formData, observacao: obsInternal, service: formData.services };
+    const finalData = { ...formData, service: formData.services };
     
     if (isEditing) {
       await updateAppointment(parseInt(id), finalData, photos);
@@ -211,16 +217,9 @@ const AddAppointment = () => {
           <div style={{ marginBottom: '16px' }}>
              <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>OBSERVAÇÃO (Opcional)</label>
              <textarea 
-               value={obsInternal}
+               ref={obsRef}
+               defaultValue={formData.observacao || ''}
                onChange={(e) => {
-                 setObsInternal(e.target.value);
-                 if (!isComposing.current) {
-                   setFormData({ ...formData, observacao: e.target.value });
-                 }
-               }}
-               onCompositionStart={() => { isComposing.current = true; }}
-               onCompositionEnd={(e) => {
-                 isComposing.current = false;
                  setFormData({ ...formData, observacao: e.target.value });
                }}
                placeholder="Detalhes adicionais sobre o serviço ou estado do veículo..."

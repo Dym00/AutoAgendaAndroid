@@ -42,7 +42,7 @@ const TopBar = ({
         {showBack && (
           <AccessibleNode 
             as="button"
-            className={styles.iconButton} 
+            className={`${styles.iconButton} ${styles.backButton}`} 
             onClick={handleBack}
             textToSpeak="Voltar para a tela anterior"
             aria-label="Voltar para a tela anterior"
@@ -86,7 +86,7 @@ const TopBar = ({
           >
             <Bell 
               size={24} 
-              color={hasUnread ? "var(--primary)" : "currentColor"} 
+              color="var(--text-main)" 
               fill={hasUnread ? "var(--primary)" : "none"} 
               aria-hidden="true" 
             />

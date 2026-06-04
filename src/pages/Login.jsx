@@ -118,7 +118,7 @@ const Login = () => {
 
   return (
     <>
-      <TopBar title="AUTOAGENDA" showBack={true} />
+      <TopBar title="AUTOAGENDA" showBack={false} />
       <div className={`page-content full-height ${styles.container}`}>
         <div className={styles.header}>
           <h2 className={styles.title}>{t('login.title')}</h2>

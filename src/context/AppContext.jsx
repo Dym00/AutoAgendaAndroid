@@ -22,6 +22,17 @@ export const AppProvider = ({ children }) => {
     try { const saved = localStorage.getItem('autoagenda_services'); return saved ? JSON.parse(saved) : []; } catch(e) { return []; }
   });
 
+  // Toast Messages Global System
+  const [toastMessage, setToastMessage] = useState(null);
+  
+  const showToast = (message, type = 'success') => {
+    setToastMessage({ message, type });
+  };
+  
+  const hideToast = () => {
+    setToastMessage(null);
+  };
+
   // Notificações Locais
   const [notifications, setNotifications] = useState(() => {
     try {
@@ -47,6 +58,9 @@ export const AppProvider = ({ children }) => {
       read: false
     };
     saveNotifications([newNotif, ...notifications]);
+    
+    // Dispara também o Toast para feedback visual imediato
+    showToast(message, type);
   };
 
   const markAllAsRead = () => {
@@ -152,7 +166,7 @@ export const AppProvider = ({ children }) => {
              if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
              return a.dataPrevisao;
            })() : 'Sem data', 
-           car: a.veiculo?.modelo || 'Não informado', 
+           car: a.veiculo ? `${a.veiculo.modelo} - ${a.veiculo.placa || 'Sem placa'}` : 'Não informado', 
            service: a.servicos?.map(s => {
              const matched = servicesList.find(svc => svc.id === s.idServico);
              return matched ? matched.name : s.descricao || 'Serviço';
@@ -438,7 +452,8 @@ export const AppProvider = ({ children }) => {
       employees, addEmployee, updateEmployee, deleteEmployee,
       services, addService, updateService, deleteService,
       addVehicle, deleteVehicle,
-      notifications, addNotification, markAllAsRead
+      notifications, addNotification, markAllAsRead,
+      toastMessage, showToast, hideToast
     }}>
       {children}
     </AppContext.Provider>

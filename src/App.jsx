@@ -6,6 +6,7 @@ import GlobalLoading from './components/common/GlobalLoading';
 import SplashLoader from './components/common/SplashLoader';
 import { AppContext } from './context/AppContext';
 import { SplashScreen } from '@capacitor/splash-screen';
+import Toast from './components/ui/Toast';
 
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -79,6 +80,7 @@ function App() {
   return (
     <>
       {isLoading && <GlobalLoading />}
+      <Toast />
       <Suspense fallback={<SplashLoader />}>
         <Routes>
           {/* Rotas Públicas */}

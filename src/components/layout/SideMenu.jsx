@@ -96,7 +96,7 @@ const SideMenu = ({ isOpen, onClose }) => {
         <div style={{ width: '100%', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <AccessibleNode textToSpeak={t('profile.tts_navServices')} onClick={() => handleNavigation('/services')} style={{ display: 'block' }}>
             <Button variant="secondary" icon={Wrench} style={{ justifyContent: 'flex-start', pointerEvents: 'none' }}>
-              {t('profile.services')}
+              Gestão de serviços da oficina
             </Button>
           </AccessibleNode>
 
@@ -110,7 +110,7 @@ const SideMenu = ({ isOpen, onClose }) => {
         <div style={{ width: '100%', marginBottom: 'auto' }}>
           <AccessibleNode textToSpeak={t('profile.tts_editShop')} onClick={() => { }} style={{ display: 'block', marginBottom: '16px' }}>
             <Button variant="secondary" icon={Settings} style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', pointerEvents: 'none' }}>
-              {t('common.edit')} {t('profile.shopData')}
+              Editar Dados da Oficina
             </Button>
           </AccessibleNode>
 

@@ -56,8 +56,97 @@
   color: #000;
 }
 
-.searchContainer {
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.searchInputWrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 16px;
+  color: var(--text-light);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 16px 12px 48px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  font-size: 14px;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: var(--primary);
+}
+
+.filterButton {
+  padding: 12px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterButtonActive {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #000;
+}
+
+.filterSection {
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 16px;
   margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid var(--border);
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filterLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.filterInput {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background-color: var(--input-bg);
+  font-size: 14px;
+  outline: none;
+  color: var(--text-main);
+}
+
+.filterInput:focus {
+  border-color: var(--primary);
 }
 
 .card {
@@ -161,7 +250,7 @@
 /* FAB */
 .fab {
   position: fixed;
-  bottom: 88px; /* Acima do BottomNav */
+  bottom: 110px; /* Acima do BottomNav com respiro */
   right: 16px;
   width: 56px;
   height: 56px;

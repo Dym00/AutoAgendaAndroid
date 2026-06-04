@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Car, Wrench, Edit, Trash2, Plus, Search } from 'lucide-react';
+import { Car, Wrench, Edit, Trash2, Plus, Search, SlidersHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { AccessibleNode } from '../components/ui/AccessibleNode';
@@ -10,9 +10,14 @@ import styles from './Appointments.module.css';
 const Appointments = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { appointments, deleteAppointment, concludeAppointment } = useAppContext();
+  const { appointments, deleteAppointment, concludeAppointment, services } = useAppContext();
   const [activeTab, setActiveTab] = useState('ativos');
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Novos estados para o Painel Rápido de Filtros
+  const [showFilters, setShowFilters] = useState(false);
+  const [filterDate, setFilterDate] = useState('');
+  const [filterService, setFilterService] = useState('');
   
   const today = new Date();
   const dateStr = today.toLocaleString(i18n.language, { 
@@ -42,9 +47,14 @@ const Appointments = () => {
 
   const filteredAppointments = currentAppointments.filter(a => {
     const term = searchTerm.toLowerCase();
-    return (a.name && a.name.toLowerCase().includes(term)) ||
+    const matchSearch = (a.name && a.name.toLowerCase().includes(term)) ||
            (a.car && a.car.toLowerCase().includes(term)) ||
            (a.service && a.service.toLowerCase().includes(term));
+           
+    const matchDate = filterDate ? (a.rawDate === filterDate) : true;
+    const matchService = filterService ? (a.service && a.service.includes(filterService)) : true;
+    
+    return matchSearch && matchDate && matchService;
   });
 
   return (
@@ -75,14 +85,52 @@ const Appointments = () => {
         </button>
       </div>
 
-      <div className={styles.searchContainer}>
-        <Input 
-          icon={Search}
-          placeholder="Buscar cliente, veículo ou serviço..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      <div className={styles.searchBar}>
+        <div className={styles.searchInputWrapper}>
+          <Search size={20} className={styles.searchIcon} aria-hidden="true" />
+          <input 
+            type="text" 
+            className={styles.searchInput} 
+            placeholder="Buscar cliente, veículo ou placa..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <button 
+          className={`${styles.filterButton} ${showFilters ? styles.filterButtonActive : ''}`} 
+          onClick={() => setShowFilters(!showFilters)}
+          aria-label="Filtros avançados"
+        >
+          <SlidersHorizontal size={20} aria-hidden="true" />
+        </button>
       </div>
+
+      {showFilters && (
+        <div className={styles.filterSection}>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Filtrar por Data</label>
+            <input 
+              type="date" 
+              className={styles.filterInput}
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+            />
+          </div>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Filtrar por Serviço</label>
+            <select 
+              className={styles.filterInput}
+              value={filterService}
+              onChange={(e) => setFilterService(e.target.value)}
+            >
+              <option value="">Todos os serviços</option>
+              {services.map(s => (
+                <option key={s.id} value={s.name}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
 
       <div className={styles.list}>
         {filteredAppointments.length === 0 ? (
@@ -128,7 +176,7 @@ const Appointments = () => {
               
               <div className={styles.carInfo}>
                 <Car size={16} />
-                <span>{app.car}</span>
+                <span>{t('appointments.vehicle', 'Veículo')}: {app.car}</span>
               </div>
               <div className={styles.serviceInfo}>
                 <Wrench size={16} style={{flexShrink: 0}} />

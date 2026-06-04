@@ -59,7 +59,7 @@
   "inventory": {
     "searchPlaceholder": "Buscar por peça, marca ou código...",
     "totalItems": "ITENS TOTAIS",
-    "critical": "CRÍTICOS",
+    "critical": "ITENS ESGOTANDO",
     "recentItems": "Itens Recentes",
     "lowStockAlert": "Alerta de Estoque Baixo",
     "tts_item": "{{name}}, Preço R$ {{price}}, Estoque {{stock}}. {{critical}}",

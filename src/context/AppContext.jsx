@@ -114,7 +114,8 @@ export const AppProvider = ({ children }) => {
 
        if (prodRes.data) {
          const newInv = prodRes.data.map(p => {
-           const minStockVal = p.estoqueMinimo !== undefined ? p.estoqueMinimo : (p.estoqueMinino || 5);
+           const minStockVal = p.estoqueMinimo !== undefined && p.estoqueMinimo !== null ? parseInt(p.estoqueMinimo, 10) : parseInt(p.estoqueMinino || 0, 10);
+           const currentStock = parseInt(p.estoqueAtual || 0, 10);
            return {
              id: p.idProduto, 
              code: p.codigoProduto || '',
@@ -122,9 +123,9 @@ export const AppProvider = ({ children }) => {
              category: p.categoria, 
              costPrice: p.precoCusto || 0,
              price: p.precoVenda, 
-             stock: p.estoqueAtual, 
+             stock: currentStock, 
              minStock: minStockVal,
-             critical: p.estoqueAtual <= minStockVal,
+             critical: currentStock < minStockVal,
              fornecedor: p.fornecedor || '',
              descricao: p.descricao || ''
            };
@@ -232,6 +233,7 @@ export const AppProvider = ({ children }) => {
       addNotification('success', 'Agendamento Salvo', 'O novo agendamento foi registrado com sucesso.');
       loadData(); // Recarrega do servidor
     } catch (err) {
+      showToast('Erro ao salvar agendamento.', 'error');
       console.error("Erro ao salvar agendamento:", err);
     }
   };
@@ -263,8 +265,10 @@ export const AppProvider = ({ children }) => {
       }
 
       await api.post('/agendamento-api', formData);
+      showToast('Agendamento atualizado com sucesso!', 'success');
       loadData();
     } catch (err) {
+      showToast('Erro ao atualizar agendamento.', 'error');
       console.error("Erro ao atualizar agendamento:", err);
     }
   };
@@ -282,8 +286,10 @@ export const AppProvider = ({ children }) => {
   const deleteAppointment = async (id) => {
     try {
       await api.delete(`/agendamento-api/${id}`);
+      showToast('Agendamento excluído!', 'success');
       loadData();
     } catch (err) {
+      showToast('Erro ao excluir agendamento.', 'error');
       console.error("Erro ao excluir agendamento:", err);
     }
   };
@@ -302,8 +308,10 @@ export const AppProvider = ({ children }) => {
         fornecedor: item.fornecedor || '',
         descricao: item.descricao || ''
       });
+      showToast('Item salvo no estoque com sucesso!', 'success');
       loadData();
     } catch (err) {
+      showToast('Erro ao salvar item no estoque.', 'error');
       console.error("Erro ao adicionar produto:", err);
     }
   };
@@ -323,8 +331,10 @@ export const AppProvider = ({ children }) => {
         fornecedor: item.fornecedor || '',
         descricao: item.descricao || ''
       });
+      showToast('Item atualizado com sucesso!', 'success');
       loadData();
     } catch (err) {
+      showToast('Erro ao atualizar item no estoque.', 'error');
       console.error("Erro ao atualizar produto:", err);
     }
   };
@@ -332,13 +342,14 @@ export const AppProvider = ({ children }) => {
   const deleteInventoryItem = async (id) => {
     try {
       await api.delete(`/produto-api/${id}`);
+      showToast('Item excluído do estoque.', 'success');
       loadData();
     } catch (err) {
+      showToast('Erro ao excluir item.', 'error');
       console.error("Erro ao excluir produto:", err);
     }
   };
 
-  // ----- CRUD Clientes -----
   const addClient = async (client) => {
     try {
       await api.post('/cliente-api', {
@@ -346,20 +357,32 @@ export const AppProvider = ({ children }) => {
         telefone: client.phone,
         email: client.email
       });
+      showToast('Cliente salvo com sucesso!', 'success');
       loadData();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      showToast('Erro ao salvar cliente.', 'error');
+      console.error(err);
+    }
   };
   const updateClient = async (id, data) => {
     try {
       await api.post('/cliente-api', { idCliente: id, nomeCliente: data.name, telefone: data.phone, email: data.email });
+      showToast('Cliente atualizado com sucesso!', 'success');
       loadData();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      showToast('Erro ao atualizar cliente.', 'error');
+      console.error(err);
+    }
   };
   const deleteClient = async (id) => {
     try {
       await api.patch(`/cliente-api/${id}/status`);
+      showToast('Cliente inativado/excluído com sucesso.', 'success');
       loadData();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      showToast('Erro ao excluir cliente.', 'error');
+      console.error(err);
+    }
   };
 
   // ----- CRUD Veículos -----
@@ -371,8 +394,10 @@ export const AppProvider = ({ children }) => {
         marca: vehicle.marca,
         placa: vehicle.placa
       });
+      showToast('Veículo salvo com sucesso!', 'success');
       loadData();
     } catch (err) {
+      showToast('Erro ao salvar veículo.', 'error');
       console.error("Erro ao salvar veículo:", err);
     }
   };
@@ -380,8 +405,10 @@ export const AppProvider = ({ children }) => {
   const deleteVehicle = async (id) => {
     try {
       await api.delete(`/veiculo-api/${id}`);
+      showToast('Veículo excluído.', 'success');
       loadData();
     } catch (err) {
+      showToast('Erro ao excluir veículo.', 'error');
       console.error("Erro ao excluir veículo:", err);
     }
   };
@@ -398,8 +425,12 @@ export const AppProvider = ({ children }) => {
         acesso: employee.role?.toLowerCase() || 'comum',
         senha: employee.senha || '123'
       });
+      showToast('Funcionário adicionado com sucesso!', 'success');
       loadData();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      showToast('Erro ao adicionar funcionário.', 'error');
+      console.error(err);
+    }
   };
   const updateEmployee = async (id, employee) => {
     try {
@@ -413,34 +444,54 @@ export const AppProvider = ({ children }) => {
         acesso: employee.role?.toLowerCase() || 'comum',
         senha: employee.senha || '123'
       });
+      showToast('Funcionário atualizado com sucesso!', 'success');
       loadData();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      showToast('Erro ao atualizar funcionário.', 'error');
+      console.error(err);
+    }
   };
   const deleteEmployee = async (id) => {
     try {
       await api.patch(`/funcionario-api/${id}/status`);
+      showToast('Funcionário inativado com sucesso.', 'success');
       loadData();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      showToast('Erro ao inativar funcionário.', 'error');
+      console.error(err);
+    }
   };
 
   // ----- CRUD Serviços -----
   const addService = async (service) => {
     try {
       await api.post('/servico-api', { nomeServico: service.name, descServico: service.description });
+      showToast('Serviço salvo com sucesso!', 'success');
       loadData();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      showToast('Erro ao salvar serviço.', 'error');
+      console.error(err);
+    }
   };
   const updateService = async (id, data) => {
     try {
       await api.post('/servico-api', { idServico: id, nomeServico: data.name, descServico: data.description });
+      showToast('Serviço atualizado com sucesso!', 'success');
       loadData();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      showToast('Erro ao atualizar serviço.', 'error');
+      console.error(err);
+    }
   };
   const deleteService = async (id) => {
     try {
       await api.delete(`/servico-api/${id}`);
+      showToast('Serviço excluído com sucesso.', 'success');
       loadData();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      showToast('Erro ao excluir serviço.', 'error');
+      console.error(err);
+    }
   };
 
   return (

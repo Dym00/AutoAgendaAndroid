@@ -79,7 +79,7 @@ const Inventory = () => {
               <span className={styles.itemCategory}>{item.category}</span>
               {item.critical && <span className={styles.criticalWarning}>{t('inventory.lowStockAlert')}</span>}
               <div className={styles.itemFooter}>
-                <span className={styles.itemPrice}>${item.price}</span>
+                <span className={styles.itemPrice}>{t('inventory.currencyPrefix', { defaultValue: 'R$ ' })}{item.price}</span>
                 <span className={styles.itemStock}>{item.stock} {t('common.unit')}</span>
               </div>
             </div>

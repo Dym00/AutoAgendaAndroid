@@ -10,7 +10,7 @@ const Dashboard = () => {
   const { user, appointments, inventory } = useAppContext();
   const navigate = useNavigate();
   
-  const userName = user ? user.name : "Ricardo";
+  const userName = user ? (user.nomeFuncionario || user.name) : "Visitante";
   const todayDateObj = new Date();
   
   const dayStr = String(todayDateObj.getDate()).padStart(2, '0');

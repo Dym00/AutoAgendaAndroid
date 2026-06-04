@@ -53,7 +53,7 @@ const TopBar = ({
         {showProfile && !showBack && (
           <AccessibleNode 
             as="button"
-            className={styles.iconButton} 
+            className={styles.profileButton} 
             onClick={handleProfileClick}
             textToSpeak="Abrir perfil do usuário"
             aria-label="Abrir perfil do usuário"

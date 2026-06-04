@@ -80,10 +80,13 @@ const Login = () => {
         
         // Mapeamento de erros humanizados para o front-end
         if (errorDetails.includes("desativada no sistema")) {
-          // O backend v3.0 joga esse erro tanto pra oficina inexistente quanto pra desativada
           displayError = "Não encontramos nenhuma oficina com esse nome ou ela está desativada. Verifique a digitação.";
+        } else if (errorDetails.includes("OFICINA_INVALIDA")) {
+          displayError = "Oficina não encontrada ou slug inválido. Verifique a digitação.";
         } else if (errorDetails.includes("Usuário ou senha incorretos")) {
           displayError = "E-mail, usuário ou senha incorretos.";
+        } else if (errorDetails.includes("Failed to connect") || errorDetails.includes("Network Error")) {
+          displayError = "Não foi possível conectar ao servidor. O sistema pode estar offline ou em manutenção.";
         } else if (err.request && !err.response) {
           displayError = "Sem resposta do servidor. Verifique sua conexão com a internet.";
         }

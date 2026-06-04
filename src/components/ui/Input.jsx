@@ -70,6 +70,14 @@ const Input = ({
           aria-describedby={error ? `${id}-error` : undefined}
           defaultValue={value || ''}
           onChange={handleChange}
+          onInvalid={(e) => {
+            e.target.setCustomValidity('Preencha este campo obrigatório.');
+            if (props.onInvalid) props.onInvalid(e);
+          }}
+          onInput={(e) => {
+            e.target.setCustomValidity('');
+            if (props.onInput) props.onInput(e);
+          }}
           {...restProps}
         />
         {isPassword && (

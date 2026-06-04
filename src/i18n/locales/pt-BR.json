@@ -58,6 +58,7 @@
   },
   "inventory": {
     "searchPlaceholder": "Buscar por peça, marca ou código...",
+    "currencyPrefix": "R$ ",
     "totalItems": "ITENS TOTAIS",
     "critical": "ITENS ESGOTANDO",
     "recentItems": "Itens Recentes",

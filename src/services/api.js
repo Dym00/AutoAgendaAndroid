@@ -24,10 +24,12 @@ const api = axios.create({
 let activeRequests = 0;
 
 api.interceptors.request.use(async (config) => {
-  if (activeRequests === 0) {
-    window.dispatchEvent(new Event('global-loading-start'));
+  if (config.hideLoading !== true) {
+    if (activeRequests === 0) {
+      window.dispatchEvent(new Event('global-loading-start'));
+    }
+    activeRequests++;
   }
-  activeRequests++;
 
   const idOficina = localStorage.getItem('idOficina');
   
@@ -37,6 +39,10 @@ api.interceptors.request.use(async (config) => {
   
   return config;
 }, (error) => {
+  if (error && error.config && error.config.hideLoading === true) {
+    return Promise.reject(error);
+  }
+  
   activeRequests--;
   if (activeRequests <= 0) {
     activeRequests = 0;
@@ -46,6 +52,9 @@ api.interceptors.request.use(async (config) => {
 });
 
 api.interceptors.response.use((response) => {
+  if (response.config && response.config.hideLoading === true) {
+    return response;
+  }
   activeRequests--;
   if (activeRequests <= 0) {
     activeRequests = 0;
@@ -53,6 +62,9 @@ api.interceptors.response.use((response) => {
   }
   return response;
 }, (error) => {
+  if (error && error.config && error.config.hideLoading === true) {
+    return Promise.reject(error);
+  }
   activeRequests--;
   if (activeRequests <= 0) {
     activeRequests = 0;

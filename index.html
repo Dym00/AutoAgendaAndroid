@@ -7,7 +7,45 @@
     <title>autoagendaandroid</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <style>
+        body, html { margin: 0; padding: 0; height: 100%; background-color: #ffffff; }
+        .initial-loader-container {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-color: #ffffff;
+          z-index: 999999;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .initial-loader-logo {
+          font-size: 28px;
+          font-weight: 800;
+          color: #1e293b;
+          letter-spacing: 2px;
+          margin-bottom: 32px;
+        }
+        .initial-loader-spinner {
+          width: 48px;
+          height: 48px;
+          border: 4px solid #f1f5f9;
+          border-top-color: #3b82f6;
+          border-radius: 50%;
+          animation: initial-loader-spin 1s linear infinite;
+        }
+        @keyframes initial-loader-spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      </style>
+      <div class="initial-loader-container">
+        <div class="initial-loader-logo">AUTOAGENDA</div>
+        <div class="initial-loader-spinner"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

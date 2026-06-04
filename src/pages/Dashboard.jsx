@@ -1,196 +1,156 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TrendingDown, Activity, AlertTriangle, Package, ChevronRight } from 'lucide-react';
+import { AlertTriangle, ChevronRight, Wrench } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import styles from './Dashboard.module.css';
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const { user, appointments, inventory } = useAppContext();
-  const [activeTab, setActiveTab] = useState('appointments');
   const navigate = useNavigate();
   
   const userName = user ? user.name : "Ricardo";
-  const today = new Date();
-  const day = today.getDate();
-  const monthStr = today.toLocaleString('pt-BR', { month: 'long' });
+  const todayDateObj = new Date();
+  
+  const dayStr = String(todayDateObj.getDate()).padStart(2, '0');
+  const monthStrNum = String(todayDateObj.getMonth() + 1).padStart(2, '0');
+  const yearStr = todayDateObj.getFullYear();
+  const rawTodayStr = `${yearStr}-${monthStrNum}-${dayStr}`; // Formato ISO usado no DB/App (YYYY-MM-DD)
+
+  const monthStr = todayDateObj.toLocaleString('pt-BR', { month: 'long' });
   const capitalizedMonth = monthStr.charAt(0).toUpperCase() + monthStr.slice(1);
-  const todayStr = `${day} de ${capitalizedMonth}`; // Fixo para match com Figma
+  const displayDateStr = `${dayStr} de ${capitalizedMonth}`;
 
-  const scheduledCount = appointments.length;
-  const inServiceCount = appointments.filter(a => a.service.includes('Óleo') || a.service.includes('Revisão')).length || 1; // mock logic adaptada
-  const criticalInventory = inventory.filter(i => i.critical);
-  const belowIdealInventory = inventory.filter(i => i.stock < 10 && !i.critical);
+  // Filtra agendamentos do dia de hoje
+  const todayAppointments = useMemo(() => {
+    return appointments.filter(a => {
+      // a.rawDate geralmente está no formato YYYY-MM-DD ou DD/MM/YYYY dependendo de como foi salvo.
+      // O AppContext tenta normalizar a leitura em `rawDate`, mas vamos checar a string:
+      if (!a.rawDate) return false;
+      const dbDate = a.rawDate.split('T')[0];
+      return dbDate === rawTodayStr;
+    }).sort((a, b) => {
+      // Ordena por horário
+      const timeA = a.time || '00:00';
+      const timeB = b.time || '00:00';
+      return timeA.localeCompare(timeB);
+    });
+  }, [appointments, rawTodayStr]);
 
-  const chartData = useMemo(() => {
-    if (activeTab === 'appointments') {
-      const data = [];
-      const labels = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
-      const currentDayOfWeek = today.getDay(); // 0 is Sunday
-      
-      const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() - currentDayOfWeek);
-      startOfWeek.setHours(0, 0, 0, 0);
+  // Contadores
+  let paraHoje = 0;
+  let emAndamento = 0;
+  let finalizados = 0;
 
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(startOfWeek);
-        date.setDate(startOfWeek.getDate() + i);
-        
-        const dayStr = String(date.getDate()).padStart(2, '0');
-        const monthStrNum = String(date.getMonth() + 1).padStart(2, '0');
-        const yearStr = date.getFullYear();
-        const dateString = `${dayStr}/${monthStrNum}/${yearStr}`;
-        
-        const count = appointments.filter(a => a.time === dateString).length;
-        
-        data.push({
-          id: `app-${i}`,
-          label: labels[i],
-          count,
-          isActive: i === currentDayOfWeek
-        });
-      }
-      
-      const maxCount = Math.max(...data.map(d => d.count), 1);
-      return data.map(d => ({ ...d, height: `${(d.count / maxCount) * 100}%` }));
-      
-    } else {
-      // Tab Estoque (Opção B: Top 7 produtos com menor estoque)
-      const sorted = [...inventory].sort((a, b) => a.stock - b.stock);
-      const top7 = sorted.slice(0, 7);
-      
-      const maxStock = Math.max(...top7.map(i => i.stock), 1);
-      
-      const mapped = top7.map((item, index) => ({
-        id: `inv-${item.id}`,
-        label: item.name.charAt(0).toUpperCase(),
-        count: item.stock,
-        isActive: item.critical, // Destaca os que estão em estado crítico
-        height: `${(item.stock / maxStock) * 100}%`
-      }));
-
-      // Garante que o layout sempre terá 7 colunas para manter a simetria flex-between
-      while (mapped.length < 7) {
-        mapped.push({
-          id: `inv-empty-${mapped.length}`,
-          label: '-',
-          count: 0,
-          isActive: false,
-          height: '0%' // minHeight garantirá a visibilidade mínima
-        });
-      }
-      return mapped;
+  todayAppointments.forEach(app => {
+    const st = (app.status || '').toLowerCase();
+    if (st === 'concluído' || st === 'concluido') {
+      finalizados++;
+    } else if (st === 'em andamento') {
+      emAndamento++;
+    } else if (st !== 'cancelado') {
+      paraHoje++;
     }
-  }, [activeTab, appointments, inventory, today]);
+  });
+
+  // Alertas de Estoque Crítico
+  const criticalInventory = inventory.filter(i => i.critical);
+
+  // Mapeamento de cores para a timeline
+  const getStatusClass = (status) => {
+    const st = (status || '').toLowerCase();
+    if (st === 'concluído' || st === 'concluido') return styles.statusConcluido;
+    if (st === 'em andamento') return styles.statusEmAndamento;
+    if (st === 'agendado' || st === 'confirmado') return styles.statusAgendado;
+    if (st === 'cancelado') return styles.statusCancelado;
+    return styles.statusPendente; // Padrão/Pendente
+  };
 
   return (
     <div className={styles.container}>
       <section className={styles.greetingSection}>
         <h2 className={styles.greeting} aria-level="2">
-          {t('dashboard.greeting', { name: userName })}
+          Olá, {userName}!
         </h2>
         <p className={styles.dateSubtitle}>
-          {t('dashboard.todaySummary', { date: todayStr })}
+          RESUMO DE HOJE, {displayDateStr}
         </p>
       </section>
 
-      <section className={styles.summaryCards} aria-label="Resumo diário">
+      <section className={styles.summaryCards} aria-label="Resumo do fluxo do dia">
         <div className={styles.card}>
-          <h3 className={styles.cardTitle}>{t('dashboard.scheduled')}</h3>
-          <div className={styles.cardValue}>0{scheduledCount}</div>
-          <div className={styles.cardFooter}>
-            <TrendingDown size={16} className={styles.trendIcon} aria-hidden="true" />
-            <span>- 1 {t('dashboard.today')}</span>
-          </div>
+          <h3 className={styles.cardTitle}>Para Hoje</h3>
+          <div className={styles.cardValue}>{paraHoje.toString().padStart(2, '0')}</div>
+        </div>
+        <div className={`${styles.card} ${styles.highlight}`}>
+          <h3 className={styles.cardTitle}>Na Oficina</h3>
+          <div className={styles.cardValue}>{emAndamento.toString().padStart(2, '0')}</div>
         </div>
         <div className={styles.card}>
-          <h3 className={styles.cardTitle}>{t('dashboard.inService')}</h3>
-          <div className={styles.cardValue}>0{inServiceCount}</div>
-          <div className={styles.cardFooter}>
-            <Activity size={16} className={styles.trendIcon} aria-hidden="true" />
-            <span>{t('dashboard.capacity')} 80%</span>
-          </div>
+          <h3 className={styles.cardTitle}>Finalizados</h3>
+          <div className={styles.cardValue}>{finalizados.toString().padStart(2, '0')}</div>
         </div>
       </section>
 
-      <section className={styles.chartSection} aria-label="Gráfico dinâmico">
-        <div className={styles.chartTabs}>
-          <button 
-            className={`${styles.chartTab} ${activeTab === 'appointments' ? styles.active : ''}`}
-            onClick={() => setActiveTab('appointments')}
-          >
-            {t('dashboard.appointmentsTab')}
-          </button>
-          <button 
-            className={`${styles.chartTab} ${activeTab === 'inventory' ? styles.active : ''}`}
-            onClick={() => setActiveTab('inventory')}
-          >
-            {t('dashboard.inventoryTab')}
-          </button>
+      <section className={styles.timelineSection} aria-label="Linha do Tempo de Agendamentos">
+        <div className={styles.timelineHeader}>
+          <h3 className={styles.timelineTitle}>Fluxo do Dia</h3>
         </div>
-        <h3 className={styles.chartTitle}>
-          {activeTab === 'appointments' ? t('dashboard.weeklyPerformance') : 'Top 7 Produtos Críticos'}
-        </h3>
-        <div className={styles.mockChart} aria-hidden="true">
-          {chartData.map((bar) => (
-            <div 
-              key={bar.id}
-              className={`${styles.bar} ${bar.isActive ? styles.active : ''} ${bar.count === 0 && bar.height === '0%' ? styles.empty : ''}`} 
-              style={{ height: bar.height, minHeight: '4px' }}
-              title={`Quantidade: ${bar.count}`}
-            >
-              <span className={styles.barLabel}>{bar.label}</span>
-            </div>
-          ))}
-        </div>
+        
+        {todayAppointments.length === 0 ? (
+          <div className={styles.emptyState}>Nenhum veículo agendado para hoje.</div>
+        ) : (
+          <div className={styles.timelineList}>
+            {todayAppointments.map(app => (
+              <div 
+                key={app.id} 
+                className={styles.timelineItem}
+                onClick={() => navigate(`/appointments/edit/${app.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className={styles.timelineTime}>{app.time || '--:--'}</div>
+                <div className={`${styles.timelineDot} ${getStatusClass(app.status)}`} />
+                <div className={styles.timelineContent}>
+                  <div className={styles.timelineCar}>{app.car}</div>
+                  <div className={styles.timelineClient}>{app.name}</div>
+                  <div className={styles.timelineService}>
+                    <Wrench size={12} />
+                    {app.service}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className={styles.alertsSection} aria-labelledby="alerts-title">
         <div className={styles.alertsHeader}>
-          <h3 id="alerts-title" className={styles.alertsTitle}>{t('dashboard.inventoryAlerts')}</h3>
-          <button className={styles.viewAll} onClick={() => navigate('/inventory')} aria-label="Ver todos os alertas">{t('dashboard.viewAll')}</button>
+          <h3 id="alerts-title" className={styles.alertsTitle}>Comprar Urgente</h3>
+          <button className={styles.viewAll} onClick={() => navigate('/inventory')} aria-label="Ver estoque completo">VER TODOS</button>
         </div>
         
         <div className={styles.alertList} role="list">
           {criticalInventory.map(item => (
             <div 
               key={item.id} 
-              className={`${styles.alertItem} ${styles.danger}`} 
+              className={styles.alertItem} 
               role="button" 
               tabIndex={0}
               onClick={() => navigate(`/inventory/edit/${item.id}`)}
-              onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/inventory/edit/${item.id}`); }}
             >
               <AlertTriangle size={24} className={styles.alertIcon} aria-hidden="true" />
               <div className={styles.alertContent}>
                 <div className={styles.alertName}>{item.name}</div>
-                <div className={styles.alertStatus}>{t('dashboard.criticalStock', { count: item.stock })}</div>
+                <div className={styles.alertStatus}>Estoque: {item.stock} (Abaixo do Mínimo)</div>
               </div>
               <ChevronRight size={20} color="var(--text-light)" aria-hidden="true" />
             </div>
           ))}
 
-          {belowIdealInventory.map(item => (
-            <div 
-              key={item.id} 
-              className={`${styles.alertItem} ${styles.warning}`} 
-              role="button" 
-              tabIndex={0}
-              onClick={() => navigate(`/inventory/edit/${item.id}`)}
-              onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/inventory/edit/${item.id}`); }}
-            >
-              <Package size={24} className={styles.alertIcon} aria-hidden="true" />
-              <div className={styles.alertContent}>
-                <div className={styles.alertName}>{item.name}</div>
-                <div className={styles.alertStatus}>{t('dashboard.belowIdeal', { count: item.stock })}</div>
-              </div>
-              <ChevronRight size={20} color="var(--text-light)" aria-hidden="true" />
-            </div>
-          ))}
-
-          {criticalInventory.length === 0 && belowIdealInventory.length === 0 && (
-            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '16px' }}>{t('dashboard.noAlerts')}</p>
+          {criticalInventory.length === 0 && (
+            <p className={styles.emptyState}>Nenhum item em falta no momento.</p>
           )}
         </div>
       </section>

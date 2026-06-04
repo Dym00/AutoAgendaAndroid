@@ -5,30 +5,22 @@ import api from '../services/api';
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    try {
-      const sessionStr = localStorage.getItem('@AutoAgenda:session');
-      if (sessionStr) {
-        const session = JSON.parse(sessionStr);
-        // Verifica se a sessão expirou
-        if (session.expiresAt && Date.now() < session.expiresAt) {
-          return session.user;
-        } else {
-          // Sessão expirada, limpa o cache
-          localStorage.removeItem('@AutoAgenda:session');
-          localStorage.removeItem('idOficina');
-        }
-      }
-    } catch (e) {
-      console.error('Erro ao ler sessão do cache', e);
-    }
-    return null;
+  const [user, setUser] = useState(null);
+  const [appointments, setAppointments] = useState(() => {
+    try { const saved = localStorage.getItem('autoagenda_appointments'); return saved ? JSON.parse(saved) : []; } catch(e) { return []; }
   });
-  const [appointments, setAppointments] = useState([]);
-  const [inventory, setInventory] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [employees, setEmployees] = useState([]);
-  const [services, setServices] = useState([]);
+  const [inventory, setInventory] = useState(() => {
+    try { const saved = localStorage.getItem('autoagenda_inventory'); return saved ? JSON.parse(saved) : []; } catch(e) { return []; }
+  });
+  const [clients, setClients] = useState(() => {
+    try { const saved = localStorage.getItem('autoagenda_clients'); return saved ? JSON.parse(saved) : []; } catch(e) { return []; }
+  });
+  const [employees, setEmployees] = useState(() => {
+    try { const saved = localStorage.getItem('autoagenda_employees'); return saved ? JSON.parse(saved) : []; } catch(e) { return []; }
+  });
+  const [services, setServices] = useState(() => {
+    try { const saved = localStorage.getItem('autoagenda_services'); return saved ? JSON.parse(saved) : []; } catch(e) { return []; }
+  });
 
   // Notificações Locais
   const [notifications, setNotifications] = useState(() => {
@@ -64,11 +56,11 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      loadData();
+      loadData(true); // Sincronização silenciosa no boot
     }
   }, [user]);
 
-  const loadData = async () => {
+  const loadData = async (silent = false) => {
     if (user && user.isOffline) {
       // Injeta dados falsos para Teste Visual
       setClients([{ id: 1, name: 'João (Teste)', phone: '(11) 9999-9999', email: 'teste@email.com' }]);
@@ -80,25 +72,30 @@ export const AppProvider = ({ children }) => {
     }
 
     try {
+       const config = silent ? { hideLoading: true } : {};
        // Carregamento paralelo de todas as APIs
        const [cliRes, empRes, prodRes, servRes, agenRes] = await Promise.all([
-          api.get('/cliente-api'),
-          api.get('/funcionario-api'),
-          api.get('/produto-api'),
-          api.get('/servico-api').catch(() => ({ data: [] })), // Fallback se não existir
-          api.get('/agendamento-api')
+          api.get('/cliente-api', config),
+          api.get('/funcionario-api', config),
+          api.get('/produto-api', config),
+          api.get('/servico-api', config).catch(() => ({ data: [] })), // Fallback se não existir
+          api.get('/agendamento-api', config)
        ]);
 
        if (cliRes.data) {
-         setClients(cliRes.data.map(c => ({
+         const newClients = cliRes.data.map(c => ({
            id: c.idCliente, name: c.nomeCliente, phone: c.telefone, email: c.email, veiculos: c.veiculos || []
-         })));
+         }));
+         setClients(newClients);
+         localStorage.setItem('autoagenda_clients', JSON.stringify(newClients));
        }
 
        if (empRes.data) {
-         setEmployees(empRes.data.map(e => ({
+         const newEmployees = empRes.data.map(e => ({
            id: e.idFuncionario, name: e.nomeFuncionario, role: e.acesso === 'admin' ? 'Gerente' : 'Mecânico', email: e.email, cpf: e.cpf, phone: e.telefone
-         })));
+         }));
+         setEmployees(newEmployees);
+         localStorage.setItem('autoagenda_employees', JSON.stringify(newEmployees));
        }
 
        if (prodRes.data) {
@@ -113,11 +110,13 @@ export const AppProvider = ({ children }) => {
              price: p.precoVenda, 
              stock: p.estoqueAtual, 
              minStock: minStockVal,
-             critical: p.estoqueAtual <= minStockVal, 
-             Icon: p.estoqueAtual <= minStockVal ? SlidersHorizontal : Package
+             critical: p.estoqueAtual <= minStockVal,
+             fornecedor: p.fornecedor || '',
+             descricao: p.descricao || ''
            };
          });
          setInventory(newInv);
+         localStorage.setItem('autoagenda_inventory', JSON.stringify(newInv));
 
          // Trigger de Estoque Crítico
          const criticalItems = newInv.filter(i => i.critical);
@@ -141,10 +140,11 @@ export const AppProvider = ({ children }) => {
            id: s.idServico, name: s.nomeServico, description: s.descServico
          }));
          setServices(servicesList);
+         localStorage.setItem('autoagenda_services', JSON.stringify(servicesList));
        }
 
        if (agenRes.data) {
-         setAppointments(agenRes.data.map(a => ({
+         const newAppts = agenRes.data.map(a => ({
            id: a.idAgendamento, 
            name: a.cliente?.nomeCliente || 'Desconhecido', 
            time: a.dataPrevisao ? (() => {
@@ -157,10 +157,12 @@ export const AppProvider = ({ children }) => {
              const matched = servicesList.find(svc => svc.id === s.idServico);
              return matched ? matched.name : s.descricao || 'Serviço';
            }).join(', ') || 'Nenhum', 
-           status: a.statusAgendamento,
+            status: a.statusAgendamento,
            observacao: a.observacao,
            rawDate: a.dataPrevisao
-         })));
+         }));
+         setAppointments(newAppts);
+         localStorage.setItem('autoagenda_appointments', JSON.stringify(newAppts));
        }
 
     } catch(err) {
@@ -170,18 +172,17 @@ export const AppProvider = ({ children }) => {
 
   const login = (userData) => {
     setUser(userData);
-    // Persiste a sessão por 7 dias (7 * 24 * 60 * 60 * 1000 = 604800000 ms)
-    const session = {
-      user: userData,
-      expiresAt: Date.now() + 604800000
-    };
-    localStorage.setItem('@AutoAgenda:session', JSON.stringify(session));
+    localStorage.setItem('@AutoAgenda:savedUser', JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('@AutoAgenda:session');
-    localStorage.removeItem('idOficina');
+    // Não apagamos o savedUser para o Quick Login, apagamos apenas os caches de dados
+    localStorage.removeItem('autoagenda_appointments');
+    localStorage.removeItem('autoagenda_inventory');
+    localStorage.removeItem('autoagenda_clients');
+    localStorage.removeItem('autoagenda_employees');
+    localStorage.removeItem('autoagenda_services');
   };
 
   // ----- CRUD Agendamentos -----

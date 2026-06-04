@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, SlidersHorizontal, Plus, Edit, Trash2 } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, Edit, Trash2, Package } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
@@ -71,7 +71,7 @@ const Inventory = () => {
             })}
           >
             <div className={styles.iconBox} aria-hidden="true">
-              <item.Icon size={24} />
+              {item.critical ? <SlidersHorizontal size={24} /> : <Package size={24} />}
             </div>
             
             <div className={styles.itemInfo} aria-hidden="true">

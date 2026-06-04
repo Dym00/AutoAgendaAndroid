@@ -17,6 +17,14 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [savedUser, setSavedUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('@AutoAgenda:savedUser');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   const { login } = useAppContext();
 
@@ -92,6 +100,22 @@ const Login = () => {
     navigate('/dashboard');
   };
 
+  const handleQuickLogin = () => {
+    if (savedUser) {
+      setLoading(true);
+      // Simula um pequeno delay para a UX do "Entrando..."
+      setTimeout(() => {
+        login(savedUser);
+        navigate('/dashboard');
+      }, 600);
+    }
+  };
+
+  const handleClearSavedUser = () => {
+    localStorage.removeItem('@AutoAgenda:savedUser');
+    setSavedUser(null);
+  };
+
   return (
     <>
       <TopBar title="AUTOAGENDA" showBack={true} />
@@ -101,73 +125,99 @@ const Login = () => {
           <p className={styles.subtitle}>{t('login.subtitle')}</p>
         </div>
 
-        <form className={styles.form} onSubmit={handleLogin}>
-          {error && (
-            <div className={styles.errorBox}>
-              <AlertCircle size={20} className={styles.errorIcon} />
-              <span className={styles.errorText}>{error}</span>
+        {savedUser ? (
+          <div className={styles.quickLoginCard}>
+            <div className={styles.avatarCircle}>
+              {savedUser.nomeFuncionario ? savedUser.nomeFuncionario.charAt(0).toUpperCase() : 'U'}
             </div>
-          )}
-          
-          <Input
-            label="SLUG DA OFICINA"
-            id="slug"
-            type="text"
-            placeholder="Ex: autoagenda-sp"
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-            required
-          />
-          <Input
-            label="USUÁRIO OU E-MAIL"
-            id="usuario"
-            type="text"
-            placeholder={t('login.emailPlaceholder')}
-            icon={Mail}
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
-            required
-          />
-          <Input
-            label={t('login.password')}
-            id="password"
-            type="password"
-            placeholder={t('login.passwordPlaceholder')}
-            icon={Lock}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          
-          <button 
-            type="button"
-            className={styles.forgotPassword} 
-            onClick={() => navigate('/forgot-password')}
-          >
-            {t('login.forgotPassword')}
-          </button>
-          
-          <div className={styles.signupPrompt}>
-            {t('login.noAccount')} <Link to="/register" className={styles.signupLink}>{t('login.createAccount')}</Link>
-          </div>
-          
-          <div className={styles.buttonContainer}>
-            <Button type="submit" loading={loading}>
-              {loading ? 'Aguarde...' : t('login.enter')}
-            </Button>
+            <div className={styles.welcomeBackText}>Bem-vindo(a) de volta</div>
+            <div className={styles.savedUserName}>{savedUser.nomeFuncionario || savedUser.name || 'Usuário'}</div>
             
             <button 
               type="button" 
-              onClick={handleOfflineLogin}
-              style={{
-                marginTop: '16px', background: 'transparent', border: '1px solid var(--border)', 
-                color: 'var(--text-secondary)', padding: '12px', borderRadius: '8px', width: '100%'
-              }}
+              className={styles.quickLoginBtn}
+              onClick={handleQuickLogin}
+              disabled={loading}
             >
-              Entrar no Modo de Teste Visual
+              {loading ? 'Entrando...' : 'Entrar'}
+            </button>
+            <button 
+              type="button" 
+              className={styles.otherAccountBtn}
+              onClick={handleClearSavedUser}
+            >
+              Entrar com outra conta
             </button>
           </div>
-        </form>
+        ) : (
+          <form className={styles.form} onSubmit={handleLogin}>
+            {error && (
+              <div className={styles.errorBox}>
+                <AlertCircle size={20} className={styles.errorIcon} />
+                <span className={styles.errorText}>{error}</span>
+              </div>
+            )}
+            
+            <Input
+              label="SLUG DA OFICINA"
+              id="slug"
+              type="text"
+              placeholder="Ex: autoagenda-sp"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              required
+            />
+            <Input
+              label="USUÁRIO OU E-MAIL"
+              id="usuario"
+              type="text"
+              placeholder={t('login.emailPlaceholder')}
+              icon={Mail}
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              required
+            />
+            <Input
+              label={t('login.password')}
+              id="password"
+              type="password"
+              placeholder={t('login.passwordPlaceholder')}
+              icon={Lock}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            
+            <button 
+              type="button"
+              className={styles.forgotPassword} 
+              onClick={() => navigate('/forgot-password')}
+            >
+              {t('login.forgotPassword')}
+            </button>
+            
+            <div className={styles.signupPrompt}>
+              {t('login.noAccount')} <Link to="/register" className={styles.signupLink}>{t('login.createAccount')}</Link>
+            </div>
+            
+            <div className={styles.buttonContainer}>
+              <Button type="submit" loading={loading}>
+                {loading ? 'Aguarde...' : t('login.enter')}
+              </Button>
+              
+              <button 
+                type="button" 
+                onClick={handleOfflineLogin}
+                style={{
+                  marginTop: '16px', background: 'transparent', border: '1px solid var(--border)', 
+                  color: 'var(--text-secondary)', padding: '12px', borderRadius: '8px', width: '100%'
+                }}
+              >
+                Entrar no Modo de Teste Visual
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </>
   );

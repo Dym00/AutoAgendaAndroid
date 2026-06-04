@@ -57,7 +57,9 @@ const AddInventory = () => {
       costPrice: unmaskCurrency(formData.costPrice),
       price: unmaskCurrency(formData.price),
       stock: formData.stock,
-      minStock: formData.minStock
+      minStock: formData.minStock,
+      fornecedor: formData.fornecedor,
+      descricao: formData.descricao
     };
 
     setTimeout(() => {

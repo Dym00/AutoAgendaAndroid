@@ -22,37 +22,49 @@ const Dashboard = () => {
   const capitalizedMonth = monthStr.charAt(0).toUpperCase() + monthStr.slice(1);
   const displayDateStr = `${dayStr} de ${capitalizedMonth}`;
 
-  // Filtra agendamentos do dia de hoje
-  const todayAppointments = useMemo(() => {
+  const upcomingAppointments = useMemo(() => {
     return appointments.filter(a => {
-      // a.rawDate geralmente está no formato YYYY-MM-DD ou DD/MM/YYYY dependendo de como foi salvo.
-      // O AppContext tenta normalizar a leitura em `rawDate`, mas vamos checar a string:
-      if (!a.rawDate) return false;
-      const dbDate = a.rawDate.split('T')[0];
-      return dbDate === rawTodayStr;
+      const st = (a.status || '').toLowerCase();
+      return st !== 'cancelado' && st !== 'concluído' && st !== 'concluido';
     }).sort((a, b) => {
-      // Ordena por horário
-      const timeA = a.time || '00:00';
-      const timeB = b.time || '00:00';
+      const dateA = a.rawDate ? a.rawDate.split('T')[0] : '9999-12-31';
+      const dateB = b.rawDate ? b.rawDate.split('T')[0] : '9999-12-31';
+      if (dateA !== dateB) return dateA.localeCompare(dateB);
+      
+      const timeA = a.time || '23:59';
+      const timeB = b.time || '23:59';
       return timeA.localeCompare(timeB);
-    });
-  }, [appointments, rawTodayStr]);
+    }).slice(0, 5);
+  }, [appointments]);
 
-  // Contadores
-  let paraHoje = 0;
+  // Contadores Globais
+  let pendentes = 0;
   let emAndamento = 0;
   let finalizados = 0;
 
-  todayAppointments.forEach(app => {
+  appointments.forEach(app => {
     const st = (app.status || '').toLowerCase();
     if (st === 'concluído' || st === 'concluido') {
       finalizados++;
     } else if (st === 'em andamento') {
       emAndamento++;
     } else if (st !== 'cancelado') {
-      paraHoje++;
+      pendentes++;
     }
   });
+
+  const formatTimelineTime = (rawDate, time) => {
+    if (!rawDate) return time || '--:--';
+    const dbDate = rawDate.split('T')[0];
+    if (dbDate === rawTodayStr) {
+      return `Hoje, ${time || '--:--'}`;
+    }
+    const parts = dbDate.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}/${parts[1]} ${time || '--:--'}`;
+    }
+    return time || '--:--';
+  };
 
   // Alertas de Estoque Crítico
   const criticalInventory = inventory.filter(i => i.critical);
@@ -74,14 +86,14 @@ const Dashboard = () => {
           Olá, {userName}!
         </h2>
         <p className={styles.dateSubtitle}>
-          RESUMO DE HOJE, {displayDateStr}
+          VISÃO GERAL DA OFICINA
         </p>
       </section>
 
-      <section className={styles.summaryCards} aria-label="Resumo do fluxo do dia">
+      <section className={styles.summaryCards} aria-label="Resumo geral da oficina">
         <div className={styles.card}>
-          <h3 className={styles.cardTitle}>Para Hoje</h3>
-          <div className={styles.cardValue}>{paraHoje.toString().padStart(2, '0')}</div>
+          <h3 className={styles.cardTitle}>Pendentes</h3>
+          <div className={styles.cardValue}>{pendentes.toString().padStart(2, '0')}</div>
         </div>
         <div className={`${styles.card} ${styles.highlight}`}>
           <h3 className={styles.cardTitle}>Na Oficina</h3>
@@ -95,21 +107,21 @@ const Dashboard = () => {
 
       <section className={styles.timelineSection} aria-label="Linha do Tempo de Agendamentos">
         <div className={styles.timelineHeader}>
-          <h3 className={styles.timelineTitle}>Fluxo do Dia</h3>
+          <h3 className={styles.timelineTitle}>Agenda Ativa</h3>
         </div>
         
-        {todayAppointments.length === 0 ? (
-          <div className={styles.emptyState}>Nenhum veículo agendado para hoje.</div>
+        {upcomingAppointments.length === 0 ? (
+          <div className={styles.emptyState}>Nenhum veículo aguardando atendimento.</div>
         ) : (
           <div className={styles.timelineList}>
-            {todayAppointments.map(app => (
+            {upcomingAppointments.map(app => (
               <div 
                 key={app.id} 
                 className={styles.timelineItem}
                 onClick={() => navigate(`/appointments/edit/${app.id}`)}
                 style={{ cursor: 'pointer' }}
               >
-                <div className={styles.timelineTime}>{app.time || '--:--'}</div>
+                <div className={styles.timelineTime}>{formatTimelineTime(app.rawDate, app.time)}</div>
                 <div className={`${styles.timelineDot} ${getStatusClass(app.status)}`} />
                 <div className={styles.timelineContent}>
                   <div className={styles.timelineCar}>{app.car}</div>

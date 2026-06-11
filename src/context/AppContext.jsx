@@ -162,11 +162,7 @@ export const AppProvider = ({ children }) => {
          const newAppts = agenRes.data.map(a => ({
            id: a.idAgendamento, 
            name: a.cliente?.nomeCliente || 'Desconhecido', 
-           time: a.dataPrevisao ? (() => {
-             const parts = a.dataPrevisao.split('-');
-             if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
-             return a.dataPrevisao;
-           })() : 'Sem data', 
+           time: a.horaPrevisao ? a.horaPrevisao.slice(0, 5) : '--:--', 
            car: a.veiculo ? `${a.veiculo.modelo} - ${a.veiculo.placa || 'Sem placa'}` : 'Não informado', 
            service: a.servicos?.map(s => {
              const matched = servicesList.find(svc => svc.id === s.idServico);
@@ -264,22 +260,33 @@ export const AppProvider = ({ children }) => {
         });
       }
 
-      await api.post('/agendamento-api', formData);
+      await api.post('/agendamento-api', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       showToast('Agendamento atualizado com sucesso!', 'success');
       loadData();
     } catch (err) {
-      showToast('Erro ao atualizar agendamento.', 'error');
+      let errorMsg = 'Erro ao atualizar agendamento.';
+      if (err.response && err.response.data && err.response.data.erro) {
+        errorMsg = err.response.data.erro;
+      }
+      showToast(errorMsg, 'error');
       console.error("Erro ao atualizar agendamento:", err);
     }
   };
 
   const concludeAppointment = async (id) => {
     try {
+      // Optimistic Update: atualiza a interface local imediatamente
+      setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: 'Concluído' } : a));
+      
       await api.patch(`/agendamento-api/${id}/concluir`);
       addNotification('success', 'Agendamento Concluído', 'O agendamento foi marcado como concluído com sucesso.');
-      loadData();
+      await loadData(); // Garante que a interface só recarregue o real após o BD confirmar
     } catch (err) {
+      showToast('Erro ao concluir agendamento.', 'error');
       console.error("Erro ao concluir agendamento:", err);
+      await loadData(); // Em caso de erro, reverte as mudanças voltando ao estado original do BD
     }
   };
 
@@ -377,7 +384,7 @@ export const AppProvider = ({ children }) => {
   const deleteClient = async (id) => {
     try {
       await api.patch(`/cliente-api/${id}/status`);
-      showToast('Cliente inativado/excluído com sucesso.', 'success');
+      showToast('Cliente removido com sucesso.', 'success');
       loadData();
     } catch (err) {
       showToast('Erro ao excluir cliente.', 'error');
@@ -408,7 +415,7 @@ export const AppProvider = ({ children }) => {
       showToast('Veículo excluído.', 'success');
       loadData();
     } catch (err) {
-      showToast('Erro ao excluir veículo.', 'error');
+      showToast('Erro: Não é possível excluir o veículo pois ele está vinculado a um agendamento.', 'error');
       console.error("Erro ao excluir veículo:", err);
     }
   };

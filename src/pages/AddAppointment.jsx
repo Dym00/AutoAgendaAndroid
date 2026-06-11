@@ -298,7 +298,7 @@ const AddAppointment = () => {
                 ))}
               </div>
             )}
-            {photos.length > 0 && <span style={{ display: 'block', marginTop: '8px', fontSize: '12px', fontWeight: '600', color: 'var(--primary)' }}>📸 {photos.length} foto(s) selecionada(s)</span>}
+            {photos.length > 0 && <span style={{ display: 'block', marginTop: '8px', fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>📸 {photos.length} foto(s) selecionada(s)</span>}
           </div>
 
           <div className={styles.buttonContainer}>

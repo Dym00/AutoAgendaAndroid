@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { Mail, Lock, AlertCircle, User } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
@@ -174,8 +174,8 @@ const Login = () => {
               label="USUÁRIO OU E-MAIL"
               id="usuario"
               type="text"
-              placeholder={t('login.emailPlaceholder')}
-              icon={Mail}
+              placeholder="Digite seu usuário ou e-mail"
+              icon={User}
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
               required

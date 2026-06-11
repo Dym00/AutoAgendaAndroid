@@ -9,10 +9,10 @@ const Dashboard = () => {
   const { t } = useTranslation();
   const { user, appointments, inventory } = useAppContext();
   const navigate = useNavigate();
-  
+
   const userName = user ? (user.nomeFuncionario || user.name) : "Visitante";
   const todayDateObj = new Date();
-  
+
   const dayStr = String(todayDateObj.getDate()).padStart(2, '0');
   const monthStrNum = String(todayDateObj.getMonth() + 1).padStart(2, '0');
   const yearStr = todayDateObj.getFullYear();
@@ -30,7 +30,7 @@ const Dashboard = () => {
       const dateA = a.rawDate ? a.rawDate.split('T')[0] : '9999-12-31';
       const dateB = b.rawDate ? b.rawDate.split('T')[0] : '9999-12-31';
       if (dateA !== dateB) return dateA.localeCompare(dateB);
-      
+
       const timeA = a.time || '23:59';
       const timeB = b.time || '23:59';
       return timeA.localeCompare(timeB);
@@ -53,18 +53,7 @@ const Dashboard = () => {
     }
   });
 
-  const formatTimelineTime = (rawDate, time) => {
-    if (!rawDate) return time || '--:--';
-    const dbDate = rawDate.split('T')[0];
-    if (dbDate === rawTodayStr) {
-      return `Hoje, ${time || '--:--'}`;
-    }
-    const parts = dbDate.split('-');
-    if (parts.length === 3) {
-      return `${parts[2]}/${parts[1]} ${time || '--:--'}`;
-    }
-    return time || '--:--';
-  };
+
 
   // Alertas de Estoque Crítico
   const criticalInventory = inventory.filter(i => i.critical);
@@ -109,19 +98,30 @@ const Dashboard = () => {
         <div className={styles.timelineHeader}>
           <h3 className={styles.timelineTitle}>Agenda Ativa</h3>
         </div>
-        
+
         {upcomingAppointments.length === 0 ? (
           <div className={styles.emptyState}>Nenhum veículo aguardando atendimento.</div>
         ) : (
           <div className={styles.timelineList}>
             {upcomingAppointments.map(app => (
-              <div 
-                key={app.id} 
+              <div
+                key={app.id}
                 className={styles.timelineItem}
                 onClick={() => navigate(`/appointments/edit/${app.id}`)}
                 style={{ cursor: 'pointer' }}
               >
-                <div className={styles.timelineTime}>{formatTimelineTime(app.rawDate, app.time)}</div>
+                <div className={styles.timelineTime}>
+                  <div className={styles.timeMain}>{app.time || '--:--'}</div>
+                  {app.rawDate && app.rawDate.split('T')[0] !== rawTodayStr && (
+                    <div className={styles.timeSub}>
+                      {(() => {
+                        const parts = app.rawDate.split('T')[0].split('-');
+                        if (parts.length === 3) return `${parts[2]}/${parts[1]}`;
+                        return '';
+                      })()}
+                    </div>
+                  )}
+                </div>
                 <div className={`${styles.timelineDot} ${getStatusClass(app.status)}`} />
                 <div className={styles.timelineContent}>
                   <div className={styles.timelineCar}>{app.car}</div>
@@ -139,16 +139,16 @@ const Dashboard = () => {
 
       <section className={styles.alertsSection} aria-labelledby="alerts-title">
         <div className={styles.alertsHeader}>
-          <h3 id="alerts-title" className={styles.alertsTitle}>Comprar Urgente</h3>
+          <h3 id="alerts-title" className={styles.alertsTitle}>Alerta de Itens em Estoque</h3>
           <button className={styles.viewAll} onClick={() => navigate('/inventory')} aria-label="Ver estoque completo">VER TODOS</button>
         </div>
-        
+
         <div className={styles.alertList} role="list">
           {criticalInventory.map(item => (
-            <div 
-              key={item.id} 
-              className={styles.alertItem} 
-              role="button" 
+            <div
+              key={item.id}
+              className={styles.alertItem}
+              role="button"
               tabIndex={0}
               onClick={() => navigate(`/inventory/edit/${item.id}`)}
             >

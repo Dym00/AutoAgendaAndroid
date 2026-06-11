@@ -81,7 +81,22 @@ const AddInventory = () => {
           <Input label={t('forms.lotCodeLabel')} id="code" placeholder={t('forms.lotCodePlaceholder')} icon={Barcode} value={formData.code} onChange={handleChange('code')} />
           <Input label={t('forms.partNameLabel')} id="name" placeholder={t('forms.partNamePlaceholder')} icon={Package} value={formData.itemName} onChange={handleChange('itemName')} required />
           <Input label="FORNECEDOR" id="fornecedor" placeholder="Nome do Fornecedor" icon={Package} value={formData.fornecedor} onChange={handleChange('fornecedor')} />
-          <Input label={t('forms.categoryLabel')} id="category" placeholder={t('forms.categoryPlaceholder')} icon={Tag} value={formData.category} onChange={handleChange('category')} required />
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{t('forms.categoryLabel')} *</label>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+              <Tag size={20} color="var(--text-light)" style={{ position: 'absolute', left: '16px' }} />
+              <select
+                value={formData.category} onChange={handleChange('category')} required
+                style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: formData.category ? 'var(--text-main)' : 'var(--text-secondary)', fontSize: '16px', fontFamily: 'inherit' }}>
+                <option value="" disabled>Selecione</option>
+                <option value="Óleo">Óleo</option>
+                <option value="Filtro">Filtro</option>
+                <option value="Pneu">Pneu</option>
+                <option value="Bateria">Bateria</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+          </div>
           <Input label={t('forms.costPriceLabel')} id="costPrice" type="tel" placeholder={t('forms.costPricePlaceholder')} icon={DollarSign} maskType="currency" value={formData.costPrice} onChange={handleChange('costPrice')} required />
           <Input label={t('forms.priceLabel')} id="price" type="tel" placeholder={t('forms.pricePlaceholder')} icon={DollarSign} maskType="currency" value={formData.price} onChange={handleChange('price')} required />
           <Input label={t('forms.initialStockLabel')} id="stock" type="number" placeholder="0" icon={Layers} value={formData.stock} onChange={handleChange('stock')} required />

@@ -9,15 +9,24 @@ import styles from './Inventory.module.css';
 const Inventory = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { inventory, deleteInventoryItem } = useAppContext();
+  const { inventory, deleteInventoryItem, updateInventoryItem } = useAppContext();
   const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [filterCategory, setFilterCategory] = useState('');
+  const [stockModalItem, setStockModalItem] = useState(null);
+  const [quickStock, setQuickStock] = useState('');
+  const [quickMinStock, setQuickMinStock] = useState('');
 
   const filteredInventory = inventory.filter(item => {
     const term = searchTerm.toLowerCase();
     const nameMatch = item.name && item.name.toLowerCase().includes(term);
     const catMatch = item.category && item.category.toLowerCase().includes(term);
     const codeMatch = item.code && item.code.toLowerCase().includes(term);
-    return nameMatch || catMatch || codeMatch;
+    const searchMatch = nameMatch || catMatch || codeMatch;
+    
+    const categoryFilterMatch = filterCategory ? item.category === filterCategory : true;
+    
+    return searchMatch && categoryFilterMatch;
   });
 
   const totalItems = filteredInventory.length;
@@ -37,10 +46,34 @@ const Inventory = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <button className={styles.filterButton} aria-label={t('common.search')}>
+        <button 
+          className={`${styles.filterButton} ${showFilters ? styles.filterButtonActive : ''}`} 
+          aria-label={t('common.search')}
+          onClick={() => setShowFilters(!showFilters)}
+        >
           <SlidersHorizontal size={20} aria-hidden="true" />
         </button>
       </div>
+
+      {showFilters && (
+        <div style={{ backgroundColor: 'var(--surface)', padding: '16px', borderRadius: '8px', marginBottom: '16px', border: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase' }}>Filtrar por Categoria</label>
+            <select 
+              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '14px' }}
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+            >
+              <option value="">Todas as categorias</option>
+              <option value="Óleo">Óleo</option>
+              <option value="Filtro">Filtro</option>
+              <option value="Pneu">Pneu</option>
+              <option value="Bateria">Bateria</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+        </div>
+      )}
 
       <div className={styles.summaryCards}>
         <div className={`${styles.summaryCard} ${styles.total}`}>
@@ -80,7 +113,17 @@ const Inventory = () => {
               {item.critical && <span className={styles.criticalWarning}>{t('inventory.lowStockAlert')}</span>}
               <div className={styles.itemFooter}>
                 <span className={styles.itemPrice}>{t('inventory.currencyPrefix', { defaultValue: 'R$ ' })}{item.price}</span>
-                <span className={styles.itemStock}>{item.stock} {t('common.unit')}</span>
+                <button 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    setQuickStock(item.stock); 
+                    setQuickMinStock(item.minStock || 0); 
+                    setStockModalItem(item); 
+                  }}
+                  style={{ background: 'var(--input-bg)', border: '1px solid var(--border)', borderRadius: '4px', padding: '4px 8px', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', color: 'var(--text-main)' }}
+                >
+                  <Package size={14} /> {item.stock} {t('common.unit')}
+                </button>
               </div>
             </div>
             
@@ -121,6 +164,53 @@ const Inventory = () => {
       >
         <Plus size={24} aria-hidden="true" />
       </AccessibleNode>
+
+      {stockModalItem && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }} onClick={() => setStockModalItem(null)}>
+          <div style={{ backgroundColor: 'var(--surface)', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px', color: 'var(--text-main)' }}>Ajuste Rápido de Estoque</h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px' }}>{stockModalItem.name}</p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Quantidade Atual</label>
+                <div style={{ position: 'relative' }}>
+                  <Package size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)' }} />
+                  <input 
+                    type="number" 
+                    value={quickStock} 
+                    onChange={(e) => setQuickStock(e.target.value)}
+                    style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '16px' }}
+                  />
+                </div>
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Quantidade Mínima</label>
+                <div style={{ position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', fontWeight: 'bold' }}>⚠️</span>
+                  <input 
+                    type="number" 
+                    value={quickMinStock} 
+                    onChange={(e) => setQuickMinStock(e.target.value)}
+                    style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '16px' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => {
+                const updatedItem = { ...stockModalItem, stock: quickStock, minStock: quickMinStock };
+                updateInventoryItem(stockModalItem.id, updatedItem);
+                setStockModalItem(null);
+              }}
+              style={{ width: '100%', padding: '16px', borderRadius: '8px', backgroundColor: 'var(--primary)', color: 'var(--text-main)', fontWeight: '700', border: 'none', cursor: 'pointer' }}
+            >
+              SALVAR
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

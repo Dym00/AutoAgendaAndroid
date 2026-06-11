@@ -10,7 +10,7 @@ import styles from './Appointments.module.css';
 const Appointments = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { appointments, deleteAppointment, concludeAppointment, services } = useAppContext();
+  const { appointments, deleteAppointment, concludeAppointment, services, clients } = useAppContext();
   const [activeTab, setActiveTab] = useState('ativos');
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -18,6 +18,33 @@ const Appointments = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [filterDate, setFilterDate] = useState('');
   const [filterService, setFilterService] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  
+  const [expandedCardId, setExpandedCardId] = useState(null);
+
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEndHandler = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && activeTab === 'ativos') setActiveTab('historico');
+    if (isRightSwipe && activeTab === 'historico') setActiveTab('ativos');
+  };
   
   const today = new Date();
   const dateStr = today.toLocaleString(i18n.language, { 
@@ -53,8 +80,9 @@ const Appointments = () => {
            
     const matchDate = filterDate ? (a.rawDate === filterDate) : true;
     const matchService = filterService ? (a.service && a.service.includes(filterService)) : true;
+    const matchStatus = filterStatus ? (a.status && a.status.toLowerCase() === filterStatus.toLowerCase()) : true;
     
-    return matchSearch && matchDate && matchService;
+    return matchSearch && matchDate && matchService && matchStatus;
   });
 
   return (
@@ -129,10 +157,39 @@ const Appointments = () => {
               ))}
             </select>
           </div>
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Filtrar por Status</label>
+            <select 
+              className={styles.filterInput}
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="">Todos os status</option>
+              {activeTab === 'ativos' && (
+                <>
+                  <option value="Pendente">Pendente</option>
+                  <option value="Agendado">Agendado</option>
+                  <option value="Confirmado">Confirmado</option>
+                  <option value="Em Andamento">Em Andamento</option>
+                </>
+              )}
+              {activeTab === 'historico' && (
+                <>
+                  <option value="Concluído">Concluído</option>
+                  <option value="Cancelado">Cancelado</option>
+                </>
+              )}
+            </select>
+          </div>
         </div>
       )}
 
-      <div className={styles.list}>
+      <div 
+        className={styles.list}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEndHandler}
+      >
         {filteredAppointments.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-secondary)' }}>
             <p>Nenhum agendamento encontrado.</p>
@@ -152,7 +209,7 @@ const Appointments = () => {
               isNew: app.isNew ? t('appointments.newCustomer') : ''
             })}
           >
-            <div aria-hidden="true">
+            <div aria-hidden="true" onClick={() => setExpandedCardId(expandedCardId === app.id ? null : app.id)}>
               <div className={styles.cardHeader}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <div className={styles.clientName}>{app.name}</div>
@@ -182,6 +239,23 @@ const Appointments = () => {
                 <Wrench size={16} style={{flexShrink: 0}} />
                 <span>{t('appointments.service')}: {app.service}</span>
               </div>
+              
+              {expandedCardId === app.id && (
+                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {(() => {
+                    const client = clients.find(c => c.id === app.idCliente || c.name === app.name);
+                    return (
+                      <>
+                        {client && <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>📞 {client.phone || 'Sem telefone'}</div>}
+                        {client && <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>✉️ {client.email || 'Sem e-mail'}</div>}
+                      </>
+                    );
+                  })()}
+                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                    <strong>Obs:</strong> {app.observacao || 'Nenhuma observação informada.'}
+                  </div>
+                </div>
+              )}
             </div>
             
             <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>

@@ -69,10 +69,9 @@ const AddAppointment = () => {
         const app = appointments.find(a => a.id === parseInt(id));
         if (app) {
           const clientObj = clients.find(c => c.name === app.name);
-          const clientId = clientObj ? clientObj.id : '';
-          const carId = clientObj?.veiculos?.find(v => v.modelo === app.car)?.idVeiculo || '';
-          const servNames = (app.service || '').split(', ');
-          const serviceIds = services.filter(s => servNames.includes(s.name)).map(s => s.id);
+          const clientId = app.idCliente || (clientObj ? clientObj.id : '');
+          const carId = app.idVeiculo || (clientObj?.veiculos?.find(v => v.modelo === app.car)?.idVeiculo || '');
+          const serviceIds = (app.idServicos && app.idServicos.length > 0) ? app.idServicos : services.filter(s => (app.service || '').split(', ').includes(s.name)).map(s => s.id);
           
           let dateVal = app.rawDate ? app.rawDate.split('T')[0] : '';
           let timeVal = app.time || '';

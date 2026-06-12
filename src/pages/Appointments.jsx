@@ -60,8 +60,21 @@ const Appointments = () => {
       case 'Em Andamento': return '#FF9800';
       case 'Concluído': return '#4CAF50';
       case 'Cancelado': return '#F44336';
+      case 'Cancelado': return '#F44336';
       case 'Pendente':
       default: return '#6c757d';
+    }
+  };
+
+  const getTranslatedStatus = (status) => {
+    switch(status) {
+      case 'Pendente': return t('status.pending', 'Pendente');
+      case 'Agendado': return t('status.scheduled', 'Agendado');
+      case 'Confirmado': return t('status.confirmed', 'Confirmado');
+      case 'Em Andamento': return t('status.inProgress', 'Em Andamento');
+      case 'Concluído': return t('status.finished', 'Concluído');
+      case 'Cancelado': return t('status.canceled', 'Cancelado');
+      default: return status;
     }
   };
 
@@ -101,7 +114,7 @@ const Appointments = () => {
           className={`${styles.tab} ${activeTab === 'ativos' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('ativos')}
         >
-          Em Aberto
+          {t('appointments.open', 'Em Aberto')}
         </button>
         <button 
           role="tab" 
@@ -109,7 +122,7 @@ const Appointments = () => {
           className={`${styles.tab} ${activeTab === 'historico' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('historico')}
         >
-          Histórico
+          {t('appointments.history', 'Histórico')}
         </button>
       </div>
 
@@ -119,7 +132,7 @@ const Appointments = () => {
           <input 
             type="text" 
             className={styles.searchInput} 
-            placeholder="Buscar cliente, veículo ou placa..."
+            placeholder={t('appointments.searchPlaceholder', 'Buscar cliente, veículo ou placa...')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -136,7 +149,7 @@ const Appointments = () => {
       {showFilters && (
         <div className={styles.filterSection}>
           <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Filtrar por Data</label>
+            <label className={styles.filterLabel}>{t('appointments.filterDate', 'Filtrar por Data')}</label>
             <input 
               type="date" 
               className={styles.filterInput}
@@ -145,38 +158,38 @@ const Appointments = () => {
             />
           </div>
           <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Filtrar por Serviço</label>
+            <label className={styles.filterLabel}>{t('appointments.filterService', 'Filtrar por Serviço')}</label>
             <select 
               className={styles.filterInput}
               value={filterService}
               onChange={(e) => setFilterService(e.target.value)}
             >
-              <option value="">Todos os serviços</option>
+              <option value="">{t('appointments.allServices', 'Todos os serviços')}</option>
               {services.map(s => (
                 <option key={s.id} value={s.name}>{s.name}</option>
               ))}
             </select>
           </div>
           <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Filtrar por Status</label>
+            <label className={styles.filterLabel}>{t('appointments.filterStatus', 'Filtrar por Status')}</label>
             <select 
               className={styles.filterInput}
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
-              <option value="">Todos os status</option>
+              <option value="">{t('appointments.allStatus', 'Todos os status')}</option>
               {activeTab === 'ativos' && (
                 <>
-                  <option value="Pendente">Pendente</option>
-                  <option value="Agendado">Agendado</option>
-                  <option value="Confirmado">Confirmado</option>
-                  <option value="Em Andamento">Em Andamento</option>
+                  <option value="Pendente">{t('status.pending', 'Pendente')}</option>
+                  <option value="Agendado">{t('status.scheduled', 'Agendado')}</option>
+                  <option value="Confirmado">{t('status.confirmed', 'Confirmado')}</option>
+                  <option value="Em Andamento">{t('status.inProgress', 'Em Andamento')}</option>
                 </>
               )}
               {activeTab === 'historico' && (
                 <>
-                  <option value="Concluído">Concluído</option>
-                  <option value="Cancelado">Cancelado</option>
+                  <option value="Concluído">{t('status.finished', 'Concluído')}</option>
+                  <option value="Cancelado">{t('status.canceled', 'Cancelado')}</option>
                 </>
               )}
             </select>
@@ -192,7 +205,7 @@ const Appointments = () => {
       >
         {filteredAppointments.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-secondary)' }}>
-            <p>Nenhum agendamento encontrado.</p>
+            <p>{t('common.emptyAppointments', 'Nenhum agendamento encontrado.')}</p>
           </div>
         ) : (
           filteredAppointments.map(app => (
@@ -223,7 +236,7 @@ const Appointments = () => {
                         app.status === 'Concluído' ? styles.statusConcluido :
                         app.status === 'Cancelado' ? styles.statusCancelado : styles.statusPendente
                       }`}>
-                        {app.status}
+                        {getTranslatedStatus(app.status)}
                       </span>
                     </div>
                   )}
@@ -246,13 +259,13 @@ const Appointments = () => {
                     const client = clients.find(c => c.id === app.idCliente || c.name === app.name);
                     return (
                       <>
-                        {client && <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>📞 {client.phone || 'Sem telefone'}</div>}
-                        {client && <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>✉️ {client.email || 'Sem e-mail'}</div>}
+                        {client && <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>📞 {client.phone || t('common.none', 'Sem telefone')}</div>}
+                        {client && <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>✉️ {client.email || t('common.none', 'Sem e-mail')}</div>}
                       </>
                     );
                   })()}
                   <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                    <strong>Obs:</strong> {app.observacao || 'Nenhuma observação informada.'}
+                    <strong>Obs:</strong> {app.observacao || t('common.none', 'Nenhuma observação informada.')}
                   </div>
                 </div>
               )}
@@ -264,7 +277,7 @@ const Appointments = () => {
                   <AccessibleNode 
                     as="button"
                     onClick={() => {
-                      if (window.confirm("Deseja marcar este agendamento como concluído?")) {
+                      if (window.confirm(t('appointments.confirmFinish', 'Deseja marcar este agendamento como concluído?'))) {
                         concludeAppointment(app.id);
                       }
                     }}
@@ -289,7 +302,7 @@ const Appointments = () => {
               <AccessibleNode 
                 as="button"
                 onClick={() => {
-                  if (window.confirm("Deseja realmente excluir este agendamento?")) {
+                  if (window.confirm(t('appointments.confirmDelete', 'Deseja realmente excluir este agendamento?'))) {
                     deleteAppointment(app.id);
                   }
                 }}

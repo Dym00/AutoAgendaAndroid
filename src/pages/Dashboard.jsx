@@ -75,32 +75,32 @@ const Dashboard = () => {
           Olá, {userName}!
         </h2>
         <p className={styles.dateSubtitle}>
-          VISÃO GERAL DA OFICINA
+          {t('dashboard.todaySummary', { date: displayDateStr, defaultValue: 'VISÃO GERAL DA OFICINA' }).toUpperCase()}
         </p>
       </section>
 
       <section className={styles.summaryCards} aria-label="Resumo geral da oficina">
         <div className={styles.card}>
-          <h3 className={styles.cardTitle}>Pendentes</h3>
+          <h3 className={styles.cardTitle}>{t('dashboard.pending', 'Pendentes')}</h3>
           <div className={styles.cardValue}>{pendentes.toString().padStart(2, '0')}</div>
         </div>
         <div className={`${styles.card} ${styles.highlight}`}>
-          <h3 className={styles.cardTitle}>Na Oficina</h3>
+          <h3 className={styles.cardTitle}>{t('dashboard.inShop', 'Na Oficina')}</h3>
           <div className={styles.cardValue}>{emAndamento.toString().padStart(2, '0')}</div>
         </div>
         <div className={styles.card}>
-          <h3 className={styles.cardTitle}>Finalizados</h3>
+          <h3 className={styles.cardTitle}>{t('dashboard.finished', 'Finalizados')}</h3>
           <div className={styles.cardValue}>{finalizados.toString().padStart(2, '0')}</div>
         </div>
       </section>
 
       <section className={styles.timelineSection} aria-label="Linha do Tempo de Agendamentos">
         <div className={styles.timelineHeader}>
-          <h3 className={styles.timelineTitle}>Agenda Ativa</h3>
+          <h3 className={styles.timelineTitle}>{t('dashboard.activeAgenda', 'Agenda Ativa')}</h3>
         </div>
 
         {upcomingAppointments.length === 0 ? (
-          <div className={styles.emptyState}>Nenhum veículo aguardando atendimento.</div>
+          <div className={styles.emptyState}>{t('common.emptyAppointments', 'Nenhum agendamento para hoje.')}</div>
         ) : (
           <div className={styles.timelineList}>
             {upcomingAppointments.map(app => (
@@ -139,8 +139,8 @@ const Dashboard = () => {
 
       <section className={styles.alertsSection} aria-labelledby="alerts-title">
         <div className={styles.alertsHeader}>
-          <h3 id="alerts-title" className={styles.alertsTitle}>Alerta de Itens em Estoque</h3>
-          <button className={styles.viewAll} onClick={() => navigate('/inventory')} aria-label="Ver estoque completo">VER TODOS</button>
+          <h3 id="alerts-title" className={styles.alertsTitle}>{t('dashboard.inventoryAlertTitle', 'Alerta de Itens em Estoque')}</h3>
+          <button className={styles.viewAll} onClick={() => navigate('/inventory')} aria-label="Ver estoque completo">{t('dashboard.viewAll', 'VER TODOS')}</button>
         </div>
 
         <div className={styles.alertList} role="list">
@@ -162,7 +162,7 @@ const Dashboard = () => {
           ))}
 
           {criticalInventory.length === 0 && (
-            <p className={styles.emptyState}>Nenhum item em falta no momento.</p>
+            <p className={styles.emptyState}>{t('dashboard.noAlerts', 'Nenhum alerta de estoque!')}</p>
           )}
         </div>
       </section>

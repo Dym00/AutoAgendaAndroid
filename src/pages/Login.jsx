@@ -10,8 +10,12 @@ import Button from '../components/ui/Button';
 import styles from './Login.module.css';
 
 const Login = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
   const [slug, setSlug] = useState('');
   const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
@@ -122,8 +126,13 @@ const Login = () => {
   return (
     <>
       <TopBar title="AUTOAGENDA" showBack={false} />
-      <div className={`page-content full-height ${styles.container}`}>
-        <div className={styles.header}>
+      <div className={`page-content full-height ${styles.container}`} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', paddingBottom: '32px' }}>
+        <div className={styles.header} style={{ position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginBottom: '16px' }}>
+            <button onClick={() => changeLanguage('pt-BR')} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', opacity: i18n.language === 'pt-BR' ? 1 : 0.4, transition: 'opacity 0.2s' }}>🇧🇷</button>
+            <button onClick={() => changeLanguage('en')} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', opacity: i18n.language === 'en' ? 1 : 0.4, transition: 'opacity 0.2s' }}>🇺🇸</button>
+            <button onClick={() => changeLanguage('es')} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', opacity: i18n.language === 'es' ? 1 : 0.4, transition: 'opacity 0.2s' }}>🇪🇸</button>
+          </div>
           <h2 className={styles.title}>{t('login.title')}</h2>
           <p className={styles.subtitle}>{t('login.subtitle')}</p>
         </div>
@@ -133,8 +142,8 @@ const Login = () => {
             <div className={styles.avatarCircle}>
               {savedUser.nomeFuncionario ? savedUser.nomeFuncionario.charAt(0).toUpperCase() : 'U'}
             </div>
-            <div className={styles.welcomeBackText}>Bem-vindo(a) de volta</div>
-            <div className={styles.savedUserName}>{savedUser.nomeFuncionario || savedUser.name || 'Usuário'}</div>
+            <div className={styles.welcomeBackText}>{t('login.welcomeBack', 'Bem-vindo(a) de volta')}</div>
+            <div className={styles.savedUserName}>{savedUser.nomeFuncionario || savedUser.name || t('login.defaultUser', 'Usuário')}</div>
             
             <button 
               type="button" 
@@ -142,14 +151,14 @@ const Login = () => {
               onClick={handleQuickLogin}
               disabled={loading}
             >
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? t('login.entering', 'Entrando...') : t('login.enter', 'Entrar')}
             </button>
             <button 
               type="button" 
               className={styles.otherAccountBtn}
               onClick={handleClearSavedUser}
             >
-              Entrar com outra conta
+              {t('login.loginOtherAccount', 'Entrar com outra conta')}
             </button>
           </div>
         ) : (
@@ -162,19 +171,19 @@ const Login = () => {
             )}
             
             <Input
-              label="SLUG DA OFICINA"
+              label={t('login.slugLabel', 'SLUG DA OFICINA')}
               id="slug"
               type="text"
-              placeholder="Ex: autoagenda-sp"
+              placeholder={t('login.slugPlaceholder', 'Ex: autoagenda-sp')}
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
               required
             />
             <Input
-              label="USUÁRIO OU E-MAIL"
+              label={t('login.userEmailLabel', 'USUÁRIO OU E-MAIL')}
               id="usuario"
               type="text"
-              placeholder="Digite seu usuário ou e-mail"
+              placeholder={t('login.userEmailPlaceholder', 'Digite seu usuário ou e-mail')}
               icon={User}
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
@@ -205,7 +214,7 @@ const Login = () => {
             
             <div className={styles.buttonContainer}>
               <Button type="submit" loading={loading}>
-                {loading ? 'Aguarde...' : t('login.enter')}
+                {loading ? t('login.wait', 'Aguarde...') : t('login.enter')}
               </Button>
               
               <button 
@@ -216,11 +225,12 @@ const Login = () => {
                   color: 'var(--text-secondary)', padding: '12px', borderRadius: '8px', width: '100%'
                 }}
               >
-                Entrar no Modo de Teste Visual
+                {t('login.offlineMode', 'Entrar no Modo de Teste Visual')}
               </button>
             </div>
           </form>
         )}
+
       </div>
     </>
   );

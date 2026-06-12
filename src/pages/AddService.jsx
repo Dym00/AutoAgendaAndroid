@@ -67,9 +67,9 @@ const AddService = () => {
           />
           
           <Input 
-            label="DESCRIÇÃO DO SERVIÇO" 
+            label={t('forms.serviceDescLabel', 'DESCRIÇÃO DO SERVIÇO')} 
             id="description" 
-            placeholder="Ex: Detalhamento do serviço prestado" 
+            placeholder={t('forms.serviceDescPlaceholder', 'Ex: Detalhamento do serviço prestado')} 
             icon={Tag} 
             value={formData.description} 
             onChange={handleChange('description')} 

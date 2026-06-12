@@ -1,7 +1,7 @@
 {
   "login": {
     "title": "Login",
-    "subtitle": "Acesse o ateliê industrial de sua oficina.",
+    "subtitle": "Acesse o sistema de gerenciamento da sua oficina.",
     "email": "E-mail",
     "emailPlaceholder": "Digite seu e-mail",
     "password": "Senha",
@@ -9,7 +9,17 @@
     "forgotPassword": "Esqueci minha senha",
     "noAccount": "Ainda não tem uma conta?",
     "createAccount": "Criar conta",
-    "enter": "Entrar"
+    "enter": "Entrar",
+    "welcomeBack": "Bem-vindo(a) de volta",
+    "defaultUser": "Usuário",
+    "entering": "Entrando...",
+    "loginOtherAccount": "Entrar com outra conta",
+    "slugLabel": "SLUG DA OFICINA",
+    "slugPlaceholder": "Ex: autoagenda-sp",
+    "userEmailLabel": "USUÁRIO OU E-MAIL",
+    "userEmailPlaceholder": "Digite seu usuário ou e-mail",
+    "wait": "Aguarde...",
+    "offlineMode": "Entrar no Modo de Teste Visual"
   },
   "dashboard": {
     "greeting": "Olá, {{name}}!",
@@ -25,7 +35,12 @@
     "viewAll": "VER TODOS",
     "criticalStock": "ESTOQUE CRÍTICO: {{count}} UNIDADES",
     "belowIdeal": "ABAIXO DO NÍVEL IDEAL: {{count}} UNIDADES",
-    "noAlerts": "Nenhum alerta de estoque!"
+    "noAlerts": "Nenhum alerta de estoque!",
+    "pending": "Pendentes",
+    "inShop": "Na Oficina",
+    "finished": "Finalizados",
+    "activeAgenda": "Agenda Ativa",
+    "inventoryAlertTitle": "Alerta de Itens em Estoque"
   },
   "common": {
     "save": "SALVAR",
@@ -43,7 +58,12 @@
     "emptyList": "Nenhum {{item}} encontrado.",
     "emptyInventory": "Estoque vazio.",
     "emptyAppointments": "Nenhum agendamento para hoje.",
-    "unit": "un"
+    "unit": "un",
+    "select": "Selecione",
+    "unknown": "Desconhecido",
+    "none": "Nenhum",
+    "finish": "CONCLUIR",
+    "processing": "PROCESSANDO..."
   },
   "appointments": {
     "title": "AGENDAMENTOS",
@@ -54,7 +74,17 @@
     "tts_appointment": "Agendamento para {{name}} às {{time}}. Veículo: {{car}}. Serviço: {{service}}. {{isNew}}",
     "tts_edit": "Editar agendamento de {{name}}",
     "tts_delete": "Excluir agendamento de {{name}}",
-    "tts_create": "Criar novo agendamento"
+    "tts_create": "Criar novo agendamento",
+    "open": "Em Aberto",
+    "history": "Histórico",
+    "searchPlaceholder": "Buscar cliente, veículo ou placa...",
+    "filterDate": "Filtrar por Data",
+    "filterService": "Filtrar por Serviço",
+    "allServices": "Todos os serviços",
+    "filterStatus": "Filtrar por Status",
+    "allStatus": "Todos os status",
+    "confirmFinish": "Deseja marcar este agendamento como concluído?",
+    "confirmDelete": "Deseja realmente excluir este agendamento?"
   },
   "inventory": {
     "searchPlaceholder": "Buscar por peça, marca ou código...",
@@ -66,14 +96,22 @@
     "tts_item": "{{name}}, Preço R$ {{price}}, Estoque {{stock}}. {{critical}}",
     "tts_edit": "Editar peça {{name}}",
     "tts_delete": "Excluir peça {{name}}",
-    "tts_create": "Adicionar nova peça/insumo ao estoque"
+    "tts_create": "Adicionar nova peça/insumo ao estoque",
+    "filterCategory": "Filtrar por Categoria",
+    "allCategories": "Todas as categorias",
+    "quickStockAdjustment": "Ajuste Rápido de Estoque",
+    "currentStock": "Quantidade Atual",
+    "minStock": "Quantidade Mínima",
+    "confirmDelete": "Deseja realmente excluir este produto/insumo?"
   },
   "nav": {
     "home": "Início",
     "appointments": "Agendamentos",
     "inventory": "Estoque / Insumos",
     "clients": "Clientes",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "services": "Gestão de serviços da oficina",
+    "editShop": "Editar Dados da Oficina"
   },
   "profile": {
     "title": "PERFIL",
@@ -100,7 +138,15 @@
     "tts_client": "Cliente: {{name}}, Email: {{email}}, Telefone: {{phone}}",
     "tts_edit": "Editar cliente {{name}}",
     "tts_delete": "Excluir cliente {{name}}",
-    "tts_create": "Adicionar novo cliente"
+    "tts_create": "Adicionar novo cliente",
+    "manageVehicles": "Gerenciar Veículos",
+    "noVehicles": "Nenhum veículo cadastrado.",
+    "licensePlate": "Placa",
+    "brandExample": "Marca (Ex: Chevrolet)",
+    "modelExample": "Modelo (Ex: Onix)",
+    "plateExample": "Placa (Ex: ABC-1234)",
+    "add": "Adicionar",
+    "afterSaveNote": "* Após salvar o cliente, você poderá adicionar e gerenciar seus veículos editando o cadastro."
   },
   "services": {
     "title": "SERVIÇOS",
@@ -120,7 +166,8 @@
     "tts_employee": "Funcionário: {{name}}, Cargo: {{role}}, Email: {{email}}",
     "tts_edit": "Editar funcionário {{name}}",
     "tts_delete": "Excluir funcionário {{name}}",
-    "tts_create": "Adicionar novo funcionário"
+    "tts_create": "Adicionar novo funcionário",
+    "confirmDelete": "Deseja realmente excluir este funcionário?"
   },
   "forgotPassword": {
     "title": "RECUPERAR SENHA",
@@ -166,7 +213,38 @@
     "saveEmployee": "CADASTRAR FUNCIONÁRIO",
     "serviceNameLabel": "NOME DO SERVIÇO",
     "serviceNamePlaceholder": "Ex: Troca de Óleo",
-    "saveService": "CADASTRAR SERVIÇO"
+    "saveService": "CADASTRAR SERVIÇO",
+    "plateLabel": "PLACA",
+    "modelLabel": "MODELO",
+    "yearLabel": "ANO",
+    "newVehicle": "Novo Veículo",
+    "employeeAccess": "ACESSO DO FUNCIONÁRIO",
+    "appointmentStatus": "STATUS DO AGENDAMENTO",
+    "cloudPhotos": "FOTOS SALVAS NA NUVEM",
+    "addPhoto": "Adicionar Foto",
+    "viewPhoto": "Ver foto ampliada",
+    "providerLabel": "FORNECEDOR",
+    "providerPlaceholder": "Nome do Fornecedor",
+    "select": "Selecione",
+    "categoryOil": "Óleo",
+    "categoryFilter": "Filtro",
+    "categoryTire": "Pneu",
+    "categoryBattery": "Bateria",
+    "categoryOther": "Outro",
+    "detailedDescription": "DESCRIÇÃO DETALHADA",
+    "additionalInfo": "Informações adicionais do produto",
+    "serviceDescLabel": "DESCRIÇÃO DO SERVIÇO",
+    "serviceDescPlaceholder": "Ex: Detalhamento do serviço prestado",
+    "selectClientFirst": "Selecione um cliente com veículos",
+    "statusLabel": "STATUS DO AGENDAMENTO",
+    "multipleSelection": "(Múltipla Seleção)",
+    "noDescription": "Sem descrição",
+    "obsLabel": "OBSERVAÇÃO (Opcional)",
+    "obsPlaceholder": "Detalhes adicionais sobre o serviço ou estado do veículo...",
+    "photosLabel": "FOTOS DO VEÍCULO (Opcional)",
+    "takePhoto": "Tirar Foto",
+    "gallery": "Galeria",
+    "photosSelected": "foto(s) selecionada(s)"
   },
   "about": {
     "description": "O AutoAgenda nasceu para redefinir a gestão automotiva no país. Combinamos tecnologia de ponta para oferecer uma plataforma robusta de agendamentos, estoque de peças e histórico veicular. Nosso foco é transformar dados técnicos em decisões inteligentes para mecânicos e proprietários."
@@ -178,6 +256,50 @@
     "newAppointment": "Novo Agendamento",
     "newAppointmentMsg": "Beatriz Souza agendou Rodízio de Pneus às 14:30.",
     "serviceDone": "Serviço Concluído",
-    "serviceDoneMsg": "Troca de óleo do Chevrolet Onix finalizada."
+    "serviceDoneMsg": "Troca de óleo do Chevrolet Onix finalizada.",
+    "empty": "Nenhuma notificação por aqui.",
+    "stockTitle": "Atenção ao Estoque!",
+    "stockMessage": "Você possui {{count}} produto(s) abaixo do limite mínimo.",
+    "apptSavedTitle": "Agendamento Salvo",
+    "apptSavedMessage": "O novo agendamento foi registrado com sucesso.",
+    "apptDoneTitle": "Agendamento Concluído",
+    "apptDoneMessage": "O agendamento foi marcado como concluído com sucesso.",
+    "justNow": "Agora mesmo",
+    "minsAgo": "Há {{count}} min",
+    "hoursAgo": "Há {{count}} hora(s)",
+    "daysAgo": "Há {{count}} dia(s)",
+    "clearAll": "Limpar Todas",
+    "Agendamento Salvo": "Agendamento Salvo",
+    "Atenção ao Estoque!": "Atenção ao Estoque!",
+    "Agendamento Concluído": "Agendamento Concluído",
+    "O novo agendamento foi registrado com sucesso.": "O novo agendamento foi registrado com sucesso.",
+    "O agendamento foi marcado como concluído com sucesso.": "O agendamento foi marcado como concluído com sucesso."
+  },
+  "register": {
+    "title": "Criar nova conta",
+    "hasAccount": "Já tem uma conta? Entrar"
+  },
+  "categories": {
+    "oil": "Óleo",
+    "filter": "Filtro",
+    "tire": "Pneu",
+    "battery": "Bateria",
+    "other": "Outro"
+  },
+  "status": {
+    "pending": "Pendente",
+    "scheduled": "Agendado",
+    "confirmed": "Confirmado",
+    "inProgress": "Em Andamento",
+    "finished": "Concluído",
+    "canceled": "Cancelado",
+    "concluido": "Concluído",
+    "completed": "Concluído"
+  },
+  "roles": {
+    "attendant": "Atendente",
+    "mechanic": "Mecânico",
+    "manager": "Gerente",
+    "admin": "Admin"
   }
 }

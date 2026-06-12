@@ -1,7 +1,7 @@
 {
   "login": {
     "title": "Iniciar Sesión",
-    "subtitle": "Accede al taller industrial de tu oficina.",
+    "subtitle": "Accede al sistema de gestión de tu taller.",
     "email": "Correo electrónico",
     "emailPlaceholder": "Ingresa tu correo",
     "password": "Contraseña",
@@ -9,7 +9,17 @@
     "forgotPassword": "Olvidé mi contraseña",
     "noAccount": "¿Aún no tienes cuenta?",
     "createAccount": "Crear cuenta",
-    "enter": "Entrar"
+    "enter": "Entrar",
+    "welcomeBack": "Bienvenido(a) de nuevo",
+    "defaultUser": "Usuario",
+    "entering": "Entrando...",
+    "loginOtherAccount": "Ingresar con otra cuenta",
+    "slugLabel": "SLUG DEL TALLER",
+    "slugPlaceholder": "Ej: autoagenda-sp",
+    "userEmailLabel": "USUARIO O CORREO ELECTRÓNICO",
+    "userEmailPlaceholder": "Ingrese su usuario o correo",
+    "wait": "Espere...",
+    "offlineMode": "Entrar en Modo de Prueba Visual"
   },
   "dashboard": {
     "greeting": "¡Hola, {{name}}!",
@@ -25,7 +35,12 @@
     "viewAll": "VER TODOS",
     "criticalStock": "STOCK CRÍTICO: {{count}} UNIDADES",
     "belowIdeal": "POR DEBAJO DEL NIVEL IDEAL: {{count}} UNIDADES",
-    "noAlerts": "¡Sin alertas de inventario!"
+    "noAlerts": "¡Sin alertas de inventario!",
+    "pending": "Pendientes",
+    "inShop": "En Taller",
+    "finished": "Finalizados",
+    "activeAgenda": "Agenda Activa",
+    "inventoryAlertTitle": "Alerta de Artículos en Inventario"
   },
   "common": {
     "save": "GUARDAR",
@@ -43,7 +58,12 @@
     "emptyList": "No se encontró ningún {{item}}.",
     "emptyInventory": "Inventario vacío.",
     "emptyAppointments": "No hay citas para hoy.",
-    "unit": "un"
+    "unit": "un",
+    "select": "Seleccionar",
+    "unknown": "Desconocido",
+    "none": "Ninguno",
+    "finish": "COMPLETAR",
+    "processing": "PROCESANDO..."
   },
   "appointments": {
     "title": "CITAS",
@@ -54,7 +74,17 @@
     "tts_appointment": "Cita para {{name}} a las {{time}}. Vehículo: {{car}}. Servicio: {{service}}. {{isNew}}",
     "tts_edit": "Editar cita de {{name}}",
     "tts_delete": "Eliminar cita de {{name}}",
-    "tts_create": "Crear nueva cita"
+    "tts_create": "Crear nueva cita",
+    "open": "Abiertos",
+    "history": "Historial",
+    "searchPlaceholder": "Buscar cliente, vehículo o matrícula...",
+    "filterDate": "Filtrar por Fecha",
+    "filterService": "Filtrar por Servicio",
+    "allServices": "Todos los servicios",
+    "filterStatus": "Filtrar por Estado",
+    "allStatus": "Todos los estados",
+    "confirmFinish": "¿Desea marcar esta cita como completada?",
+    "confirmDelete": "¿Realmente desea eliminar esta cita?"
   },
   "inventory": {
     "searchPlaceholder": "Buscar por pieza, marca o código...",
@@ -65,14 +95,22 @@
     "tts_item": "{{name}}, Precio ${{price}}, Stock {{stock}}. {{critical}}",
     "tts_edit": "Editar pieza {{name}}",
     "tts_delete": "Eliminar pieza {{name}}",
-    "tts_create": "Añadir nueva pieza/insumo al inventario"
+    "tts_create": "Añadir nueva pieza/insumo al inventario",
+    "filterCategory": "Filtrar por Categoría",
+    "allCategories": "Todas las categorías",
+    "quickStockAdjustment": "Ajuste Rápido de Inventario",
+    "currentStock": "Stock Actual",
+    "minStock": "Stock Mínimo",
+    "confirmDelete": "¿Realmente desea eliminar este producto/insumo?"
   },
   "nav": {
     "home": "Inicio",
     "appointments": "Citas",
     "inventory": "Inventario / Insumos",
     "clients": "Clientes",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "services": "Gestión de servicios del taller",
+    "editShop": "Editar Datos del Taller"
   },
   "profile": {
     "title": "PERFIL",
@@ -99,7 +137,15 @@
     "tts_client": "Cliente: {{name}}, Correo: {{email}}, Teléfono: {{phone}}",
     "tts_edit": "Editar cliente {{name}}",
     "tts_delete": "Eliminar cliente {{name}}",
-    "tts_create": "Añadir nuevo cliente"
+    "tts_create": "Añadir nuevo cliente",
+    "manageVehicles": "Gestionar Vehículos",
+    "noVehicles": "Ningún vehículo registrado.",
+    "licensePlate": "Placa",
+    "brandExample": "Marca (Ej: Chevrolet)",
+    "modelExample": "Modelo (Ej: Onix)",
+    "plateExample": "Placa (Ej: ABC-1234)",
+    "add": "Añadir",
+    "afterSaveNote": "* Después de guardar al cliente, podrás añadir y gestionar sus vehículos editando el perfil."
   },
   "services": {
     "title": "SERVICIOS",
@@ -119,7 +165,8 @@
     "tts_employee": "Empleado: {{name}}, Cargo: {{role}}, Correo: {{email}}",
     "tts_edit": "Editar empleado {{name}}",
     "tts_delete": "Eliminar empleado {{name}}",
-    "tts_create": "Añadir nuevo empleado"
+    "tts_create": "Añadir nuevo empleado",
+    "confirmDelete": "¿Realmente deseas eliminar este empleado?"
   },
   "forgotPassword": {
     "title": "RECUPERAR CONTRASEÑA",
@@ -165,7 +212,38 @@
     "saveEmployee": "REGISTRAR EMPLEADO",
     "serviceNameLabel": "NOMBRE DEL SERVICIO",
     "serviceNamePlaceholder": "Ej: Cambio de Aceite",
-    "saveService": "REGISTRAR SERVICIO"
+    "saveService": "REGISTRAR SERVICIO",
+    "plateLabel": "MATRÍCULA",
+    "modelLabel": "MODELO",
+    "yearLabel": "AÑO",
+    "newVehicle": "Nuevo Vehículo",
+    "employeeAccess": "ACCESO DE EMPLEADO",
+    "appointmentStatus": "ESTADO DE LA CITA",
+    "cloudPhotos": "FOTOS GUARDADAS EN LA NUBE",
+    "addPhoto": "Añadir Foto",
+    "viewPhoto": "Ver foto ampliada",
+    "providerLabel": "PROVEEDOR",
+    "providerPlaceholder": "Nombre del Proveedor",
+    "select": "Seleccione",
+    "categoryOil": "Aceite",
+    "categoryFilter": "Filtro",
+    "categoryTire": "Neumático",
+    "categoryBattery": "Batería",
+    "categoryOther": "Otro",
+    "detailedDescription": "DESCRIPCIÓN DETALLADA",
+    "additionalInfo": "Información adicional del producto",
+    "serviceDescLabel": "DESCRIPCIÓN DEL SERVICIO",
+    "serviceDescPlaceholder": "Ej: Detalles del servicio prestado",
+    "selectClientFirst": "Seleccione un cliente con vehículos",
+    "statusLabel": "ESTADO DE LA CITA",
+    "multipleSelection": "(Selección Múltiple)",
+    "noDescription": "Sin descripción",
+    "obsLabel": "NOTAS (Opcional)",
+    "obsPlaceholder": "Detalles adicionales sobre el servicio o estado del vehículo...",
+    "photosLabel": "FOTOS DEL VEHÍCULO (Opcional)",
+    "takePhoto": "Tomar Foto",
+    "gallery": "Galería",
+    "photosSelected": "foto(s) seleccionada(s)"
   },
   "about": {
     "description": "AutoAgenda nació para redefinir la gestión automotriz. Combinamos tecnología de punta para ofrecer una plataforma robusta de citas, inventario de piezas e historial vehicular. Nuestro enfoque es transformar datos técnicos en decisiones inteligentes para mecánicos y propietarios."
@@ -177,6 +255,50 @@
     "newAppointment": "Nueva Cita",
     "newAppointmentMsg": "Beatriz Souza agendó Rotación de Neumáticos a las 14:30.",
     "serviceDone": "Servicio Completado",
-    "serviceDoneMsg": "Cambio de aceite del Chevrolet Onix finalizado."
+    "serviceDoneMsg": "Cambio de aceite del Chevrolet Onix finalizado.",
+    "empty": "No hay notificaciones por aquí.",
+    "stockTitle": "¡Atención al Inventario!",
+    "stockMessage": "Tienes {{count}} producto(s) por debajo del límite mínimo.",
+    "apptSavedTitle": "Cita Guardada",
+    "apptSavedMessage": "La nueva cita se registró con éxito.",
+    "apptDoneTitle": "Cita Completada",
+    "apptDoneMessage": "La cita ha sido marcada como completada con éxito.",
+    "justNow": "Ahora mismo",
+    "minsAgo": "Hace {{count}} min",
+    "hoursAgo": "Hace {{count}} hora(s)",
+    "daysAgo": "Hace {{count}} día(s)",
+    "clearAll": "Limpiar Todas",
+    "Agendamento Salvo": "Cita Guardada",
+    "Atenção ao Estoque!": "¡Atención al Inventario!",
+    "Agendamento Concluído": "Cita Completada",
+    "O novo agendamento foi registrado com sucesso.": "La nueva cita se registró con éxito.",
+    "O agendamento foi marcado como concluído com sucesso.": "La cita ha sido marcada como completada con éxito."
+  },
+  "register": {
+    "title": "Crear nueva cuenta",
+    "hasAccount": "¿Ya tienes una cuenta? Iniciar sesión"
+  },
+  "categories": {
+    "oil": "Aceite",
+    "filter": "Filtro",
+    "tire": "Neumático",
+    "battery": "Batería",
+    "other": "Otro"
+  },
+  "status": {
+    "pending": "Pendiente",
+    "scheduled": "Programado",
+    "confirmed": "Confirmado",
+    "inProgress": "En Progreso",
+    "finished": "Completado",
+    "canceled": "Cancelado",
+    "concluido": "Completado",
+    "completed": "Completado"
+  },
+  "roles": {
+    "attendant": "Recepcionista",
+    "mechanic": "Mecánico",
+    "manager": "Gerente",
+    "admin": "Admin"
   }
 }

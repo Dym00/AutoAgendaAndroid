@@ -165,33 +165,33 @@ const AddAppointment = () => {
               <select
                 value={formData.carModel} onChange={handleChange('carModel')} required disabled={veiculosDisponiveis.length === 0}
                 style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}>
-                <option value="" disabled>{veiculosDisponiveis.length > 0 ? t('forms.vehiclePlaceholder') : 'Selecione um cliente com veículos'}</option>
+                <option value="" disabled>{veiculosDisponiveis.length > 0 ? t('forms.vehiclePlaceholder') : t('forms.selectClientFirst', 'Selecione um cliente com veículos')}</option>
                 {veiculosDisponiveis.map(v => <option key={v.idVeiculo} value={v.idVeiculo}>{v.modelo} - {v.placa}</option>)}
               </select>
             </div>
           </div>
 
           <Input label={t('forms.dateLabel')} id="date" type="date" icon={Calendar} value={formData.date} onChange={handleChange('date')} required />
-          <Input label="HORÁRIO" id="time" type="time" icon={Clock} value={formData.time} onChange={handleChange('time')} />
+          <Input label={t('forms.timeLabel', 'HORÁRIO')} id="time" type="time" icon={Clock} value={formData.time} onChange={handleChange('time')} />
           
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>STATUS DO AGENDAMENTO</label>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.statusLabel', 'STATUS DO AGENDAMENTO')}</label>
             <div style={{ marginTop: '8px' }}>
               <select
                 value={formData.status} onChange={handleChange('status')} required
                 style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)' }}>
-                <option value="Pendente">Pendente</option>
-                <option value="Agendado">Agendado</option>
-                <option value="Confirmado">Confirmado</option>
-                <option value="Em Andamento">Em Andamento</option>
-                <option value="Concluído">Concluído</option>
-                <option value="Cancelado">Cancelado</option>
+                <option value="Pendente">{t('status.pending', 'Pendente')}</option>
+                <option value="Agendado">{t('status.scheduled', 'Agendado')}</option>
+                <option value="Confirmado">{t('status.confirmed', 'Confirmado')}</option>
+                <option value="Em Andamento">{t('status.inProgress', 'Em Andamento')}</option>
+                <option value="Concluído">{t('status.completed', 'Concluído')}</option>
+                <option value="Cancelado">{t('status.canceled', 'Cancelado')}</option>
               </select>
             </div>
           </div>
 
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.serviceLabel')} (Múltipla Seleção)</label>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.serviceLabel')} {t('forms.multipleSelection', '(Múltipla Seleção)')}</label>
             <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {services.map(s => (
                 <label key={s.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '14px', padding: '16px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'var(--input-bg)' }}>
@@ -207,27 +207,27 @@ const AddAppointment = () => {
                       }
                     }}
                   />
-                  <span style={{ fontWeight: formData.services.includes(s.id) ? '600' : '400', color: formData.services.includes(s.id) ? 'var(--text-main)' : 'var(--text-secondary)' }}>{s.name} - {s.description || 'Sem descrição'}</span>
+                  <span style={{ fontWeight: formData.services.includes(s.id) ? '600' : '400', color: formData.services.includes(s.id) ? 'var(--text-main)' : 'var(--text-secondary)' }}>{s.name} - {s.description || t('forms.noDescription', 'Sem descrição')}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <div style={{ marginBottom: '16px' }}>
-             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>OBSERVAÇÃO (Opcional)</label>
+             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.obsLabel', 'OBSERVAÇÃO (Opcional)')}</label>
              <textarea 
                ref={obsRef}
                defaultValue={formData.observacao || ''}
                onChange={(e) => {
                  setFormData({ ...formData, observacao: e.target.value });
                }}
-               placeholder="Detalhes adicionais sobre o serviço ou estado do veículo..."
+               placeholder={t('forms.obsPlaceholder', 'Detalhes adicionais sobre o serviço ou estado do veículo...')}
                style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', marginTop: '8px', minHeight: '100px', resize: 'vertical' }}
              />
           </div>
 
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>FOTOS DO VEÍCULO (Opcional)</label>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.photosLabel', 'FOTOS DO VEÍCULO (Opcional)')}</label>
             <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
             <input type="file" multiple accept="image/*" ref={galleryInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
             
@@ -239,7 +239,7 @@ const AddAppointment = () => {
                   boxShadow: 'var(--shadow-sm)', border: 'none', cursor: 'pointer'
                 }}>
                   <Camera size={24} />
-                  Tirar Foto
+                  {t('forms.takePhoto', 'Tirar Foto')}
                 </button>
                 <button type="button" onClick={() => galleryInputRef.current?.click()} style={{
                   flex: 1, padding: '12px', borderRadius: '8px', backgroundColor: 'var(--surface)', color: 'var(--text-main)',
@@ -247,14 +247,14 @@ const AddAppointment = () => {
                   border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', cursor: 'pointer'
                 }}>
                   <ImageIcon size={24} />
-                  Galeria
+                  {t('forms.gallery', 'Galeria')}
                 </button>
               </div>
             </div>
 
             {existingPhotos.length > 0 && (
               <div style={{ marginTop: '16px' }}>
-                <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>FOTOS SALVAS NA NUVEM</label>
+                <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.savedPhotos', 'FOTOS SALVAS NA NUVEM')}</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '8px' }}>
                   {existingPhotos.map((photo) => (
                     <div key={photo.id} style={{ 
@@ -297,12 +297,12 @@ const AddAppointment = () => {
                 ))}
               </div>
             )}
-            {photos.length > 0 && <span style={{ display: 'block', marginTop: '8px', fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>📸 {photos.length} foto(s) selecionada(s)</span>}
+            {photos.length > 0 && <span style={{ display: 'block', marginTop: '8px', fontSize: '12px', fontWeight: '600', color: 'var(--text-secondary)' }}>📸 {photos.length} {t('forms.photosSelected', 'foto(s) selecionada(s)')}</span>}
           </div>
 
           <div className={styles.buttonContainer}>
             <Button type="submit" loading={loading}>
-              {loading ? "PROCESSANDO..." : (isEditing ? t('common.save') : t('forms.saveAppointment'))}
+              {loading ? t('common.processing', 'PROCESSANDO...') : (isEditing ? t('common.save') : t('forms.saveAppointment'))}
             </Button>
           </div>
         </form>

@@ -58,18 +58,18 @@ const Inventory = () => {
       {showFilters && (
         <div style={{ backgroundColor: 'var(--surface)', padding: '16px', borderRadius: '8px', marginBottom: '16px', border: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase' }}>Filtrar por Categoria</label>
+            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase' }}>{t('inventory.filterCategory', 'Filtrar por Categoria')}</label>
             <select 
               style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '14px' }}
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
             >
-              <option value="">Todas as categorias</option>
-              <option value="Óleo">Óleo</option>
-              <option value="Filtro">Filtro</option>
-              <option value="Pneu">Pneu</option>
-              <option value="Bateria">Bateria</option>
-              <option value="Outro">Outro</option>
+              <option value="">{t('inventory.allCategories', 'Todas as categorias')}</option>
+              <option value="Óleo">{t('categories.oil', 'Óleo')}</option>
+              <option value="Filtro">{t('categories.filter', 'Filtro')}</option>
+              <option value="Pneu">{t('categories.tire', 'Pneu')}</option>
+              <option value="Bateria">{t('categories.battery', 'Bateria')}</option>
+              <option value="Outro">{t('categories.other', 'Outro')}</option>
             </select>
           </div>
         </div>
@@ -140,7 +140,7 @@ const Inventory = () => {
               <AccessibleNode 
                 as="button"
                 onClick={() => {
-                  if (window.confirm('Deseja realmente excluir este produto/insumo?')) {
+                  if (window.confirm(t('inventory.confirmDelete', 'Deseja realmente excluir este produto/insumo?'))) {
                     deleteInventoryItem(item.id);
                   }
                 }}
@@ -168,12 +168,12 @@ const Inventory = () => {
       {stockModalItem && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }} onClick={() => setStockModalItem(null)}>
           <div style={{ backgroundColor: 'var(--surface)', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
-            <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px', color: 'var(--text-main)' }}>Ajuste Rápido de Estoque</h3>
+            <h3 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px', color: 'var(--text-main)' }}>{t('inventory.quickStockAdjustment', 'Ajuste Rápido de Estoque')}</h3>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px' }}>{stockModalItem.name}</p>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
               <div>
-                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Quantidade Atual</label>
+                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>{t('inventory.currentStock', 'Quantidade Atual')}</label>
                 <div style={{ position: 'relative' }}>
                   <Package size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)' }} />
                   <input 
@@ -185,7 +185,7 @@ const Inventory = () => {
                 </div>
               </div>
               <div>
-                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>Quantidade Mínima</label>
+                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>{t('inventory.minStock', 'Quantidade Mínima')}</label>
                 <div style={{ position: 'relative' }}>
                   <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', fontWeight: 'bold' }}>⚠️</span>
                   <input 
@@ -206,7 +206,7 @@ const Inventory = () => {
               }}
               style={{ width: '100%', padding: '16px', borderRadius: '8px', backgroundColor: 'var(--primary)', color: 'var(--text-main)', fontWeight: '700', border: 'none', cursor: 'pointer' }}
             >
-              SALVAR
+              {t('common.save', 'SALVAR')}
             </button>
           </div>
         </div>

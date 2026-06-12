@@ -80,7 +80,7 @@ const AddInventory = () => {
         <form className={styles.form} onSubmit={handleSubmit}>
           <Input label={t('forms.lotCodeLabel')} id="code" placeholder={t('forms.lotCodePlaceholder')} icon={Barcode} value={formData.code} onChange={handleChange('code')} />
           <Input label={t('forms.partNameLabel')} id="name" placeholder={t('forms.partNamePlaceholder')} icon={Package} value={formData.itemName} onChange={handleChange('itemName')} required />
-          <Input label="FORNECEDOR" id="fornecedor" placeholder="Nome do Fornecedor" icon={Package} value={formData.fornecedor} onChange={handleChange('fornecedor')} />
+          <Input label={t('forms.providerLabel', 'FORNECEDOR')} id="fornecedor" placeholder={t('forms.providerPlaceholder', 'Nome do Fornecedor')} icon={Package} value={formData.fornecedor} onChange={handleChange('fornecedor')} />
           <div style={{ marginBottom: '16px' }}>
             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{t('forms.categoryLabel')} *</label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px' }}>
@@ -88,12 +88,12 @@ const AddInventory = () => {
               <select
                 value={formData.category} onChange={handleChange('category')} required
                 style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: formData.category ? 'var(--text-main)' : 'var(--text-secondary)', fontSize: '16px', fontFamily: 'inherit' }}>
-                <option value="" disabled>Selecione</option>
-                <option value="Óleo">Óleo</option>
-                <option value="Filtro">Filtro</option>
-                <option value="Pneu">Pneu</option>
-                <option value="Bateria">Bateria</option>
-                <option value="Outro">Outro</option>
+                <option value="" disabled>{t('forms.select', 'Selecione')}</option>
+                <option value="Óleo">{t('forms.categoryOil', 'Óleo')}</option>
+                <option value="Filtro">{t('forms.categoryFilter', 'Filtro')}</option>
+                <option value="Pneu">{t('forms.categoryTire', 'Pneu')}</option>
+                <option value="Bateria">{t('forms.categoryBattery', 'Bateria')}</option>
+                <option value="Outro">{t('forms.categoryOther', 'Outro')}</option>
               </select>
             </div>
           </div>
@@ -101,11 +101,11 @@ const AddInventory = () => {
           <Input label={t('forms.priceLabel')} id="price" type="tel" placeholder={t('forms.pricePlaceholder')} icon={DollarSign} maskType="currency" value={formData.price} onChange={handleChange('price')} required />
           <Input label={t('forms.initialStockLabel')} id="stock" type="number" placeholder="0" icon={Layers} value={formData.stock} onChange={handleChange('stock')} required />
           <Input label={t('forms.minStockLabel')} id="minStock" type="number" placeholder="0" icon={AlertTriangle} value={formData.minStock} onChange={handleChange('minStock')} required />
-          <Input label="DESCRIÇÃO DETALHADA" id="descricao" placeholder="Informações adicionais do produto" icon={Tag} value={formData.descricao} onChange={handleChange('descricao')} />
+          <Input label={t('forms.detailedDescription', 'DESCRIÇÃO DETALHADA')} id="descricao" placeholder={t('forms.additionalInfo', 'Informações adicionais do produto')} icon={Tag} value={formData.descricao} onChange={handleChange('descricao')} />
           
           <div className={styles.buttonContainer}>
             <Button type="submit" loading={loading}>
-              {loading ? "PROCESSANDO..." : (isEditing ? t('common.save') : t('forms.savePart'))}
+              {loading ? t('common.processing', 'PROCESSANDO...') : (isEditing ? t('common.save') : t('forms.savePart'))}
             </Button>
           </div>
         </form>

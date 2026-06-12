@@ -73,7 +73,7 @@ const Employees = () => {
               <AccessibleNode 
                 as="button"
                 onClick={() => {
-                  if (window.confirm('Deseja realmente excluir este funcionário?')) {
+                  if (window.confirm(t('employees.confirmDelete', 'Deseja realmente excluir este funcionário?'))) {
                     deleteEmployee(emp.id);
                   }
                 }}

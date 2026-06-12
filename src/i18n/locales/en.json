@@ -1,7 +1,7 @@
 {
   "login": {
     "title": "Login",
-    "subtitle": "Access your workshop's industrial studio.",
+    "subtitle": "Access your workshop's management system.",
     "email": "E-mail",
     "emailPlaceholder": "Enter your e-mail",
     "password": "Password",
@@ -9,7 +9,17 @@
     "forgotPassword": "Forgot my password",
     "noAccount": "Don't have an account yet?",
     "createAccount": "Create account",
-    "enter": "Login"
+    "enter": "Login",
+    "welcomeBack": "Welcome back",
+    "defaultUser": "User",
+    "entering": "Logging in...",
+    "loginOtherAccount": "Login with another account",
+    "slugLabel": "WORKSHOP SLUG",
+    "slugPlaceholder": "Ex: autoagenda-sp",
+    "userEmailLabel": "USER OR E-MAIL",
+    "userEmailPlaceholder": "Enter your user or e-mail",
+    "wait": "Please wait...",
+    "offlineMode": "Enter Visual Test Mode"
   },
   "dashboard": {
     "greeting": "Hello, {{name}}!",
@@ -25,7 +35,12 @@
     "viewAll": "VIEW ALL",
     "criticalStock": "CRITICAL STOCK: {{count}} UNITS",
     "belowIdeal": "BELOW IDEAL LEVEL: {{count}} UNITS",
-    "noAlerts": "No stock alerts!"
+    "noAlerts": "No stock alerts!",
+    "pending": "Pending",
+    "inShop": "In Workshop",
+    "finished": "Finished",
+    "activeAgenda": "Active Agenda",
+    "inventoryAlertTitle": "Inventory Items Alert"
   },
   "common": {
     "save": "SAVE",
@@ -43,7 +58,12 @@
     "emptyList": "No {{item}} found.",
     "emptyInventory": "Empty inventory.",
     "emptyAppointments": "No appointments for today.",
-    "unit": "un"
+    "unit": "un",
+    "select": "Select",
+    "unknown": "Unknown",
+    "none": "None",
+    "finish": "FINISH",
+    "processing": "PROCESSING..."
   },
   "appointments": {
     "title": "APPOINTMENTS",
@@ -54,7 +74,17 @@
     "tts_appointment": "Appointment for {{name}} at {{time}}. Vehicle: {{car}}. Service: {{service}}. {{isNew}}",
     "tts_edit": "Edit appointment for {{name}}",
     "tts_delete": "Delete appointment for {{name}}",
-    "tts_create": "Create new appointment"
+    "tts_create": "Create new appointment",
+    "open": "Open",
+    "history": "History",
+    "searchPlaceholder": "Search client, vehicle or license plate...",
+    "filterDate": "Filter by Date",
+    "filterService": "Filter by Service",
+    "allServices": "All services",
+    "filterStatus": "Filter by Status",
+    "allStatus": "All statuses",
+    "confirmFinish": "Do you want to mark this appointment as completed?",
+    "confirmDelete": "Do you really want to delete this appointment?"
   },
   "inventory": {
     "searchPlaceholder": "Search by part, brand or code...",
@@ -65,14 +95,22 @@
     "tts_item": "{{name}}, Price ${{price}}, Stock {{stock}}. {{critical}}",
     "tts_edit": "Edit part {{name}}",
     "tts_delete": "Delete part {{name}}",
-    "tts_create": "Add new part/supply to inventory"
+    "tts_create": "Add new part/supply to inventory",
+    "filterCategory": "Filter by Category",
+    "allCategories": "All categories",
+    "quickStockAdjustment": "Quick Stock Adjustment",
+    "currentStock": "Current Stock",
+    "minStock": "Minimum Stock",
+    "confirmDelete": "Do you really want to delete this product/supply?"
   },
   "nav": {
     "home": "Home",
     "appointments": "Appointments",
     "inventory": "Inventory / Supplies",
     "clients": "Clients",
-    "profile": "Profile"
+    "profile": "Profile",
+    "services": "Workshop Services Management",
+    "editShop": "Edit Workshop Data"
   },
   "profile": {
     "title": "PROFILE",
@@ -99,7 +137,15 @@
     "tts_client": "Client: {{name}}, Email: {{email}}, Phone: {{phone}}",
     "tts_edit": "Edit client {{name}}",
     "tts_delete": "Delete client {{name}}",
-    "tts_create": "Add new client"
+    "tts_create": "Add new client",
+    "manageVehicles": "Manage Vehicles",
+    "noVehicles": "No vehicles registered.",
+    "licensePlate": "License Plate",
+    "brandExample": "Brand (Ex: Chevrolet)",
+    "modelExample": "Model (Ex: Onix)",
+    "plateExample": "Plate (Ex: ABC-1234)",
+    "add": "Add",
+    "afterSaveNote": "* After saving the client, you can add and manage their vehicles by editing the profile."
   },
   "services": {
     "title": "SERVICES",
@@ -119,7 +165,8 @@
     "tts_employee": "Employee: {{name}}, Role: {{role}}, Email: {{email}}",
     "tts_edit": "Edit employee {{name}}",
     "tts_delete": "Delete employee {{name}}",
-    "tts_create": "Add new employee"
+    "tts_create": "Add new employee",
+    "confirmDelete": "Do you really want to delete this employee?"
   },
   "forgotPassword": {
     "title": "RECOVER PASSWORD",
@@ -165,7 +212,38 @@
     "saveEmployee": "REGISTER EMPLOYEE",
     "serviceNameLabel": "SERVICE NAME",
     "serviceNamePlaceholder": "Ex: Oil Change",
-    "saveService": "REGISTER SERVICE"
+    "saveService": "REGISTER SERVICE",
+    "plateLabel": "LICENSE PLATE",
+    "modelLabel": "MODEL",
+    "yearLabel": "YEAR",
+    "newVehicle": "New Vehicle",
+    "employeeAccess": "EMPLOYEE ACCESS",
+    "appointmentStatus": "APPOINTMENT STATUS",
+    "cloudPhotos": "CLOUD SAVED PHOTOS",
+    "addPhoto": "Add Photo",
+    "viewPhoto": "View enlarged photo",
+    "providerLabel": "PROVIDER",
+    "providerPlaceholder": "Provider Name",
+    "select": "Select",
+    "categoryOil": "Oil",
+    "categoryFilter": "Filter",
+    "categoryTire": "Tire",
+    "categoryBattery": "Battery",
+    "categoryOther": "Other",
+    "detailedDescription": "DETAILED DESCRIPTION",
+    "additionalInfo": "Additional product information",
+    "serviceDescLabel": "SERVICE DESCRIPTION",
+    "serviceDescPlaceholder": "Ex: Details of the service provided",
+    "selectClientFirst": "Select a client with vehicles",
+    "statusLabel": "APPOINTMENT STATUS",
+    "multipleSelection": "(Multiple Selection)",
+    "noDescription": "No description",
+    "obsLabel": "NOTES (Optional)",
+    "obsPlaceholder": "Additional details about the service or vehicle status...",
+    "photosLabel": "VEHICLE PHOTOS (Optional)",
+    "takePhoto": "Take Photo",
+    "gallery": "Gallery",
+    "photosSelected": "photo(s) selected"
   },
   "about": {
     "description": "AutoAgenda was born to redefine automotive management. We combine cutting-edge technology to offer a robust platform for appointments, parts inventory, and vehicle history. Our focus is to transform technical data into intelligent decisions for mechanics and owners."
@@ -177,6 +255,50 @@
     "newAppointment": "New Appointment",
     "newAppointmentMsg": "Beatriz Souza scheduled Tire Rotation at 2:30 PM.",
     "serviceDone": "Service Completed",
-    "serviceDoneMsg": "Oil change for Chevrolet Onix finished."
+    "serviceDoneMsg": "Oil change for Chevrolet Onix finished.",
+    "empty": "No notifications around here.",
+    "stockTitle": "Inventory Alert!",
+    "stockMessage": "You have {{count}} product(s) below the minimum limit.",
+    "apptSavedTitle": "Appointment Saved",
+    "apptSavedMessage": "The new appointment was registered successfully.",
+    "apptDoneTitle": "Appointment Completed",
+    "apptDoneMessage": "The appointment has been successfully marked as completed.",
+    "justNow": "Just now",
+    "minsAgo": "{{count}} min ago",
+    "hoursAgo": "{{count}} hour(s) ago",
+    "daysAgo": "{{count}} day(s) ago",
+    "clearAll": "Clear All",
+    "Agendamento Salvo": "Appointment Saved",
+    "Atenção ao Estoque!": "Inventory Alert!",
+    "Agendamento Concluído": "Appointment Completed",
+    "O novo agendamento foi registrado com sucesso.": "The new appointment was registered successfully.",
+    "O agendamento foi marcado como concluído com sucesso.": "The appointment has been successfully marked as completed."
+  },
+  "register": {
+    "title": "Create new account",
+    "hasAccount": "Already have an account? Login"
+  },
+  "categories": {
+    "oil": "Oil",
+    "filter": "Filter",
+    "tire": "Tire",
+    "battery": "Battery",
+    "other": "Other"
+  },
+  "status": {
+    "pending": "Pending",
+    "scheduled": "Scheduled",
+    "confirmed": "Confirmed",
+    "inProgress": "In Progress",
+    "finished": "Finished",
+    "canceled": "Canceled",
+    "concluido": "Finished",
+    "completed": "Completed"
+  },
+  "roles": {
+    "attendant": "Attendant",
+    "mechanic": "Mechanic",
+    "manager": "Manager",
+    "admin": "Admin"
   }
 }

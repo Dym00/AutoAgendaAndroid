@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Bell, AlertTriangle, Package, CheckCircle } from 'lucide-react';
+import { Bell, AlertTriangle, Package, CheckCircle, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
 import TopBar from '../components/layout/TopBar';
@@ -7,7 +7,7 @@ import styles from './Appointments.module.css'; // Reutilizando list styles
 
 const Notifications = () => {
   const { t } = useTranslation();
-  const { notifications, markAllAsRead } = useAppContext();
+  const { notifications, markAllAsRead, clearNotifications } = useAppContext();
 
   useEffect(() => {
     markAllAsRead();
@@ -41,6 +41,23 @@ const Notifications = () => {
     <>
       <TopBar title={t('notifications.title')} showBack={true} />
       <div className={`page-content ${styles.container}`}>
+        {notifications && notifications.length > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+            <button 
+              onClick={clearNotifications}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '8px', 
+                backgroundColor: 'transparent', border: '1px solid var(--border)',
+                color: 'var(--text-secondary)', padding: '8px 16px',
+                borderRadius: '8px', fontSize: '12px', fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              <Trash2 size={16} />
+              {t('notifications.clearAll', 'Limpar Todas')}
+            </button>
+          </div>
+        )}
         <div className={styles.list} role="list">
           {notifications && notifications.length > 0 ? notifications.map(notif => (
             <article 
@@ -53,14 +70,14 @@ const Notifications = () => {
               <div style={{ display: 'flex', gap: '16px' }}>
                 <div aria-hidden="true">{getIcon(notif.type)}</div>
                 <div>
-                  <h3 style={{ fontSize: '14px', fontWeight: '700', marginBottom: '4px' }}>{notif.title}</h3>
-                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{notif.message}</p>
+                  <h3 style={{ fontSize: '14px', fontWeight: '700', marginBottom: '4px' }}>{t(notif.title)}</h3>
+                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{t(notif.message, notif.params || {})}</p>
                   <span style={{ fontSize: '10px', color: 'var(--text-light)', fontWeight: '600' }}>{formatTime(notif.time)}</span>
                 </div>
               </div>
             </article>
           )) : (
-            <p style={{ textAlign: 'center', padding: '32px', color: 'var(--text-secondary)' }}>Nenhuma notificação por aqui.</p>
+            <p style={{ textAlign: 'center', padding: '32px', color: 'var(--text-secondary)' }}>{t('notifications.empty', 'Nenhuma notificação por aqui.')}</p>
           )}
         </div>
       </div>

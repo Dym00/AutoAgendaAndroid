@@ -122,17 +122,17 @@ const AddClient = () => {
 
         {!isEditing ? (
           <p style={{ fontSize: '12px', color: 'var(--text-light)', textAlign: 'center', marginTop: '16px', fontStyle: 'italic' }}>
-            * Após salvar o cliente, você poderá adicionar e gerenciar seus veículos editando o cadastro.
+            {t('clients.afterSaveNote', '* Após salvar o cliente, você poderá adicionar e gerenciar seus veículos editando o cadastro.')}
           </p>
         ) : (
           <div style={{ marginTop: '24px', borderTop: '1px solid var(--border)', paddingTop: '24px' }}>
             <h3 style={{ fontSize: '15px', fontWeight: '700', marginBottom: '16px', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Car size={20} color="var(--primary)" /> Gerenciar Veículos ({clientVehicles.length})
+              <Car size={20} color="var(--primary)" /> {t('clients.manageVehicles', 'Gerenciar Veículos')} ({clientVehicles.length})
             </h3>
 
             {clientVehicles.length === 0 ? (
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', textAlign: 'center', padding: '20px', border: '1px dashed var(--border)', borderRadius: '8px', marginBottom: '16px' }}>
-                Nenhum veículo cadastrado.
+                {t('clients.noVehicles', 'Nenhum veículo cadastrado.')}
               </p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
@@ -140,7 +140,7 @@ const AddClient = () => {
                   <div key={v.idVeiculo} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'var(--input-bg)' }}>
                     <div>
                       <div style={{ fontWeight: '600', color: 'var(--text-main)', fontSize: '14px' }}>{v.modelo} - {v.marca}</div>
-                      <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '2px' }}>Placa: {v.placa}</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '2px' }}>{t('clients.licensePlate', 'Placa')}: {v.placa}</div>
                     </div>
                     <button 
                       type="button" 
@@ -155,25 +155,25 @@ const AddClient = () => {
             )}
 
             <div style={{ padding: '16px', border: '1px solid var(--border)', borderRadius: '8px', backgroundColor: 'var(--input-bg)' }}>
-              <h4 style={{ fontSize: '13px', fontWeight: '700', marginBottom: '12px', color: 'var(--text-main)' }}>Novo Veículo</h4>
+              <h4 style={{ fontSize: '13px', fontWeight: '700', marginBottom: '12px', color: 'var(--text-main)' }}>{t('forms.newVehicle', 'Novo Veículo')}</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <input 
                   type="text" 
-                  placeholder="Marca (Ex: Chevrolet)" 
+                  placeholder={t('clients.brandExample', 'Marca (Ex: Chevrolet)')} 
                   value={newVehicle.marca} 
                   onChange={(e) => setNewVehicle({ ...newVehicle, marca: e.target.value })}
                   style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px' }}
                 />
                 <input 
                   type="text" 
-                  placeholder="Modelo (Ex: Onix)" 
+                  placeholder={t('clients.modelExample', 'Modelo (Ex: Onix)')} 
                   value={newVehicle.modelo} 
                   onChange={(e) => setNewVehicle({ ...newVehicle, modelo: e.target.value })}
                   style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px' }}
                 />
                 <input 
                   type="text" 
-                  placeholder="Placa (Ex: ABC-1234)" 
+                  placeholder={t('clients.plateExample', 'Placa (Ex: ABC-1234)')} 
                   value={newVehicle.placa} 
                   onChange={(e) => setNewVehicle({ ...newVehicle, placa: maskPlate(e.target.value) })}
                   maxLength={8}
@@ -201,7 +201,7 @@ const AddClient = () => {
                   }}
                 >
                   <Plus size={18} />
-                  Adicionar
+                  {t('clients.add', 'Adicionar')}
                 </button>
               </div>
             </div>

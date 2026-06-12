@@ -48,24 +48,29 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem('autoagenda_notifications', JSON.stringify(newNotifs));
   };
 
-  const addNotification = (type, title, message) => {
+  const addNotification = (type, title, message, params = null) => {
     const newNotif = {
       id: Date.now() + Math.random(),
       type,
       title,
       message,
+      params,
       time: new Date().toISOString(),
       read: false
     };
     saveNotifications([newNotif, ...notifications]);
     
-    // Dispara também o Toast para feedback visual imediato
+    // Dispara também o Toast para feedback visual imediato (o toast pode renderizar as chaves cruas ou precisaria ser traduzido, mas Toast não tem suporte direto a t() aqui, então enviaremos a chave)
     showToast(message, type);
   };
 
   const markAllAsRead = () => {
     const updated = notifications.map(n => ({ ...n, read: true }));
     saveNotifications(updated);
+  };
+
+  const clearNotifications = () => {
+    saveNotifications([]);
   };
 
   useEffect(() => {
@@ -139,11 +144,12 @@ export const AppProvider = ({ children }) => {
            const todayStr = new Date().toISOString().split('T')[0];
            const lastAlert = localStorage.getItem('autoagenda_last_critical_alert');
            if (lastAlert !== todayStr) {
-             addNotification(
-               'alert', 
-               'Atenção ao Estoque!', 
-               `Você possui ${criticalItems.length} produto(s) abaixo do limite mínimo.`
-             );
+              addNotification(
+                'alert', 
+                'notifications.stockTitle', 
+                'notifications.stockMessage',
+                { count: criticalItems.length }
+              );
              localStorage.setItem('autoagenda_last_critical_alert', todayStr);
            }
          }
@@ -229,7 +235,7 @@ export const AppProvider = ({ children }) => {
       await api.post('/agendamento-api', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      addNotification('success', 'Agendamento Salvo', 'O novo agendamento foi registrado com sucesso.');
+      addNotification('success', 'notifications.apptSavedTitle', 'notifications.apptSavedMessage');
       loadData(); // Recarrega do servidor
     } catch (err) {
       showToast('Erro ao salvar agendamento.', 'error');
@@ -306,7 +312,7 @@ export const AppProvider = ({ children }) => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      addNotification('success', 'Agendamento Concluído', 'O agendamento foi marcado como concluído com sucesso.');
+      addNotification('success', 'notifications.apptDoneTitle', 'notifications.apptDoneMessage');
       await loadData(); // Garante que a interface só recarregue o real após o BD confirmar
     } catch (err) {
       showToast('Erro ao concluir agendamento.', 'error');
@@ -549,7 +555,7 @@ export const AppProvider = ({ children }) => {
       employees, addEmployee, updateEmployee, deleteEmployee,
       services, addService, updateService, deleteService,
       addVehicle, deleteVehicle,
-      notifications, addNotification, markAllAsRead,
+      notifications, addNotification, markAllAsRead, clearNotifications,
       toastMessage, showToast, hideToast
     }}>
       {children}

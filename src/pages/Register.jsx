@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, Briefcase, FileText, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -9,6 +10,7 @@ import { isValidCNPJ } from '../utils/masks';
 import styles from './Login.module.css'; // Reutilizando os estilos do Login
 
 const Register = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -85,7 +87,7 @@ const Register = () => {
           <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--primary)', marginBottom: '8px' }}>
             PASSO {step} DE 3
           </div>
-          <h2 className={styles.title}>Criar nova conta</h2>
+          <h2 className={styles.title}>{t('register.title', 'Criar nova conta')}</h2>
           <p className={styles.subtitle}>
             {step === 1 && "Preencha seus dados básicos para começar."}
             {step === 2 && "Precisamos dos dados da sua oficina."}

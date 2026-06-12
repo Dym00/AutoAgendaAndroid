@@ -218,12 +218,16 @@ const AddAppointment = () => {
              <textarea 
                ref={obsRef}
                defaultValue={formData.observacao || ''}
+               maxLength={255}
                onChange={(e) => {
                  setFormData({ ...formData, observacao: e.target.value });
                }}
                placeholder={t('forms.obsPlaceholder', 'Detalhes adicionais sobre o serviço ou estado do veículo...')}
                style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', marginTop: '8px', minHeight: '100px', resize: 'vertical' }}
              />
+             <div style={{ textAlign: 'right', fontSize: '11px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+               {(formData.observacao || '').length}/255
+             </div>
           </div>
 
           <div style={{ marginBottom: '16px' }}>

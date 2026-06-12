@@ -241,7 +241,12 @@ const Appointments = () => {
                     </div>
                   )}
                 </div>
-                <div className={styles.time}>{app.time}</div>
+                <div className={styles.time}>
+                  {app.rawDate && app.rawDate.split('T')[0] !== new Date().toISOString().split('T')[0] 
+                    ? `${app.rawDate.split('T')[0].split('-').reverse().slice(0,2).join('/')} - ` 
+                    : ''}
+                  {app.time}
+                </div>
               </div>
               
               <div className={styles.carInfo}>

@@ -14,6 +14,8 @@ const Input = ({
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+  const isTextType = ['text', 'email', 'password', 'tel', 'url', 'search'].includes(type);
+  const derivedMaxLength = props.maxLength || (isTextType ? 255 : undefined);
 
   const inputRef = useRef(null);
 
@@ -78,6 +80,7 @@ const Input = ({
             e.target.setCustomValidity('');
             if (props.onInput) props.onInput(e);
           }}
+          maxLength={derivedMaxLength}
           {...restProps}
         />
         {isPassword && (
@@ -92,6 +95,11 @@ const Input = ({
           </button>
         )}
       </div>
+      {derivedMaxLength && (
+        <div style={{ textAlign: 'right', fontSize: '11px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+          {value ? String(value).length : (inputRef.current?.value.length || 0)}/{derivedMaxLength}
+        </div>
+      )}
       {error && (
         <span id={`${id}-error`} className={styles.errorText} role="alert">
           {error}

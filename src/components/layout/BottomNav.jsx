@@ -29,7 +29,7 @@ const BottomNav = () => {
             key={item.path}
             className={`${styles.navItem} ${isActive ? styles.active : ''}`}
             onClick={() => navigate(item.path)}
-            textToSpeak={`Navegar para a aba ${t(item.i18nKey)}`}
+            textToSpeak={`${t('a11y.navigateTo', 'Navegar para a aba')} ${t(item.i18nKey)}`}
             aria-label={t(item.i18nKey)}
             aria-current={isActive ? 'page' : undefined}
           >

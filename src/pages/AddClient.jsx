@@ -3,6 +3,7 @@ import { User, Phone, Mail, Plus, Trash2, Car } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
+import { AccessibleNode } from '../components/ui/AccessibleNode';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -142,13 +143,15 @@ const AddClient = () => {
                       <div style={{ fontWeight: '600', color: 'var(--text-main)', fontSize: '14px' }}>{v.modelo} - {v.marca}</div>
                       <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '2px' }}>{t('clients.licensePlate', 'Placa')}: {v.placa}</div>
                     </div>
-                    <button 
+                    <AccessibleNode 
+                      as="button"
                       type="button" 
                       onClick={() => handleDeleteVehicle(v.idVeiculo)}
                       style={{ background: 'none', border: 'none', color: '#ff4444', padding: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      textToSpeak={t('a11y.removeVehicle', { plate: v.placa, defaultValue: 'Remover este veículo' })}
                     >
                       <Trash2 size={18} />
-                    </button>
+                    </AccessibleNode>
                   </div>
                 ))}
               </div>
@@ -179,7 +182,8 @@ const AddClient = () => {
                   maxLength={8}
                   style={{ width: '100%', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px' }}
                 />
-                <button 
+                <AccessibleNode 
+                  as="button"
                   type="button"
                   onClick={handleAddVehicle}
                   disabled={!newVehicle.marca || !newVehicle.modelo || !newVehicle.placa}
@@ -199,10 +203,11 @@ const AddClient = () => {
                     justifyContent: 'center',
                     gap: '8px'
                   }}
+                  textToSpeak={t('a11y.addVehicle', 'Adicionar veículo ao cliente')}
                 >
                   <Plus size={18} />
                   {t('clients.add', 'Adicionar')}
-                </button>
+                </AccessibleNode>
               </div>
             </div>
           </div>

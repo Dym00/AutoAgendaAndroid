@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CheckCircle, AlertCircle, Info, X } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
+import { AccessibleNode } from './AccessibleNode';
 import styles from './Toast.module.css';
 
 const Toast = () => {
@@ -36,9 +37,9 @@ const Toast = () => {
         {getIcon()}
       </div>
       <div className={styles.message}>{message}</div>
-      <button className={styles.closeButton} onClick={() => setVisible(false)}>
+      <AccessibleNode as="button" className={styles.closeButton} onClick={() => setVisible(false)} textToSpeak="Fechar notificação">
         <X size={16} />
-      </button>
+      </AccessibleNode>
     </div>
   );
 };

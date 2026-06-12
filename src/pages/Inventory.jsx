@@ -51,13 +51,15 @@ const Inventory = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <button 
+        <AccessibleNode 
+          as="button"
           className={`${styles.filterButton} ${showFilters ? styles.filterButtonActive : ''}`} 
           aria-label={t('common.search')}
           onClick={() => setShowFilters(!showFilters)}
+          textToSpeak={t('a11y.toggleFilters', 'Alternar painel de filtros avançados')}
         >
           <SlidersHorizontal size={20} aria-hidden="true" />
-        </button>
+        </AccessibleNode>
       </div>
 
       {showFilters && (
@@ -129,7 +131,8 @@ const Inventory = () => {
               {item.critical && <span className={styles.criticalWarning}>{t('inventory.lowStockAlert')}</span>}
               <div className={styles.itemFooter}>
                 <span className={styles.itemPrice}>{t('inventory.currencyPrefix', { defaultValue: 'R$ ' })}{item.price}</span>
-                <button 
+                <AccessibleNode 
+                  as="button"
                   onClick={(e) => { 
                     e.stopPropagation(); 
                     setQuickStock(item.stock); 
@@ -137,9 +140,10 @@ const Inventory = () => {
                     setStockModalItem(item); 
                   }}
                   style={{ background: 'var(--input-bg)', border: '1px solid var(--border)', borderRadius: '4px', padding: '4px 8px', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', color: 'var(--text-main)' }}
+                  textToSpeak={t('a11y.adjustStockItem', { name: item.name, defaultValue: 'Ajustar estoque deste item' })}
                 >
                   <Package size={14} /> {item.stock} {t('common.unit')}
-                </button>
+                </AccessibleNode>
               </div>
             </div>
             
@@ -201,8 +205,8 @@ const Inventory = () => {
                     />
                   </div>
                   <div style={{ display: 'flex', gap: '4px' }}>
-                    <button type="button" onClick={() => setQuickStock((parseInt(quickStock || 0) + 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</button>
-                    <button type="button" onClick={() => setQuickStock(Math.max(0, parseInt(quickStock || 0) - 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</button>
+                    <AccessibleNode as="button" textToSpeak={t('a11y.incrementStock', 'Aumentar quantidade atual em um')} type="button" onClick={() => setQuickStock((parseInt(quickStock || 0) + 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</AccessibleNode>
+                    <AccessibleNode as="button" textToSpeak={t('a11y.decrementStock', 'Diminuir quantidade atual em um')} type="button" onClick={() => setQuickStock(Math.max(0, parseInt(quickStock || 0) - 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</AccessibleNode>
                   </div>
                 </div>
               </div>
@@ -219,23 +223,25 @@ const Inventory = () => {
                     />
                   </div>
                   <div style={{ display: 'flex', gap: '4px' }}>
-                    <button type="button" onClick={() => setQuickMinStock((parseInt(quickMinStock || 0) + 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</button>
-                    <button type="button" onClick={() => setQuickMinStock(Math.max(0, parseInt(quickMinStock || 0) - 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</button>
+                    <AccessibleNode as="button" textToSpeak={t('a11y.incrementMinStock', 'Aumentar quantidade mínima em um')} type="button" onClick={() => setQuickMinStock((parseInt(quickMinStock || 0) + 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</AccessibleNode>
+                    <AccessibleNode as="button" textToSpeak={t('a11y.decrementMinStock', 'Diminuir quantidade mínima em um')} type="button" onClick={() => setQuickMinStock(Math.max(0, parseInt(quickMinStock || 0) - 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</AccessibleNode>
                   </div>
                 </div>
               </div>
             </div>
 
-            <button 
+            <AccessibleNode 
+              as="button"
               onClick={() => {
                 const updatedItem = { ...stockModalItem, stock: quickStock, minStock: quickMinStock };
                 updateInventoryItem(stockModalItem.id, updatedItem);
                 setStockModalItem(null);
               }}
               style={{ width: '100%', padding: '16px', borderRadius: '8px', backgroundColor: 'var(--primary)', color: 'var(--text-main)', fontWeight: '700', border: 'none', cursor: 'pointer' }}
+              textToSpeak={t('a11y.saveForm', 'Salvar dados e finalizar')}
             >
               {t('common.save', 'SALVAR')}
-            </button>
+            </AccessibleNode>
           </div>
         </div>
       )}

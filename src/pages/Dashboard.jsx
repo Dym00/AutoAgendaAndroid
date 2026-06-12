@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, ChevronRight, Wrench } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { AccessibleNode } from '../components/ui/AccessibleNode';
 import styles from './Dashboard.module.css';
 
 const Dashboard = () => {
@@ -104,11 +105,12 @@ const Dashboard = () => {
         ) : (
           <div className={styles.timelineList}>
             {upcomingAppointments.map(app => (
-              <div
+              <AccessibleNode
+                as="div"
                 key={app.id}
                 className={styles.timelineItem}
                 onClick={() => navigate(`/appointments/edit/${app.id}`)}
-                style={{ cursor: 'pointer' }}
+                textToSpeak={t('a11y.appointmentCard', { client: app.name, service: app.service, time: app.time || '--:--', defaultValue: `Agendamento: ${app.name}, Serviço: ${app.service}, Horário: ${app.time || '--:--'}` })}
               >
                 <div className={styles.timelineTime}>
                   <div className={styles.timeMain}>{app.time || '--:--'}</div>
@@ -131,7 +133,7 @@ const Dashboard = () => {
                     {app.service}
                   </div>
                 </div>
-              </div>
+              </AccessibleNode>
             ))}
           </div>
         )}
@@ -140,17 +142,24 @@ const Dashboard = () => {
       <section className={styles.alertsSection} aria-labelledby="alerts-title">
         <div className={styles.alertsHeader}>
           <h3 id="alerts-title" className={styles.alertsTitle}>{t('dashboard.inventoryAlertTitle', 'Alerta de Itens em Estoque')}</h3>
-          <button className={styles.viewAll} onClick={() => navigate('/inventory')} aria-label="Ver estoque completo">{t('dashboard.viewAll', 'VER TODOS')}</button>
+          <AccessibleNode 
+            as="button" 
+            className={styles.viewAll} 
+            onClick={() => navigate('/inventory')} 
+            textToSpeak={t('a11y.viewAllInventory', 'Ver estoque completo')}
+          >
+            {t('dashboard.viewAll', 'VER TODOS')}
+          </AccessibleNode>
         </div>
 
         <div className={styles.alertList} role="list">
           {criticalInventory.map(item => (
-            <div
+            <AccessibleNode
+              as="div"
               key={item.id}
               className={styles.alertItem}
-              role="button"
-              tabIndex={0}
               onClick={() => navigate(`/inventory/edit/${item.id}`)}
+              textToSpeak={t('a11y.inventoryAlertCard', { name: item.name, stock: item.stock, defaultValue: `Alerta: Estoque de ${item.name} abaixo do mínimo. Restam ${item.stock}.` })}
             >
               <AlertTriangle size={24} className={styles.alertIcon} aria-hidden="true" />
               <div className={styles.alertContent}>
@@ -158,7 +167,7 @@ const Dashboard = () => {
                 <div className={styles.alertStatus}>Estoque: {item.stock} (Abaixo do Mínimo)</div>
               </div>
               <ChevronRight size={20} color="var(--text-light)" aria-hidden="true" />
-            </div>
+            </AccessibleNode>
           ))}
 
           {criticalInventory.length === 0 && (

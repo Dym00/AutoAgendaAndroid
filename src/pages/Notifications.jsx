@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import { Bell, AlertTriangle, Package, CheckCircle, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
+import { AccessibleNode } from '../components/ui/AccessibleNode';
 import TopBar from '../components/layout/TopBar';
-import styles from './Appointments.module.css'; // Reutilizando list styles
+import styles from './Appointments.module.css';
 
 const Notifications = () => {
   const { t } = useTranslation();
@@ -43,7 +44,8 @@ const Notifications = () => {
       <div className={`page-content ${styles.container}`}>
         {notifications && notifications.length > 0 && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
-            <button 
+            <AccessibleNode 
+              as="button"
               onClick={clearNotifications}
               style={{
                 display: 'flex', alignItems: 'center', gap: '8px', 
@@ -52,20 +54,21 @@ const Notifications = () => {
                 borderRadius: '8px', fontSize: '12px', fontWeight: '600',
                 cursor: 'pointer'
               }}
+              textToSpeak={t('a11y.clearNotifications', 'Apagar todas as notificações')}
             >
               <Trash2 size={16} />
               {t('notifications.clearAll', 'Limpar Todas')}
-            </button>
+            </AccessibleNode>
           </div>
         )}
         <div className={styles.list} role="list">
           {notifications && notifications.length > 0 ? notifications.map(notif => (
-            <article 
+            <AccessibleNode
+              as="article"
               key={notif.id} 
               className={styles.card}
               style={{ borderLeftColor: notif.read ? 'transparent' : 'var(--primary)', opacity: notif.read ? 0.7 : 1 }}
-              role="listitem"
-              tabIndex={0}
+              textToSpeak={t('a11y.notificationItem', { title: t(notif.title), message: t(notif.message, notif.params || {}), time: formatTime(notif.time), defaultValue: `Notificação: ${t(notif.title)}. ${t(notif.message, notif.params || {})}. Recebida ${formatTime(notif.time)}` })}
             >
               <div style={{ display: 'flex', gap: '16px' }}>
                 <div aria-hidden="true">{getIcon(notif.type)}</div>
@@ -75,7 +78,7 @@ const Notifications = () => {
                   <span style={{ fontSize: '10px', color: 'var(--text-light)', fontWeight: '600' }}>{formatTime(notif.time)}</span>
                 </div>
               </div>
-            </article>
+            </AccessibleNode>
           )) : (
             <p style={{ textAlign: 'center', padding: '32px', color: 'var(--text-secondary)' }}>{t('notifications.empty', 'Nenhuma notificação por aqui.')}</p>
           )}

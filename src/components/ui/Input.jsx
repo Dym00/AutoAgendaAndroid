@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { maskPhone, maskCNPJ, maskCPF, maskCurrency, maskPlate } from '../../utils/masks';
+import { AccessibleNode } from './AccessibleNode';
 import styles from './Input.module.css';
 
 const Input = ({
@@ -84,15 +85,17 @@ const Input = ({
           {...restProps}
         />
         {isPassword && (
-          <button
+          <AccessibleNode
+            as="button"
             type="button"
             className={styles.iconRight}
             onClick={() => setShowPassword(!showPassword)}
             aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
             aria-pressed={showPassword}
+            textToSpeak={showPassword ? 'Ocultar senha' : 'Mostrar senha digitada em texto claro'}
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
+          </AccessibleNode>
         )}
       </div>
       {derivedMaxLength && (

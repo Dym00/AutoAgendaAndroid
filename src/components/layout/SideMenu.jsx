@@ -29,10 +29,12 @@ const SideMenu = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <div
+      <AccessibleNode
+        as="div"
         className={`${styles.backdrop} ${isOpen ? styles.backdropOpen : ''}`}
         onClick={onClose}
         aria-hidden="true"
+        textToSpeak={t('a11y.closeMenu', 'Fechar Menu Principal')}
       />
       <div
         className={`${styles.drawer} ${isOpen ? styles.drawerOpen : ''}`}
@@ -40,9 +42,15 @@ const SideMenu = ({ isOpen, onClose }) => {
         aria-modal="true"
         aria-label={t('profile.title')}
       >
-        <button className={styles.closeButton} onClick={onClose} aria-label={t('common.close')}>
+        <AccessibleNode 
+          as="button" 
+          className={styles.closeButton} 
+          onClick={onClose} 
+          aria-label={t('common.close', 'Fechar')}
+          textToSpeak={t('a11y.closeMenu', 'Fechar Menu')}
+        >
           <X size={24} />
-        </button>
+        </AccessibleNode>
 
         <div style={{
           width: '80px', height: '80px', borderRadius: '50%',

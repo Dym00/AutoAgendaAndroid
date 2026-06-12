@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowLeft, Bell, Ear, EarOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useA11y } from '../../context/A11yContext';
 import { useAppContext } from '../../context/AppContext';
 import { AccessibleNode } from '../ui/AccessibleNode';
@@ -15,6 +16,7 @@ const TopBar = ({
   onOpenMenu
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { isAccessibleMode, toggleAccessibleMode } = useA11y();
   const { notifications } = useAppContext();
 
@@ -44,8 +46,8 @@ const TopBar = ({
             as="button"
             className={`${styles.iconButton} ${styles.backButton}`} 
             onClick={handleBack}
-            textToSpeak="Voltar para a tela anterior"
-            aria-label="Voltar para a tela anterior"
+            textToSpeak={t('a11y.goBack', 'Voltar para a tela anterior')}
+            aria-label={t('a11y.goBack', 'Voltar para a tela anterior')}
           >
             <ArrowLeft size={24} aria-hidden="true" />
           </AccessibleNode>
@@ -55,8 +57,8 @@ const TopBar = ({
             as="button"
             className={styles.profileButton} 
             onClick={handleProfileClick}
-            textToSpeak="Abrir perfil do usuário"
-            aria-label="Abrir perfil do usuário"
+            textToSpeak={t('a11y.openMenu', 'Abrir Menu Principal')}
+            aria-label={t('a11y.openMenu', 'Abrir Menu Principal')}
           >
             <div className={styles.profileAvatar} aria-hidden="true">
               {/* Fallback to initial if no image */}
@@ -69,20 +71,22 @@ const TopBar = ({
       <h1 className={styles.title} aria-level="1">{title}</h1>
       
       <div className={styles.right} style={{ display: 'flex', alignItems: 'center' }}>
-        <button 
+        <AccessibleNode 
+          as="button"
           className={styles.iconButton}
           onClick={toggleAccessibleMode}
           aria-label={isAccessibleMode ? "Desativar acessibilidade por voz" : "Ativar acessibilidade por voz"}
+          textToSpeak={isAccessibleMode ? t('a11y.disableA11y', 'Desativar acessibilidade por voz e retornar ao modo padrão') : t('a11y.enableA11y', 'Ativar acessibilidade por voz')}
         >
           {isAccessibleMode ? <Ear size={24} color="var(--primary)" /> : <EarOff size={24} />}
-        </button>
+        </AccessibleNode>
         {showNotifications && (
           <AccessibleNode 
             as="button"
             className={`${styles.iconButton} ${hasUnread ? styles.badge : ''}`}
             onClick={handleNotificationsClick}
-            textToSpeak={hasUnread ? "Notificações. Você tem novas mensagens." : "Abrir central de notificações."}
-            aria-label={hasUnread ? "Notificações, você tem novas mensagens" : "Notificações"}
+            textToSpeak={hasUnread ? t('a11y.notificationsUnread', 'Notificações. Você tem novas mensagens.') : t('a11y.notifications', 'Ver Notificações')}
+            aria-label={hasUnread ? t('a11y.notificationsUnread', 'Notificações. Você tem novas mensagens.') : t('a11y.notifications', 'Ver Notificações')}
           >
             <Bell 
               size={24} 

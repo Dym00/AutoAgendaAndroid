@@ -108,22 +108,26 @@ const Appointments = () => {
       </div>
 
       <div className={styles.tabsContainer} role="tablist">
-        <button 
+        <AccessibleNode 
+          as="button"
           role="tab" 
           aria-selected={activeTab === 'ativos'}
           className={`${styles.tab} ${activeTab === 'ativos' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('ativos')}
+          textToSpeak={t('a11y.tabOpen', 'Aba: Em Aberto')}
         >
           {t('appointments.open', 'Em Aberto')}
-        </button>
-        <button 
+        </AccessibleNode>
+        <AccessibleNode 
+          as="button"
           role="tab" 
           aria-selected={activeTab === 'historico'}
           className={`${styles.tab} ${activeTab === 'historico' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('historico')}
+          textToSpeak={t('a11y.tabHistory', 'Aba: Histórico')}
         >
           {t('appointments.history', 'Histórico')}
-        </button>
+        </AccessibleNode>
       </div>
 
       <div className={styles.searchBar}>
@@ -137,13 +141,15 @@ const Appointments = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <button 
+        <AccessibleNode 
+          as="button"
           className={`${styles.filterButton} ${showFilters ? styles.filterButtonActive : ''}`} 
           onClick={() => setShowFilters(!showFilters)}
           aria-label="Filtros avançados"
+          textToSpeak={t('a11y.toggleFilters', 'Alternar painel de filtros avançados')}
         >
           <SlidersHorizontal size={20} aria-hidden="true" />
-        </button>
+        </AccessibleNode>
       </div>
 
       {showFilters && (

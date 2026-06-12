@@ -3,6 +3,7 @@ import { Package, Tag, DollarSign, Layers, Barcode, AlertTriangle } from 'lucide
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
+import { AccessibleNode } from '../components/ui/AccessibleNode';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -115,8 +116,8 @@ const AddInventory = () => {
                 />
               </div>
               <div style={{ display: 'flex', gap: '4px' }}>
-                <button type="button" onClick={() => setFormData({...formData, stock: (parseInt(formData.stock || 0) + 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</button>
-                <button type="button" onClick={() => setFormData({...formData, stock: Math.max(0, parseInt(formData.stock || 0) - 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</button>
+                <AccessibleNode as="button" textToSpeak={t('a11y.incrementStock', 'Aumentar estoque atual em um')} type="button" onClick={() => setFormData({...formData, stock: (parseInt(formData.stock || 0) + 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</AccessibleNode>
+                <AccessibleNode as="button" textToSpeak={t('a11y.decrementStock', 'Diminuir estoque atual em um')} type="button" onClick={() => setFormData({...formData, stock: Math.max(0, parseInt(formData.stock || 0) - 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</AccessibleNode>
               </div>
             </div>
           </div>
@@ -137,8 +138,8 @@ const AddInventory = () => {
                 />
               </div>
               <div style={{ display: 'flex', gap: '4px' }}>
-                <button type="button" onClick={() => setFormData({...formData, minStock: (parseInt(formData.minStock || 0) + 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</button>
-                <button type="button" onClick={() => setFormData({...formData, minStock: Math.max(0, parseInt(formData.minStock || 0) - 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</button>
+                <AccessibleNode as="button" textToSpeak={t('a11y.incrementMinStock', 'Aumentar estoque mínimo em um')} type="button" onClick={() => setFormData({...formData, minStock: (parseInt(formData.minStock || 0) + 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</AccessibleNode>
+                <AccessibleNode as="button" textToSpeak={t('a11y.decrementMinStock', 'Diminuir estoque mínimo em um')} type="button" onClick={() => setFormData({...formData, minStock: Math.max(0, parseInt(formData.minStock || 0) - 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</AccessibleNode>
               </div>
             </div>
           </div>

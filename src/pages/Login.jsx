@@ -7,6 +7,7 @@ import api from '../services/api';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import { AccessibleNode } from '../components/ui/AccessibleNode';
 import styles from './Login.module.css';
 
 const Login = () => {
@@ -129,9 +130,9 @@ const Login = () => {
       <div className={`page-content full-height ${styles.container}`} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', paddingBottom: '32px' }}>
         <div className={styles.header} style={{ position: 'relative' }}>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginBottom: '16px' }}>
-            <button onClick={() => changeLanguage('pt-BR')} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', opacity: i18n.language === 'pt-BR' ? 1 : 0.4, transition: 'opacity 0.2s' }}>🇧🇷</button>
-            <button onClick={() => changeLanguage('en')} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', opacity: i18n.language === 'en' ? 1 : 0.4, transition: 'opacity 0.2s' }}>🇺🇸</button>
-            <button onClick={() => changeLanguage('es')} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', opacity: i18n.language === 'es' ? 1 : 0.4, transition: 'opacity 0.2s' }}>🇪🇸</button>
+            <AccessibleNode as="button" textToSpeak={t('a11y.langPt', 'Mudar idioma para Português')} onClick={() => changeLanguage('pt-BR')} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', opacity: i18n.language === 'pt-BR' ? 1 : 0.4, transition: 'opacity 0.2s' }}>🇧🇷</AccessibleNode>
+            <AccessibleNode as="button" textToSpeak={t('a11y.langEn', 'Mudar idioma para Inglês')} onClick={() => changeLanguage('en')} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', opacity: i18n.language === 'en' ? 1 : 0.4, transition: 'opacity 0.2s' }}>🇺🇸</AccessibleNode>
+            <AccessibleNode as="button" textToSpeak={t('a11y.langEs', 'Mudar idioma para Espanhol')} onClick={() => changeLanguage('es')} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', opacity: i18n.language === 'es' ? 1 : 0.4, transition: 'opacity 0.2s' }}>🇪🇸</AccessibleNode>
           </div>
           <h2 className={styles.title}>{t('login.title')}</h2>
           <p className={styles.subtitle}>{t('login.subtitle')}</p>
@@ -145,21 +146,25 @@ const Login = () => {
             <div className={styles.welcomeBackText}>{t('login.welcomeBack', 'Bem-vindo(a) de volta')}</div>
             <div className={styles.savedUserName}>{savedUser.nomeFuncionario || savedUser.name || t('login.defaultUser', 'Usuário')}</div>
             
-            <button 
+            <AccessibleNode 
+              as="button"
               type="button" 
               className={styles.quickLoginBtn}
               onClick={handleQuickLogin}
               disabled={loading}
+              textToSpeak={t('a11y.quickLogin', 'Fazer login rápido na conta salva')}
             >
               {loading ? t('login.entering', 'Entrando...') : t('login.enter', 'Entrar')}
-            </button>
-            <button 
+            </AccessibleNode>
+            <AccessibleNode 
+              as="button"
               type="button" 
               className={styles.otherAccountBtn}
               onClick={handleClearSavedUser}
+              textToSpeak={t('a11y.clearSavedAccount', 'Entrar com outra conta e apagar este usuário salvo')}
             >
               {t('login.loginOtherAccount', 'Entrar com outra conta')}
-            </button>
+            </AccessibleNode>
           </div>
         ) : (
           <form className={styles.form} onSubmit={handleLogin}>
@@ -200,29 +205,33 @@ const Login = () => {
               required
             />
             
-            <button 
+            <AccessibleNode 
+              as="button"
               type="button"
               className={styles.forgotPassword} 
               onClick={() => navigate('/forgot-password')}
+              textToSpeak={t('a11y.forgotPassword', 'Esqueci minha senha')}
             >
               {t('login.forgotPassword')}
-            </button>
+            </AccessibleNode>
             
             <div className={styles.buttonContainer}>
               <Button type="submit" loading={loading}>
                 {loading ? t('login.wait', 'Aguarde...') : t('login.enter')}
               </Button>
               
-              <button 
+              <AccessibleNode 
+                as="button"
                 type="button" 
                 onClick={handleOfflineLogin}
                 style={{
                   marginTop: '16px', background: 'transparent', border: '1px solid var(--border)', 
                   color: 'var(--text-secondary)', padding: '12px', borderRadius: '8px', width: '100%'
                 }}
+                textToSpeak={t('a11y.offlineLogin', 'Entrar no modo de teste visual sem internet')}
               >
                 {t('login.offlineMode', 'Entrar no Modo de Teste Visual')}
-              </button>
+              </AccessibleNode>
             </div>
           </form>
         )}

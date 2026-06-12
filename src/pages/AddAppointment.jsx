@@ -7,6 +7,7 @@ import api from '../services/api';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import { AccessibleNode } from '../components/ui/AccessibleNode';
 import styles from './Login.module.css';
 
 const AddAppointment = () => {
@@ -237,22 +238,22 @@ const AddAppointment = () => {
             
             <div style={{ marginTop: '8px', padding: '24px', borderRadius: '12px', border: '2px dashed var(--border)', backgroundColor: 'var(--input-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
               <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
-                <button type="button" onClick={() => cameraInputRef.current?.click()} style={{
+                <AccessibleNode as="button" textToSpeak={t('a11y.takePhoto', 'Tirar foto com a câmera')} type="button" onClick={() => cameraInputRef.current?.click()} style={{
                   flex: 1, padding: '12px', borderRadius: '8px', backgroundColor: 'var(--primary)', color: 'var(--text-main)',
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', fontWeight: '600', fontSize: '14px',
                   boxShadow: 'var(--shadow-sm)', border: 'none', cursor: 'pointer'
                 }}>
                   <Camera size={24} />
                   {t('forms.takePhoto', 'Tirar Foto')}
-                </button>
-                <button type="button" onClick={() => galleryInputRef.current?.click()} style={{
+                </AccessibleNode>
+                <AccessibleNode as="button" textToSpeak={t('a11y.openGallery', 'Escolher foto da galeria')} type="button" onClick={() => galleryInputRef.current?.click()} style={{
                   flex: 1, padding: '12px', borderRadius: '8px', backgroundColor: 'var(--surface)', color: 'var(--text-main)',
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', fontWeight: '600', fontSize: '14px',
                   border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', cursor: 'pointer'
                 }}>
                   <ImageIcon size={24} />
                   {t('forms.gallery', 'Galeria')}
-                </button>
+                </AccessibleNode>
               </div>
             </div>
 
@@ -266,14 +267,14 @@ const AddAppointment = () => {
                       overflow: 'hidden', boxShadow: 'var(--shadow-sm)', border: '2px solid var(--primary)' 
                     }}>
                       <img src={`${api.defaults.baseURL}/fotos-api/imagem/${photo.id}`} alt="Foto Existente" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      <button type="button" onClick={() => handleRemoveExistingPhoto(photo.id)} style={{
+                      <AccessibleNode as="button" textToSpeak={t('a11y.removePhoto', 'Remover foto')} type="button" onClick={() => handleRemoveExistingPhoto(photo.id)} style={{
                         position: 'absolute', top: '4px', right: '4px', backgroundColor: 'var(--danger)', 
                         color: '#FFF', border: 'none', borderRadius: '50%', width: '20px', height: '20px', 
                         display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                         padding: 0
                       }}>
                         <X size={12} strokeWidth={3} />
-                      </button>
+                      </AccessibleNode>
                     </div>
                   ))}
                 </div>
@@ -289,14 +290,14 @@ const AddAppointment = () => {
                     overflow: 'hidden', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' 
                   }}>
                     <img src={url} alt={`Preview ${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <button type="button" onClick={() => removePhoto(index)} style={{
+                    <AccessibleNode as="button" textToSpeak={t('a11y.removePhoto', 'Remover foto')} type="button" onClick={() => removePhoto(index)} style={{
                       position: 'absolute', top: '4px', right: '4px', backgroundColor: 'var(--danger)', 
                       color: '#FFF', border: 'none', borderRadius: '50%', width: '20px', height: '20px', 
                       display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                       padding: 0
                     }}>
                       <X size={12} strokeWidth={3} />
-                    </button>
+                    </AccessibleNode>
                   </div>
                 ))}
               </div>

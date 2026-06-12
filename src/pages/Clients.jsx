@@ -82,7 +82,7 @@ const Clients = () => {
               <AccessibleNode 
                 as="button"
                 onClick={() => {
-                  if (window.confirm('Deseja realmente excluir este cliente?')) {
+                  if (window.confirm(t('clients.confirmDelete', 'Deseja realmente excluir este cliente?'))) {
                     deleteClient(client.id);
                   }
                 }}

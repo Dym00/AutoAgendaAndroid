@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { User, Car, Calendar, Wrench, Clock, Camera, Image as ImageIcon, X } from 'lucide-react';
+import { User, Car, Calendar, Wrench, Clock, Camera as CameraIcon, Image as ImageIcon, X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppContext } from '../context/AppContext';
 import api from '../services/api';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -46,6 +47,35 @@ const AddAppointment = () => {
     setPreviewUrls(prev => [...prev, ...newUrls]);
     
     e.target.value = '';
+  };
+
+  const takeNativePhoto = async () => {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 80,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera
+      });
+
+      // Se a imagem for capturada com sucesso, converte-a para um Blob/File
+      if (image.webPath) {
+        const response = await fetch(image.webPath);
+        const blob = await response.blob();
+        
+        // Determina o formato (ex: jpeg) e cria o arquivo
+        const format = image.format || 'jpeg';
+        const file = new File([blob], `camera_${Date.now()}.${format}`, {
+          type: `image/${format}`
+        });
+
+        // Atualiza os estados de foto que serão enviados ao backend e o preview
+        setPhotos(prev => [...prev, file]);
+        setPreviewUrls(prev => [...prev, image.webPath]);
+      }
+    } catch (e) {
+      console.warn("Câmera cancelada ou erro:", e);
+    }
   };
 
   const removePhoto = (indexToRemove) => {
@@ -233,17 +263,16 @@ const AddAppointment = () => {
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)' }}>{t('forms.photosLabel', 'FOTOS DO VEÍCULO (Opcional)')}</label>
-            <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
             <input type="file" multiple accept="image/*" ref={galleryInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
             
             <div style={{ marginTop: '8px', padding: '24px', borderRadius: '12px', border: '2px dashed var(--border)', backgroundColor: 'var(--input-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
               <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
-                <AccessibleNode as="button" textToSpeak={t('a11y.takePhoto', 'Tirar foto com a câmera')} type="button" onClick={() => cameraInputRef.current?.click()} style={{
+                <AccessibleNode as="button" textToSpeak={t('a11y.takePhoto', 'Tirar foto com a câmera')} type="button" onClick={takeNativePhoto} style={{
                   flex: 1, padding: '12px', borderRadius: '8px', backgroundColor: 'var(--primary)', color: 'var(--text-main)',
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', fontWeight: '600', fontSize: '14px',
                   boxShadow: 'var(--shadow-sm)', border: 'none', cursor: 'pointer'
                 }}>
-                  <Camera size={24} />
+                  <CameraIcon size={24} />
                   {t('forms.takePhoto', 'Tirar Foto')}
                 </AccessibleNode>
                 <AccessibleNode as="button" textToSpeak={t('a11y.openGallery', 'Escolher foto da galeria')} type="button" onClick={() => galleryInputRef.current?.click()} style={{

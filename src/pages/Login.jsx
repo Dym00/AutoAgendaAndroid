@@ -208,10 +208,6 @@ const Login = () => {
               {t('login.forgotPassword')}
             </button>
             
-            <div className={styles.signupPrompt}>
-              {t('login.noAccount')} <Link to="/register" className={styles.signupLink}>{t('login.createAccount')}</Link>
-            </div>
-            
             <div className={styles.buttonContainer}>
               <Button type="submit" loading={loading}>
                 {loading ? t('login.wait', 'Aguarde...') : t('login.enter')}

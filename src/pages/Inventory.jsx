@@ -13,6 +13,7 @@ const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filterCategory, setFilterCategory] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
   const [stockModalItem, setStockModalItem] = useState(null);
   const [quickStock, setQuickStock] = useState('');
   const [quickMinStock, setQuickMinStock] = useState('');
@@ -25,6 +26,10 @@ const Inventory = () => {
     const searchMatch = nameMatch || catMatch || codeMatch;
     
     const categoryFilterMatch = filterCategory ? item.category === filterCategory : true;
+    
+    if (filterStatus === 'critical') {
+      return searchMatch && categoryFilterMatch && item.critical;
+    }
     
     return searchMatch && categoryFilterMatch;
   });
@@ -70,6 +75,17 @@ const Inventory = () => {
               <option value="Pneu">{t('categories.tire', 'Pneu')}</option>
               <option value="Bateria">{t('categories.battery', 'Bateria')}</option>
               <option value="Outro">{t('categories.other', 'Outro')}</option>
+            </select>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
+            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase' }}>{t('inventory.filterStatus', 'Status do Estoque')}</label>
+            <select 
+              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '14px' }}
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="">{t('inventory.allStatus', 'Todos os Itens')}</option>
+              <option value="critical">{t('inventory.lowStockItems', 'Itens Esgotando')}</option>
             </select>
           </div>
         </div>
@@ -174,26 +190,38 @@ const Inventory = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
               <div>
                 <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>{t('inventory.currentStock', 'Quantidade Atual')}</label>
-                <div style={{ position: 'relative' }}>
-                  <Package size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)' }} />
-                  <input 
-                    type="number" 
-                    value={quickStock} 
-                    onChange={(e) => setQuickStock(e.target.value)}
-                    style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '16px' }}
-                  />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ position: 'relative', flex: 1 }}>
+                    <Package size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)' }} />
+                    <input 
+                      type="number" 
+                      value={quickStock} 
+                      onChange={(e) => setQuickStock(e.target.value)}
+                      style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '16px' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <button type="button" onClick={() => setQuickStock((parseInt(quickStock || 0) + 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</button>
+                    <button type="button" onClick={() => setQuickStock(Math.max(0, parseInt(quickStock || 0) - 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</button>
+                  </div>
                 </div>
               </div>
               <div>
                 <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-light)', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>{t('inventory.minStock', 'Quantidade Mínima')}</label>
-                <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', fontWeight: 'bold' }}>⚠️</span>
-                  <input 
-                    type="number" 
-                    value={quickMinStock} 
-                    onChange={(e) => setQuickMinStock(e.target.value)}
-                    style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '16px' }}
-                  />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ position: 'relative', flex: 1 }}>
+                    <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', fontWeight: 'bold' }}>⚠️</span>
+                    <input 
+                      type="number" 
+                      value={quickMinStock} 
+                      onChange={(e) => setQuickMinStock(e.target.value)}
+                      style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '16px' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <button type="button" onClick={() => setQuickMinStock((parseInt(quickMinStock || 0) + 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</button>
+                    <button type="button" onClick={() => setQuickMinStock(Math.max(0, parseInt(quickMinStock || 0) - 1).toString())} style={{ width: '48px', height: '48px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</button>
+                  </div>
                 </div>
               </div>
             </div>

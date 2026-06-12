@@ -99,8 +99,49 @@ const AddInventory = () => {
           </div>
           <Input label={t('forms.costPriceLabel')} id="costPrice" type="tel" placeholder={t('forms.costPricePlaceholder')} icon={DollarSign} maskType="currency" value={formData.costPrice} onChange={handleChange('costPrice')} required />
           <Input label={t('forms.priceLabel')} id="price" type="tel" placeholder={t('forms.pricePlaceholder')} icon={DollarSign} maskType="currency" value={formData.price} onChange={handleChange('price')} required />
-          <Input label={t('forms.initialStockLabel')} id="stock" type="number" placeholder="0" icon={Layers} value={formData.stock} onChange={handleChange('stock')} required />
-          <Input label={t('forms.minStockLabel')} id="minStock" type="number" placeholder="0" icon={AlertTriangle} value={formData.minStock} onChange={handleChange('minStock')} required />
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{t('forms.initialStockLabel', 'ESTOQUE INICIAL')} *</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+              <div style={{ position: 'relative', flex: 1 }}>
+                <Layers size={20} color="var(--text-light)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+                <input 
+                  id="stock"
+                  type="number" 
+                  placeholder="0"
+                  value={formData.stock} 
+                  onChange={handleChange('stock')}
+                  style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '16px' }}
+                  required
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <button type="button" onClick={() => setFormData({...formData, stock: (parseInt(formData.stock || 0) + 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</button>
+                <button type="button" onClick={() => setFormData({...formData, stock: Math.max(0, parseInt(formData.stock || 0) - 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</button>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{t('forms.minStockLabel', 'ESTOQUE MÍNIMO (CRÍTICO)')} *</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+              <div style={{ position: 'relative', flex: 1 }}>
+                <AlertTriangle size={20} color="var(--text-light)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+                <input 
+                  id="minStock"
+                  type="number" 
+                  placeholder="0"
+                  value={formData.minStock} 
+                  onChange={handleChange('minStock')}
+                  style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '8px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '16px' }}
+                  required
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <button type="button" onClick={() => setFormData({...formData, minStock: (parseInt(formData.minStock || 0) + 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>+</button>
+                <button type="button" onClick={() => setFormData({...formData, minStock: Math.max(0, parseInt(formData.minStock || 0) - 1).toString()})} style={{ width: '56px', height: '56px', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--surface)', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}>-</button>
+              </div>
+            </div>
+          </div>
           <Input label={t('forms.detailedDescription', 'DESCRIÇÃO DETALHADA')} id="descricao" placeholder={t('forms.additionalInfo', 'Informações adicionais do produto')} icon={Tag} value={formData.descricao} onChange={handleChange('descricao')} />
           
           <div className={styles.buttonContainer}>

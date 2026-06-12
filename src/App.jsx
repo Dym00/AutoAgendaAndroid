@@ -9,7 +9,6 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import Toast from './components/ui/Toast';
 
 const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Appointments = lazy(() => import('./pages/Appointments'));
@@ -87,7 +86,6 @@ function App() {
           <Route element={<AuthLayout />}>
             <Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} replace />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
-            <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
           </Route>
 

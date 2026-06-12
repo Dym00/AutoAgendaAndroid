@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Mail, ArrowLeft } from 'lucide-react';
+import { Mail, ArrowLeft, Building, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import api from '../services/api';
 import TopBar from '../components/layout/TopBar';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -11,13 +12,31 @@ const ForgotPassword = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [idOficina, setIdOficina] = useState('');
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email) {
-      setSent(true);
-      // Aqui integraria com a rota do backend para envio de e-mail de recuperação
+    if (email && idOficina) {
+      setLoading(true);
+      setError('');
+      try {
+        await api.post('/funcionario-api/recuperar-senha', null, {
+          params: { email },
+          headers: { idOficina }
+        });
+        setSent(true);
+      } catch (err) {
+        if (err.response?.status === 404) {
+          setError(t('forgotPassword.notFound', 'E-mail ou ID da Oficina não encontrados.'));
+        } else {
+          setError(t('forgotPassword.error', 'Ocorreu um erro ao enviar o e-mail. Tente novamente mais tarde.'));
+        }
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -33,6 +52,24 @@ const ForgotPassword = () => {
 
         {!sent ? (
           <form className={styles.form} onSubmit={handleSubmit}>
+            {error && (
+              <div className={styles.errorBox}>
+                <AlertCircle size={20} className={styles.errorIcon} />
+                <span className={styles.errorText}>{error}</span>
+              </div>
+            )}
+            
+            <Input 
+              label={t('forgotPassword.idOficinaLabel', 'ID DA OFICINA')}
+              id="idOficina"
+              type="number"
+              placeholder={t('forgotPassword.idOficinaPlaceholder', 'Ex: 1')}
+              icon={Building}
+              value={idOficina}
+              onChange={(e) => setIdOficina(e.target.value)}
+              required
+            />
+
             <Input 
               label={t('common.email').toUpperCase()}
               id="email"
@@ -44,8 +81,8 @@ const ForgotPassword = () => {
               required
             />
 
-            <Button type="submit" style={{ marginTop: '24px' }}>
-              {t('forgotPassword.send')}
+            <Button type="submit" loading={loading} style={{ marginTop: '24px' }}>
+              {loading ? t('common.processing', 'PROCESSANDO...') : t('forgotPassword.send')}
             </Button>
           </form>
         ) : (
